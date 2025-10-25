@@ -1,4 +1,4 @@
-import { SidePot } from '../../../../shared/types/game';
+import { SidePot } from '../../types/game';
 
 /**
  * Calculates pots and side pots from player bets

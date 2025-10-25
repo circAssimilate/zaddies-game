@@ -1,5 +1,5 @@
-import { Card, HandEvaluation, HandRank } from '../../../../shared/types/game';
-import { RANK_VALUES, HAND_RANKINGS } from '../../../../shared/constants/gameRules';
+import { Card, HandEvaluation, HandRank } from '../../types/game';
+import { RANK_VALUES, HAND_RANKINGS } from '../../constants/gameRules';
 
 /**
  * Evaluates a poker hand of exactly 5 cards

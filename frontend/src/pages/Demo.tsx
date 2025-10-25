@@ -12,9 +12,9 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Card, Chip, Timer } from '../components';
-import { Card as CardType } from '../../../../shared/types/game';
-import { createDeck, gilbertShannonReedsShuff } from '../../../backend/src/lib/poker/shuffler';
-import { findBestHand } from '../../../backend/src/lib/poker/handEvaluator';
+import { Card as CardType } from '@shared/types/game';
+import { createDeck, gilbertShannonReedsShuff } from '@shared/lib/poker/shuffler';
+import { findBestHand } from '@shared/lib/poker/handEvaluator';
 
 export function Demo() {
   const [deck, setDeck] = useState<CardType[]>(() => createDeck());

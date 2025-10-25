@@ -1,5 +1,5 @@
-import { Card } from '../../../../shared/types/game';
-import { ALL_RANKS, ALL_SUITS, SHUFFLE_COUNT } from '../../../../shared/constants/gameRules';
+import { Card } from '../../types/game';
+import { ALL_RANKS, ALL_SUITS, SHUFFLE_COUNT } from '../../constants/gameRules';
 
 /**
  * Creates a standard 52-card deck in sorted order

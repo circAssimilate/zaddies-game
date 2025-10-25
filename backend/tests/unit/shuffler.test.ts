@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
-
-// Import the shuffler (will implement after test)
-import { gilbertShannonReedsShuff, createDeck } from '../../src/lib/poker/shuffler';
+import { gilbertShannonReedsShuff, createDeck } from '@shared/lib/poker/shuffler';
 
 describe('Gilbert-Shannon-Reeds Shuffler', () => {
   describe('createDeck', () => {

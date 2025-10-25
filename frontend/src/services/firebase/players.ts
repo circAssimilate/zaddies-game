@@ -14,7 +14,7 @@ import {
   addDoc,
 } from 'firebase/firestore';
 import { db } from './config';
-import { Player, LedgerEntry } from '../../../../../shared/types/player';
+import { Player, LedgerEntry } from '@shared/types/player';
 
 const PLAYERS_COLLECTION = 'players';
 const LEDGER_COLLECTION = 'ledger';

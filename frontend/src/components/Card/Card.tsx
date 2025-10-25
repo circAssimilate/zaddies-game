@@ -1,5 +1,5 @@
 import { Box, Text, VStack } from '@chakra-ui/react';
-import { Card as CardType } from '../../../../../shared/types/game';
+import { Card as CardType } from '@shared/types/game';
 
 interface CardProps {
   card: CardType;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { calculatePots, distributePot } from '../../src/lib/poker/potCalculator';
-import { SidePot } from '../../../../shared/types/game';
+import { calculatePots, distributePot } from '@shared/lib/poker/potCalculator';
+import { SidePot } from '@shared/types/game';
 
 describe('Pot Calculator', () => {
   describe('calculatePots', () => {

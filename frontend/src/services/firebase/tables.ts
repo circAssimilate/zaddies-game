@@ -13,7 +13,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from './config';
-import { Table, TableStatus, TableSettings } from '../../../../../shared/types/table';
+import { Table, TableStatus, TableSettings } from '@shared/types/table';
 
 const TABLES_COLLECTION = 'tables';
 

@@ -1,7 +1,7 @@
 import { doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { db } from './config';
-import { Table } from '../../../../../shared/types/table';
-import { Player } from '../../../../../shared/types/player';
+import { Table } from '@shared/types/table';
+import { Player } from '@shared/types/player';
 
 /**
  * Subscribe to real-time updates for a table

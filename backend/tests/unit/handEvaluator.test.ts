@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Card } from '../../../shared/types/game';
-import { evaluateHand, findBestHand } from '../../src/lib/poker/handEvaluator';
+import { Card } from '@shared/types/game';
+import { evaluateHand, findBestHand } from '@shared/lib/poker/handEvaluator';
 
 describe('Hand Evaluator', () => {
   describe('Royal Flush', () => {

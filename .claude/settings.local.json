@@ -5,7 +5,9 @@
       "Bash(npm install:*)",
       "Bash(npm run lint:*)",
       "Bash(firebase --version:*)",
-      "Bash(firebase projects:list:*)"
+      "Bash(firebase projects:list:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run view:*)"
     ],
     "deny": [],
     "ask": []

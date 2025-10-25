@@ -63,6 +63,7 @@ firebase init
 ```
 
 **Firebase Configuration** (`firebase.json`):
+
 ```json
 {
   "firestore": {
@@ -79,11 +80,7 @@ firebase init
   },
   "hosting": {
     "public": "frontend/dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
@@ -117,6 +114,7 @@ firebase init
 Create `.env` files for local development:
 
 **frontend/.env.local**:
+
 ```bash
 VITE_FIREBASE_API_KEY=your-api-key
 VITE_FIREBASE_AUTH_DOMAIN=zaddies-game.firebaseapp.com
@@ -130,6 +128,7 @@ VITE_USE_EMULATORS=true
 ```
 
 **backend/.env**:
+
 ```bash
 FIREBASE_CONFIG={"projectId":"zaddies-game","storageBucket":"zaddies-game.appspot.com"}
 ```
@@ -137,6 +136,7 @@ FIREBASE_CONFIG={"projectId":"zaddies-game","storageBucket":"zaddies-game.appspo
 ### 5. Configure Prettier and ESLint
 
 **Root `.prettierrc`**:
+
 ```json
 {
   "semi": true,
@@ -150,6 +150,7 @@ FIREBASE_CONFIG={"projectId":"zaddies-game","storageBucket":"zaddies-game.appspo
 ```
 
 **Root `.eslintrc.json`**:
+
 ```json
 {
   "root": true,
@@ -187,6 +188,7 @@ FIREBASE_CONFIG={"projectId":"zaddies-game","storageBucket":"zaddies-game.appspo
 ```
 
 **Install Dev Dependencies**:
+
 ```bash
 # Root
 npm install --save-dev prettier eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-hooks eslint-config-prettier
@@ -213,6 +215,7 @@ firebase emulators:start
 **Emulator UI**: http://localhost:4000
 
 This starts:
+
 - Firestore emulator (port 8080)
 - Functions emulator (port 5001)
 - Auth emulator (port 9099)
@@ -234,6 +237,7 @@ npm run dev
 ### 3. Run Tests (TDD Workflow)
 
 **Backend Tests**:
+
 ```bash
 cd backend
 npm test                 # Run all tests
@@ -242,6 +246,7 @@ npm test -- --coverage   # With coverage report
 ```
 
 **Frontend Tests**:
+
 ```bash
 cd frontend
 npm test                 # Run all tests
@@ -250,6 +255,7 @@ npm test -- --coverage   # With coverage
 ```
 
 **Run All Tests (Root)**:
+
 ```bash
 npm test  # Runs both frontend and backend tests
 ```
@@ -402,9 +408,9 @@ name: Continuous Integration
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   quality-checks:
@@ -444,6 +450,7 @@ jobs:
 ```
 
 **Status Checks**:
+
 - ✅ Prettier formatting
 - ✅ ESLint linting
 - ✅ Backend unit tests pass
@@ -466,12 +473,12 @@ name: Deploy to Firebase
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: quality-checks  # Only deploy if CI passes
+    needs: quality-checks # Only deploy if CI passes
 
     steps:
       - uses: actions/checkout@v3
@@ -510,6 +517,7 @@ jobs:
 ### Setup GitHub Secrets
 
 1. **Get Firebase Service Account**:
+
    ```bash
    firebase init hosting:github
    # Follow prompts to create service account
@@ -726,6 +734,7 @@ const perf = getPerformance(app);
 ```
 
 **Automatic Traces**:
+
 - Page load time
 - Network requests
 - Custom traces for game actions
@@ -752,8 +761,13 @@ firebase emulators:exec --only firestore \
 ```
 
 **backend/tests/rules/firestore.test.ts**:
+
 ```typescript
-import { initializeTestEnvironment, assertSucceeds, assertFails } from '@firebase/rules-unit-testing';
+import {
+  initializeTestEnvironment,
+  assertSucceeds,
+  assertFails,
+} from '@firebase/rules-unit-testing';
 
 describe('Firestore Security Rules', () => {
   it('should allow player to read own data', async () => {
@@ -768,8 +782,7 @@ describe('Firestore Security Rules', () => {
     const alice = testEnv.authenticatedContext('alice');
 
     await assertFails(
-      alice.firestore()
-        .collection('tables/1234/hands/1/playerHands').doc('bob').get()
+      alice.firestore().collection('tables/1234/hands/1/playerHands').doc('bob').get()
     );
   });
 });
@@ -780,6 +793,7 @@ describe('Firestore Security Rules', () => {
 ## Summary
 
 Development workflow:
+
 1. **Start emulators**: `firebase emulators:start`
 2. **Start frontend**: `cd frontend && npm run dev`
 3. **Write tests first** (TDD)
@@ -791,6 +805,7 @@ Development workflow:
 9. **Auto-deploy** via GitHub Actions
 
 **Key Tools**:
+
 - Firebase Emulators (local development)
 - Vitest (testing)
 - Vite (fast builds)
@@ -799,6 +814,7 @@ Development workflow:
 - GitHub Actions (CI/CD)
 
 **Free Tier Optimization**:
+
 - Monitor Firebase console daily
 - Alert at 80% quota
 - Optimize reads/writes

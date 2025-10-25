@@ -1,12 +1,7 @@
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Demo } from './pages/Demo';
 
 function App() {
-  return (
-    <Box p={8}>
-      <Heading>Zaddies Game - Texas Hold&apos;em Poker</Heading>
-      <Text mt={4}>Welcome! The game is being built.</Text>
-    </Box>
-  );
+  return <Demo />;
 }
 
 export default App;

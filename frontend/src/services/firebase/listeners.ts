@@ -1,4 +1,4 @@
-import { doc, onSnapshot, DocumentSnapshot, Unsubscribe } from 'firebase/firestore';
+import { doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { db } from './config';
 import { Table } from '../../../../../shared/types/table';
 import { Player } from '../../../../../shared/types/player';

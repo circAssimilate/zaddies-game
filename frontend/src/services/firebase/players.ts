@@ -22,6 +22,7 @@ const LEDGER_COLLECTION = 'ledger';
 /**
  * Get reference to players collection
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPlayersCollection(): CollectionReference {
   return collection(db, PLAYERS_COLLECTION);
 }
@@ -148,7 +149,7 @@ export async function recordLedgerEntry(
 export async function getPlayerLedger(playerId: string, limit?: number): Promise<LedgerEntry[]> {
   const ledgerRef = getLedgerCollection();
 
-  let q = query(ledgerRef, where('playerId', '==', playerId), orderBy('timestamp', 'desc'));
+  const q = query(ledgerRef, where('playerId', '==', playerId), orderBy('timestamp', 'desc'));
 
   const snapshot = await getDocs(q);
   const entries: LedgerEntry[] = [];

@@ -19,10 +19,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci
-          cd frontend && npm ci
-          cd ../backend && npm ci
+        run: npm ci --workspaces --include-workspace-root
 
       - name: Prettier Check
         run: npm run format:check

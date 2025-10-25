@@ -119,7 +119,8 @@ function isStraight(cards: Card[]): number | null {
   }
 
   // Check for wheel (A-2-3-4-5)
-  const isWheel = values[0] === 2 && values[1] === 3 && values[2] === 4 && values[3] === 5 && values[4] === 14;
+  const isWheel =
+    values[0] === 2 && values[1] === 3 && values[2] === 4 && values[3] === 5 && values[4] === 14;
   if (isWheel) {
     return 5; // In a wheel, 5 is the high card
   }
@@ -130,7 +131,11 @@ function isStraight(cards: Card[]): number | null {
 /**
  * Helper: Calculate hand value from hand rank and card values
  */
-function calculateHandValue(handRank: HandRank, primaryValues: number[], kickers: number[] = []): number {
+function calculateHandValue(
+  handRank: HandRank,
+  primaryValues: number[],
+  kickers: number[] = []
+): number {
   const baseValue = HAND_RANKINGS.indexOf(handRank) * 100000000; // 100 million per rank tier
 
   // Encode primary values (e.g., trip value, pair values) in higher digits
@@ -200,11 +205,7 @@ function checkFourOfAKind(cards: Card[]): HandEvaluation | null {
   for (const [rank, count] of counts.entries()) {
     if (count === 4) {
       const quadValue = RANK_VALUES[rank as keyof typeof RANK_VALUES];
-      const kicker = Math.max(
-        ...cards
-          .filter(c => c.rank !== rank)
-          .map(c => RANK_VALUES[c.rank])
-      );
+      const kicker = Math.max(...cards.filter(c => c.rank !== rank).map(c => RANK_VALUES[c.rank]));
 
       return {
         handRank: 'Four of a Kind',
@@ -318,9 +319,7 @@ function checkTwoPair(cards: Card[]): HandEvaluation | null {
       .sort((a, b) => b - a);
 
     const kicker = Math.max(
-      ...cards
-        .filter(c => !pairs.includes(c.rank))
-        .map(c => RANK_VALUES[c.rank])
+      ...cards.filter(c => !pairs.includes(c.rank)).map(c => RANK_VALUES[c.rank])
     );
 
     return {

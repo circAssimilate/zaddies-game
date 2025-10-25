@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { Card } from '../../../shared/types/game';
 
 // Import the shuffler (will implement after test)
 import { gilbertShannonReedsShuff, createDeck } from '../../src/lib/poker/shuffler';

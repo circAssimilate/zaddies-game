@@ -8,7 +8,7 @@ import { SidePot } from '../../../../shared/types/game';
  */
 export function calculatePots(
   bets: Map<string, number>,
-  allInPlayers: Set<string> = new Set()
+  _allInPlayers: Set<string> = new Set()
 ): SidePot[] {
   if (bets.size === 0) {
     return [];
@@ -93,10 +93,7 @@ export function distributePot(pot: SidePot, winners: string[]): Map<string, numb
  * @param winners - Array of winning player IDs for each pot (can be different per pot)
  * @returns Map of playerId to total winnings across all pots
  */
-export function distributeAllPots(
-  pots: SidePot[],
-  winnersPerPot: string[][]
-): Map<string, number> {
+export function distributeAllPots(pots: SidePot[], winnersPerPot: string[][]): Map<string, number> {
   const totalWinnings = new Map<string, number>();
 
   pots.forEach((pot, index) => {

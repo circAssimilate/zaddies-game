@@ -1,4 +1,4 @@
-import { Card, Suit, Rank } from '../../../../shared/types/game';
+import { Card } from '../../../../shared/types/game';
 import { ALL_RANKS, ALL_SUITS, SHUFFLE_COUNT } from '../../../../shared/constants/gameRules';
 
 /**

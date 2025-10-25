@@ -50,6 +50,7 @@ Test-Driven Development (TDD) is mandatory for all feature development. Tests MU
 **Rationale**: TDD ensures requirements are understood before coding, reduces debugging time, provides living documentation, and enables confident refactoring. For a game project, this prevents regressions in game mechanics, physics, and player interactions.
 
 **Enforcement**:
+
 - All PRs MUST include tests written before implementation
 - Tests MUST fail initially (demonstrated in PR description or commit history)
 - Code reviews MUST verify TDD compliance
@@ -74,6 +75,7 @@ All game features and systems MUST be developed as independently testable, loose
 All features MUST meet defined performance benchmarks before merge. Performance is not optional or "nice to have" - it is a core requirement that MUST be validated during development.
 
 **Required Benchmarks** (adjust per game requirements):
+
 - **Frame Rate**: Maintain target FPS (e.g., 60 FPS minimum on target hardware)
 - **Latency**: Client-server round-trip < 100ms (p95)
 - **Load Time**: Initial game load < 3 seconds
@@ -81,6 +83,7 @@ All features MUST meet defined performance benchmarks before merge. Performance 
 - **Battery**: Mobile builds MUST be power-efficient (define drain limits)
 
 **Enforcement**:
+
 - Performance tests MUST be included in test suites
 - Benchmarks MUST pass in CI/CD pipeline
 - Performance regressions block merges
@@ -93,6 +96,7 @@ All features MUST meet defined performance benchmarks before merge. Performance 
 The Zaddies Game architecture MUST maintain clear separation between frontend (client) and backend (server) concerns:
 
 **Frontend Responsibilities**:
+
 - Rendering and visual presentation
 - User input handling and local UI state
 - Client-side prediction and interpolation
@@ -100,6 +104,7 @@ The Zaddies Game architecture MUST maintain clear separation between frontend (c
 - Animation and visual effects
 
 **Backend Responsibilities**:
+
 - Authoritative game state and physics
 - Player data persistence and validation
 - Game logic enforcement (prevent cheating)
@@ -107,6 +112,7 @@ The Zaddies Game architecture MUST maintain clear separation between frontend (c
 - Analytics and telemetry collection
 
 **Contracts**:
+
 - All client-server communication MUST use well-defined API contracts
 - API contracts MUST be versioned and documented
 - Breaking changes MUST follow semantic versioning rules
@@ -119,6 +125,7 @@ The Zaddies Game architecture MUST maintain clear separation between frontend (c
 All game systems MUST be observable and debuggable in development and production environments.
 
 **Requirements**:
+
 - **Structured Logging**: All critical game events MUST be logged with structured data (JSON format preferred)
 - **Metrics Collection**: Performance metrics, player actions, and system health MUST be instrumented in a way that doesn't cost
 - **Error Reporting**: All errors MUST include context (game state, player ID, timestamp, stack trace)
@@ -126,6 +133,7 @@ All game systems MUST be observable and debuggable in development and production
 - **Cost Conscious**: Keep hosting and service costs in mind - trying to keep the cost footprint as small as possible
 
 **Prohibited**:
+
 - Using tools or platforms that require a subscription
 - Silent failures or swallowed errors
 - Logging sensitive player data (PII) without consent
@@ -174,6 +182,7 @@ Before implementation begins, features MUST be evaluated against these checks:
 5. **Observability**: Are logging, metrics, and debugging hooks planned?
 
 **Complexity Justification**: Any violation of core principles MUST be documented with:
+
 - What principle is being violated and why
 - What simpler alternative was considered and why it was rejected
 - What technical debt is being created and mitigation plan
@@ -216,6 +225,7 @@ Constitution versions follow semantic versioning:
 ### Runtime Development Guidance
 
 For day-to-day development guidance and examples, consult:
+
 - Implementation plans in `/specs/[###-feature]/plan.md`
 - Feature specifications in `/specs/[###-feature]/spec.md`
 - Task breakdowns in `/specs/[###-feature]/tasks.md`

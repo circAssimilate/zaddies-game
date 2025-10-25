@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run lint:*)",
+      "Bash(firebase --version:*)",
+      "Bash(firebase projects:list:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

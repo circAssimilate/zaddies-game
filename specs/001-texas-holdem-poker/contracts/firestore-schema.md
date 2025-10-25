@@ -15,13 +15,14 @@ This document defines the Firestore database schema as a contract between fronte
 **Purpose**: User profile and authentication data
 
 **Schema**:
+
 ```typescript
 interface Player {
-  id: string;                    // Firebase Auth UID (immutable)
-  username: string;              // Display name (mutable)
-  email: string;                 // From Firebase Auth (immutable)
-  createdAt: Timestamp;          // Account creation (immutable)
-  lastSeen: Timestamp;           // Last login (mutable)
+  id: string; // Firebase Auth UID (immutable)
+  username: string; // Display name (mutable)
+  email: string; // From Firebase Auth (immutable)
+  createdAt: Timestamp; // Account creation (immutable)
+  lastSeen: Timestamp; // Last login (mutable)
   stats?: {
     totalChipsBought: number;
     totalChipsCashedOut: number;
@@ -31,6 +32,7 @@ interface Player {
 ```
 
 **Security Rules**:
+
 ```javascript
 match /players/{playerId} {
   allow read: if request.auth.uid == playerId;
@@ -51,19 +53,21 @@ match /players/{playerId} {
 **Purpose**: Immutable transaction history for debt tracking
 
 **Schema**:
+
 ```typescript
 interface LedgerEntry {
-  id: string;                    // Auto-generated
-  playerId: string;              // Player reference
+  id: string; // Auto-generated
+  playerId: string; // Player reference
   type: 'buy' | 'cashout';
-  amount: number;                // Chips (buy=negative, cashout=positive)
+  amount: number; // Chips (buy=negative, cashout=positive)
   tableId: string | null;
   timestamp: Timestamp;
-  runningBalance: number;        // Cumulative balance
+  runningBalance: number; // Cumulative balance
 }
 ```
 
 **Security Rules**:
+
 ```javascript
 match /ledger/{playerId}/transactions/{transactionId} {
   allow read: if request.auth != null;  // All authenticated users can read (transparency)
@@ -72,6 +76,7 @@ match /ledger/{playerId}/transactions/{transactionId} {
 ```
 
 **Indexes**:
+
 ```json
 {
   "collectionGroup": "transactions",
@@ -91,6 +96,7 @@ match /ledger/{playerId}/transactions/{transactionId} {
 **Schema**: See data-model.md for complete `Table` interface
 
 **Key Fields**:
+
 - `id`: 4-digit string (e.g., "1234")
 - `hostId`: Current host player ID
 - `status`: 'waiting' | 'playing' | 'ended'
@@ -99,6 +105,7 @@ match /ledger/{playerId}/transactions/{transactionId} {
 - `hand`: Current hand state (null when not playing)
 
 **Security Rules**:
+
 ```javascript
 match /tables/{tableId} {
   // Players at table can read
@@ -110,6 +117,7 @@ match /tables/{tableId} {
 ```
 
 **Indexes**:
+
 ```json
 {
   "collectionGroup": "tables",
@@ -127,6 +135,7 @@ match /tables/{tableId} {
 **Purpose**: Private hole cards for security
 
 **Schema**:
+
 ```typescript
 interface PlayerHand {
   playerId: string;
@@ -136,6 +145,7 @@ interface PlayerHand {
 ```
 
 **Security Rules**:
+
 ```javascript
 match /tables/{tableId}/hands/{handNumber}/playerHands/{playerId} {
   // Only the player can read their own hole cards
@@ -157,6 +167,7 @@ match /tables/{tableId}/hands/{handNumber}/playerHands/{playerId} {
 **Schema**: See data-model.md for complete `HandHistoryEntry` interface
 
 **Security Rules**:
+
 ```javascript
 match /tables/{tableId}/history/{handNumber} {
   // Anyone at the table can read history
@@ -168,12 +179,11 @@ match /tables/{tableId}/history/{handNumber} {
 ```
 
 **Indexes**:
+
 ```json
 {
   "collectionGroup": "history",
-  "fields": [
-    { "fieldPath": "handNumber", "order": "DESCENDING" }
-  ]
+  "fields": [{ "fieldPath": "handNumber", "order": "DESCENDING" }]
 }
 ```
 
@@ -184,6 +194,7 @@ match /tables/{tableId}/history/{handNumber} {
 **Purpose**: Generated URLs for streaming/sharing
 
 **Schema**:
+
 ```typescript
 interface ShareableView {
   id: string;
@@ -197,6 +208,7 @@ interface ShareableView {
 ```
 
 **Security Rules**:
+
 ```javascript
 match /shareableViews/{viewId} {
   // Public views readable by anyone
@@ -218,26 +230,28 @@ match /shareableViews/{viewId} {
 ### Frontend Subscription Patterns
 
 **Table State** (real-time):
+
 ```typescript
 import { doc, onSnapshot } from 'firebase/firestore';
 
 const unsubscribe = onSnapshot(
   doc(db, 'tables', tableId),
-  (snapshot) => {
+  snapshot => {
     const table = snapshot.data() as Table;
     updateUI(table);
   },
-  (error) => {
+  error => {
     console.error('Table listener error:', error);
   }
 );
 ```
 
 **Player Hole Cards** (real-time):
+
 ```typescript
 const unsubscribe = onSnapshot(
   doc(db, `tables/${tableId}/hands/${handNumber}/playerHands/${playerId}`),
-  (snapshot) => {
+  snapshot => {
     const playerHand = snapshot.data() as PlayerHand;
     displayHoleCards(playerHand.holeCards);
   }
@@ -245,6 +259,7 @@ const unsubscribe = onSnapshot(
 ```
 
 **Ledger Transactions** (query):
+
 ```typescript
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 
@@ -263,6 +278,7 @@ const transactions = snapshot.docs.map(doc => doc.data() as LedgerEntry);
 ## Write Operations (Backend Only)
 
 All write operations are performed via Firebase Cloud Functions to ensure:
+
 1. **Atomicity**: Transactions prevent race conditions
 2. **Validation**: Server-side business logic enforcement
 3. **Security**: Clients cannot manipulate game state
@@ -312,7 +328,7 @@ function validatePlayerAction(action: PlayerAction, table: Table): boolean {
   }
 
   if (action.amount > player.chips) {
-    return false;  // Cannot bet more than you have
+    return false; // Cannot bet more than you have
   }
 
   return true;
@@ -326,11 +342,13 @@ function validatePlayerAction(action: PlayerAction, table: Table): boolean {
 **Current Version**: 1.0.0
 
 **Migration Strategy**:
+
 - Schema changes require MINOR version bump
 - Breaking changes require MAJOR version bump
 - Use Firestore document version field for migration tracking
 
 **Future Considerations**:
+
 - If schema changes, add `schemaVersion` field to documents
 - Backend functions check version and apply migrations
 - Client detects outdated schema and prompts refresh
@@ -352,8 +370,9 @@ function validatePlayerAction(action: PlayerAction, table: Table): boolean {
 3. **Minimal Updates**: Only update changed fields (use `update()` not `set()`)
 
 **Example Optimized Write**:
+
 ```typescript
-await runTransaction(db, async (transaction) => {
+await runTransaction(db, async transaction => {
   const tableRef = doc(db, 'tables', tableId);
   const table = await transaction.get(tableRef);
 
@@ -362,7 +381,7 @@ await runTransaction(db, async (transaction) => {
     'hand.currentPlayerPosition': nextPlayerPosition,
     'hand.pot': newPotAmount,
     [`players.${playerId}.chips`]: increment(-betAmount),
-    'updatedAt': serverTimestamp()
+    updatedAt: serverTimestamp(),
   });
 });
 ```
@@ -374,10 +393,12 @@ await runTransaction(db, async (transaction) => {
 ### Read/Write Tracking
 
 Monitor Firestore usage in Firebase Console:
+
 - **Target**: < 40K reads/day (80% of free tier limit)
 - **Target**: < 15K writes/day (75% of free tier limit)
 
 **Alert Triggers**:
+
 - 80% of daily quota: Warning notification
 - 90% of daily quota: Rate limiting consideration
 - 95% of daily quota: Disable new table creation
@@ -395,6 +416,7 @@ Monitor Firestore usage in Firebase Console:
 Firestore schema contract defines all data structures, security rules, indexes, and access patterns. All writes are server-authoritative via Cloud Functions. Real-time listeners provide responsive UI updates. Performance optimized for free tier Firebase usage.
 
 **Contract Compliance**:
+
 - ✅ All documents conform to TypeScript interfaces
 - ✅ Security rules enforce read/write permissions
 - ✅ Indexes support efficient queries

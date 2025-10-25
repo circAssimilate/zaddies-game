@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description: "Build a web game that allows friends to play Texas Hold'em Poker with vegas style rules. The game should allow tables to be created or joined with a 4 digit code. Each player should be able to access the Cashier when not sitting at a table where they can cash out their chips and have their ledger updated. Each player can get chips at the table and their ledger be updated. No payment information is used in the app, but the ledger will keep track of what a player owes. The Cashier should present that info transparently to all players. When a player gets chips the info is also viewable within there user profile. Keep in strict adherence with vegas rules around dealing players in, waiting for the big blind before a player starts, blinds, etc. Unlike Vegas, table dealers do not take an rake so the Cashier ledger is a complete reflection of player activity. A view of the table should be shareable so that it can be shared on apps like Discord and presented to all players. There should also be a view for a player's betting and hand, that can be really small. It doesn't have to show the table cards. There should be table options on whether the player hand view also shows what hand the player has (pair, high card, flush, etc.). There should also be admin options for min-buy-in and buy-in timer and blind amount and blind timers. Making this app visually appealing is not a priority, but accessibility (visible cards, usable functionality, reliability) is of the most important. This app is a hobby game meant to be played by one friend group - so it just has to be reliable and secure (other players shouldn't be able to find out other hands). Each table should have a history of public hand information. Each player should be able to show or muck cards in accordance with Vegas rules. Hand timers should also be in place and customizable in table settings to keep games going with attention getting UI on the player hand view."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Create and Join Tables (Priority: P1)
 
@@ -133,7 +133,7 @@ Players need to view the history of completed hands and follow Vegas rules for s
 - What happens if the table host leaves? Host privileges automatically transfer to the next player (longest-seated player or first in seat order), ensuring game continuity.
 - What happens when a player tries to buy chips at a table but it would exceed a maximum stack limit? System enforces a table-level maximum stack size (configurable by host, e.g., 200 big blinds) and prevents chip additions that would exceed this limit.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -242,7 +242,7 @@ Players need to view the history of completed hands and follow Vegas rules for s
 - **HandHistory**: Represents completed hand records, including final pot amount, community cards, winning player(s), and cards shown at showdown
 - **ShareableView**: Represents a generated URL for either a table view or personal hand view, with real-time game state updates
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

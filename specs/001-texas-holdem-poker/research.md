@@ -15,6 +15,7 @@ This document captures research findings for implementing a web-based Texas Hold
 **Decision**: Use Firebase Firestore for real-time game state synchronization and Firebase Authentication for player identity.
 
 **Rationale**:
+
 - **Real-time Updates**: Firestore provides built-in real-time listeners that automatically sync game state across all connected clients without custom WebSocket implementation
 - **Offline Support**: Firebase SDK handles offline scenarios with automatic reconnection
 - **Security**: Firestore Security Rules provide server-side authorization without custom middleware
@@ -23,11 +24,13 @@ This document captures research findings for implementing a web-based Texas Hold
 - **Scalability**: Can upgrade to Blaze plan (pay-as-you-go) if usage grows, but optimize for free tier
 
 **Alternatives Considered**:
+
 - **Socket.io + Node.js server**: More control but requires server management, higher complexity, hosting costs
 - **Supabase**: Similar real-time features but less mature ecosystem, PostgreSQL may be overkill
 - **PeerJS/WebRTC**: Peer-to-peer would eliminate server costs but complex NAT traversal, no authoritative server
 
 **Implementation Notes**:
+
 - Use Firestore transactions for atomic game state updates (prevent race conditions)
 - Implement optimistic UI updates for responsiveness
 - Structure Firestore documents for efficient querying (denormalize where beneficial)
@@ -38,17 +41,20 @@ This document captures research findings for implementing a web-based Texas Hold
 **Decision**: Implement Gilbert-Shannon-Reeds (GSR) model for card shuffling in backend.
 
 **Rationale**:
+
 - **Realism**: GSR model simulates physical riffle shuffles, matching real casino shuffling
 - **Mathematical Soundness**: Proven to produce statistically random permutations after 7 shuffles
 - **Fairness**: Eliminates bias from poor shuffling algorithms (e.g., naive Fisher-Yates with weak PRNG)
 - **Trust**: Players trust game fairness when shuffling matches real-world expectations
 
 **Alternatives Considered**:
+
 - **Fisher-Yates shuffle**: Simpler but doesn't model physical shuffling behavior
 - **Crypto.getRandomValues()**: Good for randomness but doesn't provide GSR realism
 - **Third-party RNG service**: Adds dependency, latency, potential costs
 
 **Implementation Notes**:
+
 ```typescript
 // backend/src/lib/poker/shuffler.ts
 export function gilbertShannonReedsShuff(deck: Card[]): Card[] {
@@ -74,6 +80,7 @@ function riffleShuffle(deck: Card[]): Card[] {
 ```
 
 **References**:
+
 - "Trailing the Dovetail Shuffle to its Lair" (Bayer & Diaconis, 1992)
 - https://en.wikipedia.org/wiki/Gilbert%E2%80%93Shannon%E2%80%93Reeds_model
 
@@ -82,22 +89,26 @@ function riffleShuffle(deck: Card[]): Card[] {
 **Decision**: Use color blind friendly palette with distinct hues and non-color-dependent suit identification.
 
 **Rationale**:
+
 - **Inclusivity**: ~8% of males have some form of color blindness (red-green most common)
 - **Requirement**: Spec mandates 100% color blind accessibility
 - **Best Practice**: Combine color with shape, pattern, or text to convey information
 
 **Color Palette Selection**:
+
 - **Primary Colors**: Blue (#0066CC) and Orange (#FF9500) - maximally distinct for all color vision types
 - **Avoid**: Red/Green combinations (indistinguishable to deuteranopia/protanopia)
 - **High Contrast**: Minimum 4.5:1 contrast ratio (WCAG AA standard)
 
 **Card Suit Representation**:
+
 - **Spades ♠**: Black + filled shape
 - **Hearts ♥**: Red + filled shape + "H" letter indicator
 - **Diamonds ♦**: Red + hollow shape + "D" letter indicator
 - **Clubs ♣**: Black + filled shape + "C" letter indicator
 
 **UI Element Colors**:
+
 - **Player Turn Indicator**: Blue border + pulsing animation
 - **Action Buttons**:
   - Fold: Gray with red accent
@@ -107,6 +118,7 @@ function riffleShuffle(deck: Card[]): Card[] {
 - **Status Indicators**: Icons + text (not color alone)
 
 **Implementation with Chakra UI**:
+
 ```typescript
 // frontend/src/theme/colors.ts
 export const colorBlindFriendlyTheme = {
@@ -132,6 +144,7 @@ export const colorBlindFriendlyTheme = {
 ```
 
 **References**:
+
 - https://www.smashingmagazine.com/2016/06/improving-color-accessibility-for-color-blind-users/
 - https://davidmathlogic.com/colorblind/
 
@@ -140,6 +153,7 @@ export const colorBlindFriendlyTheme = {
 **Decision**: Architect for Firebase Spark plan limits while maintaining performance.
 
 **Rationale**:
+
 - **Cost Constraint**: Spec requires cheapest tier only
 - **Usage Limits**:
   - Firestore: 50K reads/day, 20K writes/day, 1GB storage, 10GB/month network egress
@@ -175,6 +189,7 @@ export const colorBlindFriendlyTheme = {
    - Implement rate limiting if approaching limits
 
 **Implementation**:
+
 ```typescript
 // backend/src/functions/index.ts
 export const gameActions = functions.https.onCall(async (data, context) => {
@@ -199,6 +214,7 @@ export const gameActions = functions.https.onCall(async (data, context) => {
 **Decision**: Use Vite for build tooling, TypeScript for type safety, Vitest for testing.
 
 **Rationale**:
+
 - **Vite Benefits**:
   - Ultra-fast HMR (Hot Module Replacement) for development
   - Optimized production builds with Rollup
@@ -219,11 +235,13 @@ export const gameActions = functions.https.onCall(async (data, context) => {
   - Built-in coverage reporting
 
 **Alternatives Considered**:
+
 - **Create React App**: Slower builds, webpack-based, more configuration
 - **Next.js**: Overkill for SPA, server-side rendering not needed
 - **Jest**: Requires separate configuration, slower than Vitest with Vite
 
 **Implementation Notes**:
+
 ```typescript
 // vite.config.ts
 export default defineConfig({
@@ -252,6 +270,7 @@ export default defineConfig({
 **Decision**: Use Chakra UI for component library with Emotion for CSS-in-JS.
 
 **Rationale**:
+
 - **Accessibility**: Built-in ARIA attributes, keyboard navigation
 - **Theming**: Powerful theme customization (perfect for color blind palette)
 - **Responsive**: Mobile-first design system
@@ -259,11 +278,13 @@ export default defineConfig({
 - **Developer Experience**: Intuitive API, great TypeScript support
 
 **Alternatives Considered**:
+
 - **Material-UI**: Heavier bundle, less flexible theming
 - **Ant Design**: Gaming aesthetic doesn't match, larger bundle
 - **Tailwind CSS**: More manual work, no pre-built accessible components
 
 **Implementation Strategy**:
+
 ```typescript
 // frontend/src/theme/components.ts
 export const cardComponent = {
@@ -307,6 +328,7 @@ export const cardComponent = {
 **Decision**: Implement strict TDD using Vitest for unit/integration tests and Firebase Emulator for backend testing.
 
 **Rationale**:
+
 - **Constitution Requirement**: TDD is non-negotiable
 - **Quality**: Tests written first ensure requirements are understood
 - **Confidence**: Safe refactoring with comprehensive test coverage
@@ -331,6 +353,7 @@ export const cardComponent = {
    - State management hooks
 
 **Implementation**:
+
 ```typescript
 // backend/tests/unit/handEvaluator.test.ts
 import { describe, it, expect } from 'vitest';
@@ -359,6 +382,7 @@ describe('Hand Evaluator', () => {
 **Decision**: Implement in SLC phases to deliver value incrementally.
 
 **Rationale**:
+
 - **Spec Requirement**: Phased approach mandated
 - **Risk Reduction**: Early feedback, course correction
 - **Motivation**: Working software maintains team morale
@@ -367,6 +391,7 @@ describe('Hand Evaluator', () => {
 **Phase Breakdown**:
 
 **Phase 1 - Simple** (MVP for 2 players):
+
 - Create/join table with 4-digit code
 - Basic 2-player Texas Hold'em (no blinds increase, fixed blinds)
 - Manual chip tracking (simple buy-in/cash-out)
@@ -374,6 +399,7 @@ describe('Hand Evaluator', () => {
 - Desktop-only
 
 **Phase 2 - Lovable** (Full multiplayer):
+
 - Support 2-10 players at table
 - Blind increase timers
 - Cashier ledger with transaction history
@@ -382,6 +408,7 @@ describe('Hand Evaluator', () => {
 - Color blind accessibility enhancements
 
 **Phase 3 - Complete** (All features):
+
 - Shareable table/hand views
 - Configurable table settings (debt limits, stack limits)
 - Host transfer on disconnect
@@ -398,6 +425,7 @@ Each phase is independently deployable and testable. No phase depends on future 
 **Pattern**: Denormalized, read-optimized document structure.
 
 **Table Document**:
+
 ```typescript
 {
   id: string; // 4-digit code
@@ -469,15 +497,19 @@ service cloud.firestore {
 ## Open Questions (Resolved During Research)
 
 ~~1. How to prevent card visibility exploits in Firestore?~~
+
 - **Resolution**: Use Firestore Security Rules to prevent reading opponent hands. Store hole cards in subcollection with player-specific read rules.
 
 ~~2. How to handle Firebase quota limits for real-time updates?~~
+
 - **Resolution**: Optimize with read reduction strategies (see Section 4). Monitor usage dashboard.
 
 ~~3. Gilbert-Shannon-Reeds implementation complexity?~~
+
 - **Resolution**: Moderate complexity (~100 lines). Well-documented algorithm with TypeScript implementation examples available.
 
 ~~4. Color blind testing approach?~~
+
 - **Resolution**: Use Chrome DevTools color blindness simulation + manual testing with color blind users from friend group.
 
 ## References
@@ -496,6 +528,7 @@ service cloud.firestore {
 All major technical decisions documented. No unresolved NEEDS CLARIFICATION items. Ready to proceed to Phase 1 (Design & Contracts).
 
 **Key Takeaways**:
+
 1. Firebase provides robust real-time infrastructure within free tier limits
 2. Gilbert-Shannon-Reeds shuffling is implementable and adds realism
 3. Color blind accessibility requires multi-modal information encoding (color + shape + text)

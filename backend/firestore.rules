@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Players collection
+    match /players/{playerId} {
+      allow read: if isOwner(playerId);
+      allow create: if isOwner(playerId);
+      allow update: if isOwner(playerId)
+                    && request.resource.data.id == resource.data.id
+                    && request.resource.data.email == resource.data.email;
+      allow delete: if false;
+    }
+
+    // Ledger transactions (transparent - all authenticated users can read)
+    match /ledger/{playerId}/transactions/{transactionId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only backend functions
+    }
+
+    // Tables
+    match /tables/{tableId} {
+      // Players at table can read
+      allow read: if isAuthenticated() && request.auth.uid in resource.data.players;
+      // Only backend functions can write
+      allow write: if false;
+    }
+
+    // Player hole cards (private)
+    match /tables/{tableId}/hands/{handNumber}/playerHands/{playerId} {
+      // Only the player can read their own hole cards
+      allow read: if isOwner(playerId);
+      // Only backend functions can write
+      allow write: if false;
+    }
+
+    // Hand history (anyone at the table can read)
+    match /tables/{tableId}/history/{handNumber} {
+      allow read: if isAuthenticated()
+                  && request.auth.uid in get(/databases/$(database)/documents/tables/$(tableId)).data.players;
+      allow write: if false;
+    }
+
+    // Shareable views
+    match /shareableViews/{viewId} {
+      // Public views readable by anyone, private only by creator
+      allow read: if resource.data.isPublic == true
+                  || isOwner(resource.data.playerId);
+      allow create, update, delete: if false; // Only backend functions
+    }
+  }
+}

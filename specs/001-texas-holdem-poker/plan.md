@@ -15,6 +15,7 @@ Build a web-based Texas Hold'em Poker game for friend groups with Vegas-style ru
 
 **Language/Version**: TypeScript 5.3+ (frontend and backend), Node.js 20 LTS (backend runtime)
 **Primary Dependencies**:
+
 - Frontend: Vite 5.x, React 18.x, Chakra UI 2.x, Emotion (CSS-in-JS), Firebase SDK 10.x
 - Backend: TS-Node, Firebase Admin SDK, Firebase Functions (for serverless backend)
 - Testing: Vitest 1.x, Testing Library, Firebase Emulator Suite
@@ -24,6 +25,7 @@ Build a web-based Texas Hold'em Poker game for friend groups with Vegas-style ru
 **Target Platform**: Modern web browsers (Chrome, Firefox, Safari) on desktop and mobile, Google Cloud Platform (Firebase Hosting)
 **Project Type**: Web application (frontend + backend)
 **Performance Goals**:
+
 - < 500ms action processing (fold, call, raise)
 - < 100ms p95 client-server round-trip (Firebase real-time updates)
 - < 3 second initial load time
@@ -31,6 +33,7 @@ Build a web-based Texas Hold'em Poker game for friend groups with Vegas-style ru
 - Support 10 concurrent tables with 6-10 players each
 
 **Constraints**:
+
 - Cost: Free tier only (Firebase Spark plan, no paid services)
 - Latency: < 100ms p95 for game state synchronization
 - Accessibility: 100% color blind friendly (distinct colors, patterns for suits)
@@ -39,6 +42,7 @@ Build a web-based Texas Hold'em Poker game for friend groups with Vegas-style ru
 - Build Size: Minimize bundle size, avoid large SVGs/images for fast loading
 
 **Scale/Scope**:
+
 - Expected users: 10-50 concurrent players (friend group hobby app)
 - Concurrent tables: Up to 10 active games simultaneously
 - Transaction volume: ~100 chip transactions per game session
@@ -47,7 +51,7 @@ Build a web-based Texas Hold'em Poker game for friend groups with Vegas-style ru
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### I. Test-Driven Development (TDD) ✅ PASS
 

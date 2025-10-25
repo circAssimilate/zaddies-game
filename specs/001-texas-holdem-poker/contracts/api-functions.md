@@ -26,39 +26,43 @@ Creates a new poker table with unique 4-digit code.
 **Endpoint**: `https://us-central1-{project-id}.cloudfunctions.net/createTable`
 
 **Request**:
+
 ```typescript
 interface CreateTableRequest {
-  settings?: Partial<TableSettings>;  // Optional custom settings
+  settings?: Partial<TableSettings>; // Optional custom settings
 }
 
 interface TableSettings {
-  maxPlayers: number;        // Default: 10
-  minBuyIn: number;          // Default: 100
-  maxStack: number;          // Default: 200 * bigBlind
-  maxDebtPerPlayer: number;  // Default: 1000
-  smallBlind: number;        // Default: 5
-  bigBlind: number;          // Default: 10
+  maxPlayers: number; // Default: 10
+  minBuyIn: number; // Default: 100
+  maxStack: number; // Default: 200 * bigBlind
+  maxDebtPerPlayer: number; // Default: 1000
+  smallBlind: number; // Default: 5
+  bigBlind: number; // Default: 10
   blindIncreaseInterval: number; // Default: 15 (minutes)
-  actionTimer: number;       // Default: 30 (seconds)
+  actionTimer: number; // Default: 30 (seconds)
   showHandStrength: boolean; // Default: false
 }
 ```
 
 **Response**:
+
 ```typescript
 interface CreateTableResponse {
   success: boolean;
-  tableId: string;           // 4-digit code (e.g., "1234")
+  tableId: string; // 4-digit code (e.g., "1234")
   message: string;
 }
 ```
 
 **Errors**:
+
 - `unauthenticated`: User not authenticated
 - `resource-exhausted`: No available 4-digit codes (highly unlikely)
 - `invalid-argument`: Invalid settings
 
 **Example**:
+
 ```typescript
 import { httpsCallable } from 'firebase/functions';
 
@@ -67,8 +71,8 @@ const result = await createTable({
   settings: {
     bigBlind: 20,
     smallBlind: 10,
-    actionTimer: 45
-  }
+    actionTimer: 45,
+  },
 });
 
 console.log(`Table created: ${result.data.tableId}`);
@@ -81,29 +85,33 @@ console.log(`Table created: ${result.data.tableId}`);
 Join an existing table with 4-digit code.
 
 **Request**:
+
 ```typescript
 interface JoinTableRequest {
-  tableId: string;           // 4-digit code
-  buyInAmount: number;       // Initial chips
+  tableId: string; // 4-digit code
+  buyInAmount: number; // Initial chips
 }
 ```
 
 **Response**:
+
 ```typescript
 interface JoinTableResponse {
   success: boolean;
-  position: number;          // Assigned seat position (0-9)
+  position: number; // Assigned seat position (0-9)
   message: string;
 }
 ```
 
 **Errors**:
+
 - `not-found`: Table doesn't exist
 - `failed-precondition`: Table is full
 - `invalid-argument`: buyInAmount < table.settings.minBuyIn
 - `permission-denied`: Player has insufficient funds (ledger balance check)
 
 **Validation**:
+
 - Check table exists and status !== 'ended'
 - Check player count < maxPlayers
 - Check buyInAmount >= minBuyIn
@@ -116,6 +124,7 @@ interface JoinTableResponse {
 Leave a table (cash out chips automatically).
 
 **Request**:
+
 ```typescript
 interface LeaveTableRequest {
   tableId: string;
@@ -123,6 +132,7 @@ interface LeaveTableRequest {
 ```
 
 **Response**:
+
 ```typescript
 interface LeaveTableResponse {
   success: boolean;
@@ -132,6 +142,7 @@ interface LeaveTableResponse {
 ```
 
 **Side Effects**:
+
 - Automatically fold if in active hand
 - Cash out remaining chips to ledger
 - If player was host, transfer to next player
@@ -143,6 +154,7 @@ interface LeaveTableResponse {
 Update table configuration (host only).
 
 **Request**:
+
 ```typescript
 interface UpdateTableSettingsRequest {
   tableId: string;
@@ -151,6 +163,7 @@ interface UpdateTableSettingsRequest {
 ```
 
 **Response**:
+
 ```typescript
 interface UpdateTableSettingsResponse {
   success: boolean;
@@ -159,6 +172,7 @@ interface UpdateTableSettingsResponse {
 ```
 
 **Errors**:
+
 - `permission-denied`: Caller is not table host
 - `failed-precondition`: Cannot update during active hand
 
@@ -169,6 +183,7 @@ interface UpdateTableSettingsResponse {
 Start the game (host only, requires ≥2 players).
 
 **Request**:
+
 ```typescript
 interface StartGameRequest {
   tableId: string;
@@ -176,20 +191,23 @@ interface StartGameRequest {
 ```
 
 **Response**:
+
 ```typescript
 interface StartGameResponse {
   success: boolean;
-  handNumber: number;        // First hand number (1)
+  handNumber: number; // First hand number (1)
   message: string;
 }
 ```
 
 **Side Effects**:
+
 - Sets table.status = 'playing'
 - Creates first hand, shuffles deck
 - Deals hole cards, posts blinds
 
 **Errors**:
+
 - `permission-denied`: Not the host
 - `failed-precondition`: < 2 players seated
 
@@ -202,20 +220,22 @@ interface StartGameResponse {
 Execute a player action (fold, call, check, raise).
 
 **Request**:
+
 ```typescript
 interface PlayerActionRequest {
   tableId: string;
   action: 'fold' | 'call' | 'check' | 'raise' | 'allin';
-  amount?: number;           // Required for 'raise'
+  amount?: number; // Required for 'raise'
 }
 ```
 
 **Response**:
+
 ```typescript
 interface PlayerActionResponse {
   success: boolean;
   newGameState: {
-    phase: string;           // Updated game phase
+    phase: string; // Updated game phase
     pot: number;
     currentPlayer: string | null;
   };
@@ -224,6 +244,7 @@ interface PlayerActionResponse {
 ```
 
 **Validation**:
+
 - Check it's player's turn (table.hand.currentPlayerPosition)
 - Validate action is legal:
   - `call`: amount = currentBet - player.currentBet
@@ -233,6 +254,7 @@ interface PlayerActionResponse {
   - `fold`: always allowed
 
 **Side Effects**:
+
 - Update player state (chips, currentBet, hasActed)
 - Update pot, sidePots if all-in
 - Advance to next player or next phase
@@ -240,11 +262,13 @@ interface PlayerActionResponse {
 - Record action in hand.actions
 
 **Errors**:
+
 - `permission-denied`: Not player's turn
 - `invalid-argument`: Invalid action or amount
 - `failed-precondition`: Hand not in progress
 
 **Example**:
+
 ```typescript
 const playerAction = httpsCallable(functions, 'playerAction');
 
@@ -252,7 +276,7 @@ const playerAction = httpsCallable(functions, 'playerAction');
 await playerAction({
   tableId: '1234',
   action: 'raise',
-  amount: 50
+  amount: 50,
 });
 ```
 
@@ -265,34 +289,39 @@ await playerAction({
 Purchase chips and add to ledger as debt.
 
 **Request**:
+
 ```typescript
 interface BuyChipsRequest {
   amount: number;
-  tableId?: string;          // Optional: if buying at table
+  tableId?: string; // Optional: if buying at table
 }
 ```
 
 **Response**:
+
 ```typescript
 interface BuyChipsResponse {
   success: boolean;
-  newBalance: number;        // Chips player now has
-  ledgerBalance: number;     // Running debt balance
+  newBalance: number; // Chips player now has
+  ledgerBalance: number; // Running debt balance
   message: string;
 }
 ```
 
 **Validation**:
+
 - Check amount > 0
 - Check player ledger balance + amount <= maxDebtPerPlayer
 - If tableId provided, check player is seated at table
 - If at table, check newChips <= maxStack
 
 **Side Effects**:
+
 - Create ledger transaction (type: 'buy', amount: -amount)
 - If at table, update table.players[playerId].chips
 
 **Errors**:
+
 - `invalid-argument`: amount <= 0
 - `resource-exhausted`: Would exceed maxDebt limit
 
@@ -303,6 +332,7 @@ interface BuyChipsResponse {
 Cash out chips and reduce ledger debt.
 
 **Request**:
+
 ```typescript
 interface CashOutRequest {
   amount: number;
@@ -310,6 +340,7 @@ interface CashOutRequest {
 ```
 
 **Response**:
+
 ```typescript
 interface CashOutResponse {
   success: boolean;
@@ -320,14 +351,17 @@ interface CashOutResponse {
 ```
 
 **Validation**:
+
 - Check player has sufficient chips (not seated at table)
 - Check amount > 0
 
 **Side Effects**:
+
 - Create ledger transaction (type: 'cashout', amount: +amount)
 - Reduce player chip balance
 
 **Errors**:
+
 - `failed-precondition`: Player is seated at a table
 - `invalid-argument`: Insufficient chips
 
@@ -338,27 +372,30 @@ interface CashOutResponse {
 Get player's transaction history and summary.
 
 **Request**:
+
 ```typescript
 interface GetLedgerRequest {
-  playerId?: string;         // Optional: get another player's ledger (transparency)
-  limit?: number;            // Default: 100
+  playerId?: string; // Optional: get another player's ledger (transparency)
+  limit?: number; // Default: 100
 }
 ```
 
 **Response**:
+
 ```typescript
 interface GetLedgerResponse {
   transactions: LedgerEntry[];
   summary: {
     totalBought: number;
     totalCashedOut: number;
-    netBalance: number;      // Positive = owed money, negative = owes money
+    netBalance: number; // Positive = owed money, negative = owes money
     transactionCount: number;
   };
 }
 ```
 
 **Notes**:
+
 - Ledger is public for transparency (all players can see all balances)
 - Useful for settling up after game sessions
 
@@ -371,25 +408,28 @@ interface GetLedgerResponse {
 Generate URL for shareable table or hand view.
 
 **Request**:
+
 ```typescript
 interface GenerateShareableViewRequest {
   type: 'table' | 'hand';
   tableId: string;
-  playerId?: string;         // Required if type === 'hand'
+  playerId?: string; // Required if type === 'hand'
 }
 ```
 
 **Response**:
+
 ```typescript
 interface GenerateShareableViewResponse {
   success: boolean;
   viewId: string;
-  url: string;               // Full URL to shareable view
+  url: string; // Full URL to shareable view
   expiresAt: Timestamp;
 }
 ```
 
 **Side Effects**:
+
 - Creates ShareableView document
 - Returns URL like: `https://{domain}/share/{viewId}`
 
@@ -400,14 +440,16 @@ interface GenerateShareableViewResponse {
 Get hand history for a table.
 
 **Request**:
+
 ```typescript
 interface GetHandHistoryRequest {
   tableId: string;
-  limit?: number;            // Default: 50
+  limit?: number; // Default: 50
 }
 ```
 
 **Response**:
+
 ```typescript
 interface GetHandHistoryResponse {
   hands: HandHistoryEntry[];
@@ -426,23 +468,23 @@ Runs daily to delete ended tables older than 7 days.
 **Trigger**: Firebase Scheduled Function (cron: `0 2 * * *` - 2 AM daily)
 
 **Logic**:
+
 ```typescript
-export const cleanupOldTables = functions.pubsub
-  .schedule('0 2 * * *')
-  .onRun(async (context) => {
-    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+export const cleanupOldTables = functions.pubsub.schedule('0 2 * * *').onRun(async context => {
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-    const oldTables = await db.collection('tables')
-      .where('status', '==', 'ended')
-      .where('updatedAt', '<', Timestamp.fromMillis(sevenDaysAgo))
-      .get();
+  const oldTables = await db
+    .collection('tables')
+    .where('status', '==', 'ended')
+    .where('updatedAt', '<', Timestamp.fromMillis(sevenDaysAgo))
+    .get();
 
-    const batch = db.batch();
-    oldTables.docs.forEach(doc => batch.delete(doc.ref));
-    await batch.commit();
+  const batch = db.batch();
+  oldTables.docs.forEach(doc => batch.delete(doc.ref));
+  await batch.commit();
 
-    console.log(`Cleaned up ${oldTables.size} old tables`);
-  });
+  console.log(`Cleaned up ${oldTables.size} old tables`);
+});
 ```
 
 ---
@@ -454,6 +496,7 @@ Automatically folds player when action timer expires.
 **Trigger**: Firestore onCreate for `/tables/{tableId}`
 
 **Logic**:
+
 ```typescript
 export const autoFoldOnTimeout = functions.firestore
   .document('tables/{tableId}')
@@ -534,6 +577,7 @@ try {
 - **Egress**: 5GB/month
 
 **Expected Usage** (10 concurrent tables, 6 players each, 1 hour sessions):
+
 - createTable: ~10/day
 - joinTable: ~60/day
 - playerAction: ~600/day (10 actions per hand × 10 hands per player × 6 players)
@@ -549,7 +593,11 @@ For abuse prevention:
 // Simple rate limiter (per-player)
 const rateLimits = new Map<string, number[]>();
 
-function checkRateLimit(playerId: string, maxRequests: number = 10, windowMs: number = 60000): boolean {
+function checkRateLimit(
+  playerId: string,
+  maxRequests: number = 10,
+  windowMs: number = 60000
+): boolean {
   const now = Date.now();
   const requests = rateLimits.get(playerId) || [];
 
@@ -606,8 +654,8 @@ describe('createTable function', () => {
       projectId: 'test-project',
       firestore: {
         host: 'localhost',
-        port: 8080
-      }
+        port: 8080,
+      },
     });
   });
 
@@ -635,7 +683,7 @@ name: Deploy to Firebase
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -666,6 +714,7 @@ jobs:
 ```
 
 **Required Secrets**:
+
 - `FIREBASE_SERVICE_ACCOUNT`: Service account JSON for deployment
 
 ---
@@ -675,6 +724,7 @@ jobs:
 API contract defines all Firebase Cloud Functions with type-safe interfaces, error handling, rate limiting, and deployment via GitHub Actions. All game logic is server-authoritative. Testing strategy uses Vitest + Firebase Emulator.
 
 **Contract Compliance**:
+
 - ✅ All functions have TypeScript contracts
 - ✅ Error codes standardized
 - ✅ Rate limiting implemented

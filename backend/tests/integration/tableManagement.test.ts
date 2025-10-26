@@ -10,6 +10,7 @@ import { createTable } from '../../src/functions/game/createTable';
 import { joinTable } from '../../src/functions/game/joinTable';
 import type { CreateTableRequest, JoinTableRequest } from '../../src/functions/game/types';
 import { getFirestore } from 'firebase-admin/firestore';
+import type { PlayerState } from '@shared/types/player';
 
 /**
  * Combined Integration Tests for Table Management
@@ -50,7 +51,11 @@ describe('Table Management Integration Tests', () => {
       const tableData = tableDoc.data();
       expect(tableData?.hostId).toBe(userId);
       expect(tableData?.status).toBe('waiting');
-      expect(tableData?.players).toEqual([]);
+
+      // Creator should be auto-joined
+      expect(tableData?.players.length).toBe(1);
+      expect(tableData?.players[0].id).toBe(userId);
+      expect(tableData?.players[0].position).toBe(0);
     });
 
     it('should create table with custom settings', async () => {
@@ -81,10 +86,11 @@ describe('Table Management Integration Tests', () => {
     });
 
     it('should generate unique 4-digit codes for multiple tables', async () => {
-      const userId = 'test-user-3';
+      const userId = `test-user-unique-${Date.now()}`;
       const tableIds = new Set<string>();
       const context = createAuthContext(userId);
 
+      // Create 5 tables - each costs 100 chips, total -500 which is within 1000 debt limit
       for (let i = 0; i < 5; i++) {
         const response = await createTable({}, context);
         tableIds.add(response.tableId);
@@ -145,8 +151,13 @@ describe('Table Management Integration Tests', () => {
         id: response.tableId,
         hostId: userId,
         status: 'waiting',
-        players: [],
       });
+
+      // Creator should be auto-joined at position 0
+      expect(tableData?.players.length).toBe(1);
+      expect(tableData?.players[0].id).toBe(userId);
+      expect(tableData?.players[0].position).toBe(0);
+      expect(tableData?.players[0].chips).toBe(100); // Default minBuyIn
 
       expect(tableData?.settings).toHaveProperty('maxPlayers');
       expect(tableData?.settings).toHaveProperty('smallBlind');
@@ -185,10 +196,13 @@ describe('Table Management Integration Tests', () => {
       const tableDoc = await db.collection('tables').doc(tableId).get();
       const tableData = tableDoc.data();
 
-      expect(tableData?.players.length).toBe(1);
-      expect(tableData?.players[0].id).toBe(userId);
-      expect(tableData?.players[0].chips).toBe(100);
-      expect(tableData?.players[0].position).toBe(response.position);
+      // Table should have 2 players now (host + this player)
+      expect(tableData?.players.length).toBe(2);
+      // Find the newly joined player
+      const newPlayer = (tableData?.players as PlayerState[])?.find(p => p.id === userId);
+      expect(newPlayer).toBeDefined();
+      expect(newPlayer?.chips).toBe(100);
+      expect(newPlayer?.position).toBe(response.position);
     });
 
     it('should assign sequential seat positions', async () => {
@@ -207,16 +221,19 @@ describe('Table Management Integration Tests', () => {
         createAuthContext(player2Id)
       );
 
-      expect(response1.position).toBe(0);
-      expect(response2.position).toBe(1);
+      // Host is at position 0, so first joining player gets position 1, second gets position 2
+      expect(response1.position).toBe(1);
+      expect(response2.position).toBe(2);
 
       const db = getFirestore();
       const tableDoc = await db.collection('tables').doc(tableId).get();
       const tableData = tableDoc.data();
 
-      expect(tableData?.players.length).toBe(2);
-      expect(tableData?.players[0].position).toBe(0);
-      expect(tableData?.players[1].position).toBe(1);
+      // Should have 3 players total (host + 2 joined players)
+      expect(tableData?.players.length).toBe(3);
+      // Verify positions are sequential
+      const positions = (tableData?.players as PlayerState[])?.map(p => p.position).sort();
+      expect(positions).toEqual([0, 1, 2]);
     });
 
     it('should join with buy-in amount greater than minimum', async () => {
@@ -236,7 +253,9 @@ describe('Table Management Integration Tests', () => {
       const tableDoc = await db.collection('tables').doc(tableId).get();
       const tableData = tableDoc.data();
 
-      expect(tableData?.players[0].chips).toBe(500);
+      // Find the newly joined player and verify their chips
+      const newPlayer = (tableData?.players as PlayerState[])?.find(p => p.id === userId);
+      expect(newPlayer?.chips).toBe(500);
     });
 
     it('should fail with not-found when table does not exist', async () => {
@@ -252,22 +271,21 @@ describe('Table Management Integration Tests', () => {
     it('should fail when table is full', async () => {
       const timestamp = Date.now();
       const hostContext = createAuthContext(`host-user-${timestamp}`);
+      // Create a table with 2 max players (host will be auto-joined as first player)
       const createResponse = await createTable({ settings: { maxPlayers: 2 } }, hostContext);
       const fullTableId = createResponse.tableId;
 
+      // Join one more player to fill the table
       await joinTable(
         { tableId: fullTableId, buyInAmount: 100 },
         createAuthContext(`player-${timestamp}-1`)
       );
-      await joinTable(
-        { tableId: fullTableId, buyInAmount: 100 },
-        createAuthContext(`player-${timestamp}-2`)
-      );
 
+      // Try to join a third player - should fail
       await expect(
         joinTable(
           { tableId: fullTableId, buyInAmount: 100 },
-          createAuthContext(`player-${timestamp}-3`)
+          createAuthContext(`player-${timestamp}-2`)
         )
       ).rejects.toThrow('Table is full');
     });

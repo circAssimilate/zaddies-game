@@ -2,14 +2,15 @@
  * createTable Cloud Function
  * Contract: specs/001-texas-holdem-poker/contracts/api-functions.md
  *
- * Creates a new poker table with unique 4-digit code
+ * Creates a new poker table with unique 4-digit code and auto-joins the creator
  */
 
 import { HttpsError } from 'firebase-functions/v2/https';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import type { CreateTableRequest, CreateTableResponse } from './types';
-import { createTableDocument } from './schemas';
+import { createTableDocument, createPlayerDocument, createLedgerEntry } from './schemas';
 import { generateTableCode } from '../../lib/utils/codeGenerator';
+import type { PlayerState } from '@shared/types/player';
 
 /**
  * Create Table Function
@@ -19,7 +20,7 @@ import { generateTableCode } from '../../lib/utils/codeGenerator';
  */
 export async function createTable(
   data: CreateTableRequest,
-  context: { auth?: { uid: string } }
+  context: { auth?: { uid: string; token?: { email?: string; name?: string } } }
 ): Promise<CreateTableResponse> {
   // Validate authentication
   if (!context.auth) {
@@ -41,13 +42,106 @@ export async function createTable(
     // Create table document
     const tableDoc = createTableDocument(tableId, userId, data.settings);
 
-    // Save to Firestore
-    await db.collection('tables').doc(tableId).set(tableDoc);
+    // Auto-join the creator with minimum buy-in using a transaction
+    const result = await db.runTransaction(async transaction => {
+      const tableRef = db.collection('tables').doc(tableId);
+
+      // Get player's current ledger balance
+      const ledgerSnapshot = await transaction.get(
+        db
+          .collection('ledger')
+          .doc(userId)
+          .collection('transactions')
+          .orderBy('timestamp', 'desc')
+          .limit(1)
+      );
+
+      let currentBalance = 0;
+      if (!ledgerSnapshot.empty) {
+        const lastTransaction = ledgerSnapshot.docs[0].data();
+        currentBalance = lastTransaction.runningBalance || 0;
+      }
+
+      // Use minimum buy-in for auto-join
+      const buyInAmount = tableDoc.settings.minBuyIn;
+
+      // Calculate new balance after purchase
+      const newBalance = currentBalance - buyInAmount;
+
+      // Validate debt limit
+      if (Math.abs(newBalance) > tableDoc.settings.maxDebtPerPlayer) {
+        throw new HttpsError(
+          'permission-denied',
+          `Creating this table would exceed the maximum debt limit of ${tableDoc.settings.maxDebtPerPlayer}`
+        );
+      }
+
+      // Get player document
+      const playerRef = db.collection('players').doc(userId);
+      const playerDoc = await transaction.get(playerRef);
+
+      // Create player state for the creator (position 0)
+      const playerState: PlayerState = {
+        id: userId,
+        position: 0,
+        chips: buyInAmount,
+        status: 'sitting',
+        isDealer: false,
+        isSmallBlind: false,
+        isBigBlind: false,
+        currentBet: 0,
+        hasActed: false,
+        isFolded: false,
+        isAllIn: false,
+      };
+
+      // Add player to table document
+      const tableWithPlayer = {
+        ...tableDoc,
+        players: [playerState],
+      };
+
+      // Save table with creator as first player
+      transaction.set(tableRef, tableWithPlayer);
+
+      // Create or update player document
+      if (!playerDoc.exists) {
+        // Create new player document
+        const email = context.auth?.token?.email || `${userId}@unknown`;
+        const username = context.auth?.token?.name || `Player ${userId.slice(0, 6)}`;
+
+        const newPlayer = createPlayerDocument(userId, username, email);
+        transaction.set(playerRef, newPlayer);
+      } else {
+        // Update lastSeen timestamp
+        transaction.update(playerRef, {
+          lastSeen: Timestamp.now(),
+        });
+      }
+
+      // Create ledger transaction
+      const ledgerEntry = createLedgerEntry(
+        userId,
+        'buy',
+        -buyInAmount, // Negative for chip purchase
+        newBalance,
+        tableId
+      );
+
+      const ledgerRef = db.collection('ledger').doc(userId).collection('transactions').doc();
+
+      transaction.set(ledgerRef, {
+        ...ledgerEntry,
+        id: ledgerRef.id,
+      });
+
+      return { tableId, newBalance };
+    });
 
     return {
       success: true,
-      tableId,
-      message: 'Table created successfully',
+      tableId: result.tableId,
+      message: 'Table created successfully and you have been seated',
     };
   } catch (error) {
     // Handle specific errors
@@ -81,6 +175,7 @@ export async function createTable(
     }
 
     // Generic error
+    console.error('Error creating table:', error);
     throw new HttpsError('internal', 'Failed to create table');
   }
 }

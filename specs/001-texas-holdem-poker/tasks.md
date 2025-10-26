@@ -161,8 +161,8 @@
 - [x] T088 [US2] Implement dealer button rotation in backend/src/poker/handInitializer.ts (determinePositions)
 - [x] T089 [US2] Implement player dealing-in rules in backend/src/poker/handInitializer.ts (dealInPlayersAtBigBlind, resetPlayerStatesForNextHand)
 - [x] T090 [US2] Implement all-in and side pot handling in backend/src/poker/potCalculator.ts
-- [ ] T091 [P] [US2] Create useGameState hook in frontend/src/hooks/useGameState.ts
-- [ ] T092 [P] [US2] Create usePlayerHand hook in frontend/src/hooks/usePlayerHand.ts (private hole cards)
+- [x] T091 [P] [US2] Create useGameState hook in frontend/src/hooks/useGameState.ts
+- [x] T092 [P] [US2] Create usePlayerHand hook in frontend/src/hooks/usePlayerHand.ts (private hole cards)
 - [ ] T093 [P] [US2] Create Game page component in frontend/src/pages/Game.tsx
 - [ ] T094 [P] [US2] Create TableView component in frontend/src/components/Table/TableView.tsx
 - [ ] T095 [US2] Create CommunityCards component in frontend/src/components/Table/CommunityCards.tsx

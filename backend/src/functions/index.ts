@@ -3,10 +3,14 @@
  * Contract: specs/001-texas-holdem-poker/contracts/api-functions.md
  */
 
+import admin from 'firebase-admin';
 import { onCall } from 'firebase-functions/v2/https';
 import { createTable } from './game/createTable';
 import { joinTable } from './game/joinTable';
 import { leaveTable } from './game/leaveTable';
+
+// Initialize Firebase Admin
+admin.initializeApp();
 
 // ============================================================================
 // Table Management Functions
@@ -16,7 +20,7 @@ import { leaveTable } from './game/leaveTable';
  * Create Table
  * Creates a new poker table with unique 4-digit code
  */
-export const createTableFunction = onCall(async request => {
+export const createTableFunction = onCall({ cors: true }, async request => {
   return createTable(request.data, request);
 });
 
@@ -24,7 +28,7 @@ export const createTableFunction = onCall(async request => {
  * Join Table
  * Join an existing table with 4-digit code
  */
-export const joinTableFunction = onCall(async request => {
+export const joinTableFunction = onCall({ cors: true }, async request => {
   return joinTable(request.data, request);
 });
 
@@ -32,7 +36,7 @@ export const joinTableFunction = onCall(async request => {
  * Leave Table
  * Leave a table and automatically cash out chips
  */
-export const leaveTableFunction = onCall(async request => {
+export const leaveTableFunction = onCall({ cors: true }, async request => {
   return leaveTable(request.data, request);
 });
 

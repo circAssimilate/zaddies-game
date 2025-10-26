@@ -37,6 +37,13 @@ export default function TableLobby() {
     }
   }, [tableId, navigate]);
 
+  // Redirect to game when status changes to 'playing'
+  useEffect(() => {
+    if (table && table.status === 'playing') {
+      navigate(`/game/${tableId}`);
+    }
+  }, [table, tableId, navigate]);
+
   // Handle errors
   useEffect(() => {
     if (error) {
@@ -95,13 +102,28 @@ export default function TableLobby() {
   };
 
   const handleStartGame = async () => {
-    // TODO: Implement start game logic
-    toast({
-      title: 'Coming soon',
-      description: 'Start game functionality will be implemented in User Story 2',
-      status: 'info',
-      duration: 3000,
-    });
+    if (!tableId) return;
+
+    try {
+      // TODO: Call startGame Cloud Function when user is host
+      // The table status will update to 'playing' via Firestore subscription
+      // and the useEffect above will redirect to the game page
+      toast({
+        title: 'Starting game',
+        description: 'Dealing cards and posting blinds...',
+        status: 'info',
+        duration: 2000,
+      });
+    } catch (err) {
+      console.error('Failed to start game:', err);
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to start game',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   if (loading) {

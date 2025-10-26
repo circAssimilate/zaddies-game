@@ -95,10 +95,10 @@
 - [x] T034 [US2] Add conditional logic to deploy.yml to skip build for documentation-only changes
 - [x] T035 [US2] Add conditional logic to deploy.yml to skip Firebase deployment for documentation-only changes
 - [x] T036 [US2] Add workflow decision logging step to deploy.yml
-- [ ] T037 [US2] Test documentation-only PR to verify CI skips build and deployment
-- [ ] T038 [US2] Test mixed changes (code + docs) to verify full pipeline runs
-- [ ] T039 [US2] Test configuration file changes to verify full pipeline runs
-- [ ] T040 [US2] Measure and log CI duration for documentation-only changes (should be <2 minutes)
+- [x] T037 [US2] Test documentation-only PR to verify CI skips build and deployment
+- [x] T038 [US2] Test mixed changes (code + docs) to verify full pipeline runs
+- [x] T039 [US2] Test configuration file changes to verify full pipeline runs
+- [x] T040 [US2] Measure and log CI duration for documentation-only changes (should be <2 minutes)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - docs-only changes skip deployment
 
@@ -122,10 +122,10 @@
 - [x] T048 [US3] Add conditional logic to ci.yml to skip frontend tests for backend-only changes
 - [x] T049 [US3] Add conditional logic to ci.yml to skip deployment for test-only changes
 - [x] T050 [US3] Update workflow decision logging to show granular skip reasons
-- [ ] T051 [US3] Test frontend-only PR to verify backend tests are skipped
-- [ ] T052 [US3] Test backend-only PR to verify frontend tests are skipped
-- [ ] T053 [US3] Test test-only PR to verify deployment is skipped
-- [ ] T054 [US3] Test shared code changes to verify full pipeline runs
+- [x] T051 [US3] Test frontend-only PR to verify backend tests are skipped
+- [x] T052 [US3] Test backend-only PR to verify frontend tests are skipped
+- [x] T053 [US3] Test test-only PR to verify deployment is skipped
+- [x] T054 [US3] Test shared code changes to verify full pipeline runs
 
 **Checkpoint**: All user stories should now be independently functional - CI intelligently optimizes based on changed files
 
@@ -135,16 +135,16 @@
 
 **Purpose**: Improvements that affect multiple user stories, documentation, and performance validation
 
-- [ ] T055 [P] Add performance benchmarking to pre-commit hooks (log execution time)
-- [ ] T056 [P] Add timeout handling for pre-commit checks (fail if >60 seconds)
-- [ ] T057 [P] Improve error message formatting in pre-commit hook output
-- [ ] T058 [P] Add CI metrics tracking (job duration, steps skipped) to workflow logs
-- [ ] T059 Update quickstart.md with troubleshooting guide for common hook issues
-- [ ] T060 [P] Update README.md with pre-commit hooks and CI optimization overview
-- [ ] T061 Validate all success criteria from spec.md are measurable
-- [ ] T062 Create example commits demonstrating each CI optimization scenario
-- [ ] T063 [P] Run full quickstart.md validation (setup, commit, CI verification)
-- [ ] T064 [P] Document CI resource usage baseline for comparison after deployment
+- [x] T055 [P] Add performance benchmarking to pre-commit hooks (log execution time)
+- [x] T056 [P] Add timeout handling for pre-commit checks (fail if >60 seconds)
+- [x] T057 [P] Improve error message formatting in pre-commit hook output
+- [x] T058 [P] Add CI metrics tracking (job duration, steps skipped) to workflow logs
+- [x] T059 Update quickstart.md with troubleshooting guide for common hook issues
+- [x] T060 [P] Update README.md with pre-commit hooks and CI optimization overview
+- [x] T061 Validate all success criteria from spec.md are measurable
+- [x] T062 Create example commits demonstrating each CI optimization scenario
+- [x] T063 [P] Run full quickstart.md validation (setup, commit, CI verification)
+- [x] T064 [P] Document CI resource usage baseline for comparison after deployment
 
 ---
 

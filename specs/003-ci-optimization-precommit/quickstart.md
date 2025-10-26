@@ -121,11 +121,78 @@ pnpm exec husky install
 **Temporary Workaround**:
 
 ```bash
-# Skip TypeScript check just for this commit
-SKIP_TSC=1 git commit -m "your message"
+# Use --no-verify to bypass hooks (not recommended)
+git commit --no-verify -m "your message"
 ```
 
 **Long-term Fix**: Optimize tsconfig.json (incremental compilation, project references)
+
+### "lint-staged: command not found"
+
+**Cause**: Dependencies not installed or node_modules corrupted
+
+**Fix**:
+
+```bash
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+### "Prettier formatting conflicts with my editor"
+
+**Cause**: Editor auto-formatting uses different config
+
+**Fix**:
+
+1. Install Prettier extension in your editor (VS Code, IntelliJ, etc.)
+2. Configure editor to use project's `.prettierrc` file
+3. Or disable editor auto-format and rely on pre-commit hooks
+
+### "ESLint errors I don't understand"
+
+**Cause**: Linting rules catching potential bugs or style violations
+
+**Fix**:
+
+```bash
+# See detailed error explanation
+pnpm run lint
+
+# Auto-fix most issues
+pnpm run lint:fix
+
+# Then commit again
+git commit -m "your message"
+```
+
+### "Pre-commit hook doesn't run"
+
+**Cause**: Git hooks not executable or Husky not initialized
+
+**Fix**:
+
+```bash
+# Re-initialize Husky
+pnpm exec husky install
+
+# Make hook executable
+chmod +x .husky/pre-commit
+
+# Verify it exists
+cat .husky/pre-commit
+```
+
+### "TypeScript errors in files I didn't change"
+
+**Cause**: Type-check runs on entire project, not just changed files
+
+**Why**: This is intentional - ensures no breaking changes to other files
+
+**Options**:
+
+1. Fix the errors (recommended)
+2. Use `--no-verify` for emergency commits (not recommended)
+3. Ask team to fix type errors in their code
 
 ### "Permission denied: .husky/pre-commit"
 

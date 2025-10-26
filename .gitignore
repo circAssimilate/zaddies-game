@@ -64,6 +64,9 @@ backend/_isolated_/
 *.swp
 *.tmp
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # OS
 Thumbs.db
 .DS_Store

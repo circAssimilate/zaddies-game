@@ -52,7 +52,7 @@ export default function CreateTableModal({
   const [useCustomSettings, setUseCustomSettings] = useState(false);
 
   const handleCreate = async () => {
-    const settings: Partial<TableSettings> = useCustomSettings
+    const settings: Partial<TableSettings> | undefined = useCustomSettings
       ? {
           maxPlayers,
           smallBlind,

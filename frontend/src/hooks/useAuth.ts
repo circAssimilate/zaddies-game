@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
-import { auth, signInAnonymously, signOut } from '../services/firebase/auth';
+import { auth, signInAnonymous, signOut } from '../services/firebase/auth';
 
 export interface AuthState {
   user: User | null;
@@ -50,7 +50,7 @@ export function useAuth(): AuthState & AuthActions {
     try {
       setLoading(true);
       setError(null);
-      await signInAnonymously();
+      await signInAnonymous();
     } catch (err) {
       console.error('Sign in error:', err);
       setError(err as Error);

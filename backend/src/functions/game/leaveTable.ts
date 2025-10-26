@@ -19,14 +19,11 @@ import { createLedgerEntry } from './schemas';
  */
 export async function leaveTable(
   data: LeaveTableRequest,
-  context: { auth?: { uid: string } },
+  context: { auth?: { uid: string } }
 ): Promise<LeaveTableResponse> {
   // Validate authentication
   if (!context.auth) {
-    throw new HttpsError(
-      'unauthenticated',
-      'User must be authenticated to leave a table',
-    );
+    throw new HttpsError('unauthenticated', 'User must be authenticated to leave a table');
   }
 
   const userId = context.auth.uid;
@@ -36,14 +33,11 @@ export async function leaveTable(
   try {
     // Validate table ID format
     if (!/^\d{4}$/.test(tableId)) {
-      throw new HttpsError(
-        'invalid-argument',
-        'Table code must be a 4-digit number',
-      );
+      throw new HttpsError('invalid-argument', 'Table code must be a 4-digit number');
     }
 
     // Use transaction to ensure atomicity
-    const result = await db.runTransaction(async (transaction) => {
+    const result = await db.runTransaction(async transaction => {
       // Get table document
       const tableRef = db.collection('tables').doc(tableId);
       const tableDoc = await transaction.get(tableRef);
@@ -55,23 +49,20 @@ export async function leaveTable(
       const table = tableDoc.data() as TableDocument;
 
       // Find player in table
-      const playerIndex = table.players.findIndex((p) => p.id === userId);
+      const playerIndex = table.players.findIndex(p => p.id === userId);
 
       if (playerIndex === -1) {
-        throw new HttpsError(
-          'failed-precondition',
-          'You are not at this table',
-        );
+        throw new HttpsError('failed-precondition', 'You are not at this table');
       }
 
       const player = table.players[playerIndex];
       const chipsToCashOut = player.chips;
 
       // Remove player from table
-      const updatedPlayers = table.players.filter((p) => p.id !== userId);
+      const updatedPlayers = table.players.filter(p => p.id !== userId);
 
       // If player is in active hand, fold them
-      let updatedHand = table.hand;
+      // const updatedHand = table.hand; // Will be used when implementing auto-fold logic
       if (table.hand && !player.isFolded) {
         // TODO: Implement auto-fold logic when hand state is implemented
         // For now, just log it
@@ -106,7 +97,7 @@ export async function leaveTable(
           .doc(userId)
           .collection('transactions')
           .orderBy('timestamp', 'desc')
-          .limit(1),
+          .limit(1)
       );
 
       let currentBalance = 0;
@@ -124,14 +115,10 @@ export async function leaveTable(
         'cashout',
         chipsToCashOut, // Positive for cash out
         newBalance,
-        tableId,
+        tableId
       );
 
-      const ledgerRef = db
-        .collection('ledger')
-        .doc(userId)
-        .collection('transactions')
-        .doc(); // Auto-generate ID
+      const ledgerRef = db.collection('ledger').doc(userId).collection('transactions').doc(); // Auto-generate ID
 
       transaction.set(ledgerRef, {
         ...ledgerEntry,
@@ -160,9 +147,6 @@ export async function leaveTable(
 
     // Generic error
     console.error('Error leaving table:', error);
-    throw new HttpsError(
-      'internal',
-      'Failed to leave table',
-    );
+    throw new HttpsError('internal', 'Failed to leave table');
   }
 }

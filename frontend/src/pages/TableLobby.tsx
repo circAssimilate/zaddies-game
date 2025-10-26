@@ -161,13 +161,7 @@ export default function TableLobby() {
         </Box>
 
         {/* Table Settings */}
-        <Box
-          p={6}
-          bg="gray.800"
-          borderRadius="lg"
-          borderWidth={1}
-          borderColor="gray.700"
-        >
+        <Box p={6} bg="gray.800" borderRadius="lg" borderWidth={1} borderColor="gray.700">
           <Heading as="h3" size="md" mb={4}>
             Table Settings
           </Heading>
@@ -204,11 +198,7 @@ export default function TableLobby() {
               Players ({playerCount}/{table.settings.maxPlayers})
             </Heading>
           </HStack>
-          <PlayerList
-            players={table.players}
-            hostId={table.hostId}
-            currentUserId={user?.uid}
-          />
+          <PlayerList players={table.players} hostId={table.hostId} currentUserId={user?.uid} />
         </Box>
 
         {/* Actions */}
@@ -217,11 +207,7 @@ export default function TableLobby() {
             <StartGameButton
               onClick={handleStartGame}
               isDisabled={!canStartGame}
-              tooltip={
-                playerCount < 2
-                  ? 'Need at least 2 players to start'
-                  : undefined
-              }
+              tooltip={playerCount < 2 ? 'Need at least 2 players to start' : undefined}
             />
           ) : (
             <Text color="gray.400" fontSize="sm">

@@ -3,14 +3,7 @@
  * Displays list of players at a table
  */
 
-import {
-  VStack,
-  HStack,
-  Box,
-  Text,
-  Badge,
-  Avatar,
-} from '@chakra-ui/react';
+import { VStack, HStack, Box, Text, Badge, Avatar } from '@chakra-ui/react';
 import type { PlayerState } from '@shared/types/player';
 
 interface PlayerListProps {
@@ -19,11 +12,7 @@ interface PlayerListProps {
   currentUserId?: string;
 }
 
-export default function PlayerList({
-  players,
-  hostId,
-  currentUserId,
-}: PlayerListProps) {
+export default function PlayerList({ players, hostId, currentUserId }: PlayerListProps) {
   if (players.length === 0) {
     return (
       <Box p={8} textAlign="center" bg="gray.800" borderRadius="lg">
@@ -37,7 +26,7 @@ export default function PlayerList({
 
   return (
     <VStack spacing={2} align="stretch">
-      {sortedPlayers.map((player) => (
+      {sortedPlayers.map(player => (
         <Box
           key={player.id}
           p={4}
@@ -49,11 +38,7 @@ export default function PlayerList({
           <HStack justify="space-between">
             <HStack spacing={3}>
               {/* Avatar */}
-              <Avatar
-                size="sm"
-                name={player.id}
-                bg="brand.500"
-              />
+              <Avatar size="sm" name={player.id} bg="brand.500" />
 
               {/* Player Info */}
               <Box>
@@ -62,9 +47,7 @@ export default function PlayerList({
                     Player {player.id.slice(0, 6)}
                     {player.id === currentUserId && ' (You)'}
                   </Text>
-                  {player.id === hostId && (
-                    <Badge colorScheme="purple">Host</Badge>
-                  )}
+                  {player.id === hostId && <Badge colorScheme="purple">Host</Badge>}
                 </HStack>
                 <HStack spacing={2} fontSize="sm" color="gray.400">
                   <Text>Position: {player.position}</Text>
@@ -80,8 +63,8 @@ export default function PlayerList({
                 player.status === 'playing'
                   ? 'green'
                   : player.status === 'sitting'
-                  ? 'yellow'
-                  : 'gray'
+                    ? 'yellow'
+                    : 'gray'
               }
             >
               {player.status}

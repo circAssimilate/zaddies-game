@@ -47,6 +47,7 @@ pnpm run dev
 ```
 
 The emulators will run on:
+
 - Firestore: http://localhost:8080
 - Functions: http://localhost:5001
 - Auth: http://localhost:9099
@@ -251,6 +252,7 @@ Following TDD approach:
 3. **E2E Tests**: Test complete user flows
 
 Tests are located in:
+
 - Frontend: `frontend/tests/`
 - Backend: `backend/tests/`
 

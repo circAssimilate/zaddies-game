@@ -6,7 +6,11 @@
 import { useState, useEffect } from 'react';
 import { Table } from '@shared/types/table';
 import { subscribeToTable } from '../services/firebase/listeners';
-import { createTable as createTableFn, joinTable as joinTableFn, leaveTable as leaveTableFn } from '../services/firebase/tables';
+import {
+  createTable as createTableFn,
+  joinTable as joinTableFn,
+  leaveTable as leaveTableFn,
+} from '../services/firebase/tables';
 
 export interface TableState {
   table: Table | null;
@@ -43,15 +47,15 @@ export function useTable(tableId?: string): TableState & TableActions {
     // Subscribe to real-time table updates
     const unsubscribe = subscribeToTable(
       tableId,
-      (updatedTable) => {
+      updatedTable => {
         setTable(updatedTable);
         setLoading(false);
       },
-      (err) => {
+      err => {
         console.error('Table subscription error:', err);
         setError(err);
         setLoading(false);
-      },
+      }
     );
 
     // Cleanup subscription

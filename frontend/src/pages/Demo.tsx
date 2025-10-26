@@ -3,8 +3,8 @@ import {
   Box,
   Button,
   Heading,
-  HStack,
   VStack,
+  Stack,
   Text,
   Wrap,
   WrapItem,
@@ -17,7 +17,8 @@ import { createDeck, gilbertShannonReedsShuff } from '@shared/lib/poker/shuffler
 import { findBestHand } from '@shared/lib/poker/handEvaluator';
 
 export function Demo() {
-  const [deck, setDeck] = useState<CardType[]>(() => createDeck());
+  // Auto-shuffle deck on page load to prevent unshuffled deals
+  const [deck, setDeck] = useState<CardType[]>(() => gilbertShannonReedsShuff(createDeck()));
   const [playerHand, setPlayerHand] = useState<CardType[]>([]);
   const [communityCards, setCommunityCards] = useState<CardType[]>([]);
   const [handEval, setHandEval] = useState<string>('');
@@ -81,128 +82,164 @@ export function Demo() {
   };
 
   return (
-    <Box maxW="1200px" mx="auto" p={8}>
-      <VStack spacing={8} align="stretch">
+    <Box maxW="1200px" mx="auto" p={{ base: 4, md: 6, lg: 8 }}>
+      <VStack spacing={{ base: 6, md: 8 }} align="stretch">
         {/* Header */}
         <Box>
-          <Heading size="xl" mb={2}>
+          <Heading size={{ base: 'lg', md: 'xl' }} mb={2}>
             Poker Demo
           </Heading>
-          <Text color="gray.400">Test the shuffler, hand evaluator, and UI components</Text>
+          <Text color="gray.400" fontSize={{ base: 'sm', md: 'md' }}>
+            Test the shuffler, hand evaluator, and UI components
+          </Text>
         </Box>
 
-        {/* Controls */}
-        <HStack spacing={4}>
-          <Button onClick={handleShuffle} colorScheme="brand">
+        <Divider />
+
+        {/* Controls - Stack vertically on mobile, horizontally on tablet+ */}
+        <Stack
+          direction={{ base: 'column', md: 'row' }}
+          spacing={4}
+          align={{ base: 'stretch', md: 'center' }}
+        >
+          <Button onClick={handleShuffle} colorScheme="brand" size={{ base: 'md', md: 'md' }}>
             Shuffle Deck
           </Button>
-          <Button onClick={handleDeal} colorScheme="green">
+          <Button onClick={handleDeal} colorScheme="green" size={{ base: 'md', md: 'md' }}>
             Deal Hand
           </Button>
-          <Button onClick={handleStartTimer} colorScheme="orange">
+          <Button onClick={handleStartTimer} colorScheme="orange" size={{ base: 'md', md: 'md' }}>
             Start Timer
           </Button>
-          <Text color="gray.500">Cards remaining: {deck.length}</Text>
-        </HStack>
-
-        <Divider />
+          <Text color="gray.500" fontSize={{ base: 'sm', md: 'md' }}>
+            Cards remaining: {deck.length}
+          </Text>
+        </Stack>
 
         {/* Timer Demo */}
         {showTimer && (
           <Box>
-            <Heading size="md" mb={4}>
+            <Heading size={{ base: 'sm', md: 'md' }} mb={4}>
               Action Timer
             </Heading>
             <Timer duration={30} onComplete={handleTimerComplete} size="lg" />
           </Box>
         )}
 
-        {/* Chip Demo */}
-        <Box>
-          <Heading size="md" mb={4}>
-            Poker Chips
-          </Heading>
-          <HStack spacing={6}>
-            <VStack>
-              <Chip value={1} />
-              <Text fontSize="sm">$1</Text>
-            </VStack>
-            <VStack>
-              <Chip value={5} />
-              <Text fontSize="sm">$5</Text>
-            </VStack>
-            <VStack>
-              <Chip value={25} />
-              <Text fontSize="sm">$25</Text>
-            </VStack>
-            <VStack>
-              <Chip value={100} />
-              <Text fontSize="sm">$100</Text>
-            </VStack>
-            <VStack>
-              <Chip value={500} />
-              <Text fontSize="sm">$500</Text>
-            </VStack>
-            <VStack>
-              <Chip value={1000} />
-              <Text fontSize="sm">$1K</Text>
-            </VStack>
-            <VStack>
-              <Chip value={100} count={5} size="md" />
-              <Text fontSize="sm">5x $100</Text>
-            </VStack>
-            <VStack>
-              <Chip value={25} count={10} size="md" />
-              <Text fontSize="sm">10x $25</Text>
-            </VStack>
-          </HStack>
-        </Box>
-
-        <Divider />
-
-        {/* Player Hand */}
+        {/* Player Hand Banner */}
         {playerHand.length > 0 && (
           <Box>
-            <Heading size="md" mb={4}>
+            <Heading size={{ base: 'sm', md: 'md' }} mb={4}>
               Your Hand
             </Heading>
-            <HStack spacing={2}>
+            <Wrap spacing={2}>
               {playerHand.map((card, i) => (
-                <Card key={`player-${i}`} card={card} size="lg" />
+                <WrapItem key={`player-${i}`}>
+                  <Card card={card} size="lg" />
+                </WrapItem>
               ))}
-            </HStack>
+            </Wrap>
           </Box>
         )}
 
-        {/* Community Cards */}
+        {/* Community Cards Banner */}
         {communityCards.length > 0 && (
           <Box>
-            <Heading size="md" mb={4}>
+            <Heading size={{ base: 'sm', md: 'md' }} mb={4}>
               Community Cards
             </Heading>
-            <HStack spacing={2}>
+            <Wrap spacing={2}>
               {communityCards.map((card, i) => (
-                <Card key={`community-${i}`} card={card} size="lg" />
+                <WrapItem key={`community-${i}`}>
+                  <Card card={card} size="lg" />
+                </WrapItem>
               ))}
-            </HStack>
+            </Wrap>
           </Box>
         )}
 
-        {/* Hand Evaluation */}
+        {/* Hand Evaluation Banner */}
         {handEval && (
-          <Box p={4} bg="green.800" borderRadius="md" borderWidth="2px" borderColor="green.600">
-            <Heading size="md" mb={2}>
+          <Box
+            p={{ base: 3, md: 4 }}
+            bg="green.800"
+            borderRadius="md"
+            borderWidth="2px"
+            borderColor="green.600"
+          >
+            <Heading size={{ base: 'sm', md: 'md' }} mb={2}>
               Best Hand
             </Heading>
-            <Text fontSize="xl" fontWeight="bold">
+            <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold">
               {handEval}
             </Text>
           </Box>
         )}
 
+        <Divider />
+
+        {/* Chip Demo */}
+        <Box>
+          <Heading size={{ base: 'sm', md: 'md' }} mb={4}>
+            Poker Chips
+          </Heading>
+          <Wrap spacing={{ base: 4, md: 6 }}>
+            <WrapItem>
+              <VStack>
+                <Chip value={1} />
+                <Text fontSize="sm">$1</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={5} />
+                <Text fontSize="sm">$5</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={25} />
+                <Text fontSize="sm">$25</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={100} />
+                <Text fontSize="sm">$100</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={500} />
+                <Text fontSize="sm">$500</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={1000} />
+                <Text fontSize="sm">$1K</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={100} count={5} size="md" />
+                <Text fontSize="sm">5x $100</Text>
+              </VStack>
+            </WrapItem>
+            <WrapItem>
+              <VStack>
+                <Chip value={25} count={10} size="md" />
+                <Text fontSize="sm">10x $25</Text>
+              </VStack>
+            </WrapItem>
+          </Wrap>
+        </Box>
+
+        <Divider />
+
         {/* Card Back Demo */}
         <Box>
-          <Heading size="md" mb={4}>
+          <Heading size={{ base: 'sm', md: 'md' }} mb={4}>
             Card Sizes & Face Down
           </Heading>
           <Wrap spacing={4}>
@@ -235,15 +272,23 @@ export function Demo() {
 
         {/* All Suits Demo */}
         <Box>
-          <Heading size="md" mb={4}>
+          <Heading size={{ base: 'sm', md: 'md' }} mb={4}>
             All Suits (Color-Blind Friendly)
           </Heading>
-          <HStack spacing={2}>
-            <Card card={{ rank: 'A', suit: 'spades' }} size="md" />
-            <Card card={{ rank: 'K', suit: 'hearts' }} size="md" />
-            <Card card={{ rank: 'Q', suit: 'diamonds' }} size="md" />
-            <Card card={{ rank: 'J', suit: 'clubs' }} size="md" />
-          </HStack>
+          <Wrap spacing={2}>
+            <WrapItem>
+              <Card card={{ rank: 'A', suit: 'spades' }} size="md" />
+            </WrapItem>
+            <WrapItem>
+              <Card card={{ rank: 'K', suit: 'hearts' }} size="md" />
+            </WrapItem>
+            <WrapItem>
+              <Card card={{ rank: 'Q', suit: 'diamonds' }} size="md" />
+            </WrapItem>
+            <WrapItem>
+              <Card card={{ rank: 'J', suit: 'clubs' }} size="md" />
+            </WrapItem>
+          </Wrap>
         </Box>
       </VStack>
     </Box>

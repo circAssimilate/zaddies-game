@@ -124,8 +124,8 @@ export default function JoinTableForm({
           >
             <NumberInputField />
             <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
+              <NumberIncrementStepper color="gray.100" />
+              <NumberDecrementStepper color="gray.100" />
             </NumberInputStepper>
           </NumberInput>
           <FormErrorMessage>{amountError}</FormErrorMessage>

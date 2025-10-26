@@ -35,9 +35,7 @@ function getTableRef(tableId: string): DocumentReference {
  * @param settings - Optional partial table settings
  * @returns Table ID (4-digit code)
  */
-export async function createTable(
-  settings?: Partial<TableSettings>
-): Promise<string> {
+export async function createTable(settings?: Partial<TableSettings>): Promise<string> {
   const createTableFn = httpsCallable<
     { settings?: Partial<TableSettings> },
     { success: boolean; tableId: string; message: string }
@@ -58,10 +56,7 @@ export async function createTable(
  * @param buyInAmount - Initial chips to buy
  * @returns Assigned seat position
  */
-export async function joinTable(
-  tableId: string,
-  buyInAmount: number
-): Promise<number> {
+export async function joinTable(tableId: string, buyInAmount: number): Promise<number> {
   const joinTableFn = httpsCallable<
     { tableId: string; buyInAmount: number },
     { success: boolean; position: number; message: string }

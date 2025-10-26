@@ -7,8 +7,8 @@
  */
 
 import { Timestamp } from 'firebase-admin/firestore';
-import type { Player, PlayerState } from '@shared/types/player';
-import type { Table, TableSettings, TableStatus } from '@shared/types/table';
+import type { PlayerState } from '@shared/types/player';
+import type { TableSettings, TableStatus } from '@shared/types/table';
 import type { Card } from '@shared/types/game';
 
 // ============================================================================
@@ -64,11 +64,7 @@ export function validatePlayerDocument(data: unknown): PlayerDocument {
 /**
  * Create default Player document
  */
-export function createPlayerDocument(
-  id: string,
-  username: string,
-  email: string,
-): PlayerDocument {
+export function createPlayerDocument(id: string, username: string, email: string): PlayerDocument {
   const now = Timestamp.now();
 
   return {
@@ -148,13 +144,8 @@ export function validateTableDocument(data: unknown): TableDocument {
     throw new Error('Table.hostId is required and must be a string');
   }
 
-  if (
-    !table.status ||
-    !['waiting', 'playing', 'ended'].includes(table.status)
-  ) {
-    throw new Error(
-      'Table.status must be one of: waiting, playing, ended',
-    );
+  if (!table.status || !['waiting', 'playing', 'ended'].includes(table.status)) {
+    throw new Error('Table.status must be one of: waiting, playing, ended');
   }
 
   if (!table.settings) {
@@ -178,7 +169,7 @@ export function validateTableDocument(data: unknown): TableDocument {
 export function createTableDocument(
   tableId: string,
   hostId: string,
-  settings?: Partial<TableSettings>,
+  settings?: Partial<TableSettings>
 ): TableDocument {
   const defaultSettings: TableSettings = {
     maxPlayers: 10,
@@ -255,7 +246,7 @@ export function createLedgerEntry(
   type: 'buy' | 'cashout',
   amount: number,
   runningBalance: number,
-  tableId: string | null = null,
+  tableId: string | null = null
 ): LedgerEntryDocument {
   return {
     id: '', // Will be set by Firestore auto-ID
@@ -288,7 +279,7 @@ export interface PlayerHandDocument {
 export function createPlayerHandDocument(
   playerId: string,
   holeCards: [Card, Card],
-  handNumber: number,
+  handNumber: number
 ): PlayerHandDocument {
   return {
     playerId,
@@ -328,7 +319,7 @@ export function createHandHistoryDocument(
   pot: number,
   winningHand: string,
   communityCards: Card[],
-  players: { id: string; holeCards: [Card, Card] | null; finalChips: number }[],
+  players: { id: string; holeCards: [Card, Card] | null; finalChips: number }[]
 ): HandHistoryDocument {
   return {
     handNumber,

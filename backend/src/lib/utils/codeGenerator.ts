@@ -12,10 +12,7 @@ import { Firestore } from 'firebase-admin/firestore';
  * @returns Promise<string> - 4-digit code (e.g., "1234")
  * @throws Error if unable to generate unique code after maxAttempts
  */
-export async function generateTableCode(
-  db: Firestore,
-  maxAttempts = 10,
-): Promise<string> {
+export async function generateTableCode(db: Firestore, maxAttempts = 10): Promise<string> {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Generate random 4-digit code (1000-9999)
     const code = Math.floor(1000 + Math.random() * 9000).toString();
@@ -28,9 +25,7 @@ export async function generateTableCode(
     }
   }
 
-  throw new Error(
-    `Unable to generate unique table code after ${maxAttempts} attempts`,
-  );
+  throw new Error(`Unable to generate unique table code after ${maxAttempts} attempts`);
 }
 
 /**
@@ -48,10 +43,7 @@ export function isValidTableCode(code: string): boolean {
  * @param code - Table code to check
  * @returns Promise<boolean> - true if code exists
  */
-export async function tableCodeExists(
-  db: Firestore,
-  code: string,
-): Promise<boolean> {
+export async function tableCodeExists(db: Firestore, code: string): Promise<boolean> {
   if (!isValidTableCode(code)) {
     return false;
   }

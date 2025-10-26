@@ -31,16 +31,16 @@ export function useAuth(): AuthState & AuthActions {
   useEffect(() => {
     // Subscribe to auth state changes
     const unsubscribe = auth.onAuthStateChanged(
-      (currentUser) => {
+      currentUser => {
         setUser(currentUser);
         setLoading(false);
         setError(null);
       },
-      (err) => {
+      err => {
         console.error('Auth state error:', err);
         setError(err as Error);
         setLoading(false);
-      },
+      }
     );
 
     // Cleanup subscription

@@ -18,14 +18,14 @@ const colors = {
   },
   // Card suits - color-blind friendly alternatives
   suits: {
-    // Spades: Black (safe)
+    // Spades: Black (distinguishable from red)
     spades: '#000000',
     // Hearts: Red (distinguishable from black)
     hearts: '#E63946',
-    // Diamonds: Orange (distinguishable from red and black)
-    diamonds: '#F77F00',
-    // Clubs: Dark Gray (distinguishable from black)
-    clubs: '#2A2A2A',
+    // Diamonds: Red (distinguishable from black)
+    diamonds: '#E63946',
+    // Clubs: Black (distinguishable from red)
+    clubs: '#000000',
   },
   // Table colors
   table: {

@@ -17,12 +17,14 @@ pnpm -w run dev:frontend
 Open **http://localhost:5173** - You'll see the poker app UI!
 
 **What works:**
+
 - ✅ All UI components render
 - ✅ Routing and navigation
 - ✅ Form validation
 - ✅ Component interactions
 
 **What doesn't work (yet):**
+
 - ❌ Creating tables (needs backend)
 - ❌ Joining tables (needs backend)
 - ❌ Real-time updates (needs backend)
@@ -32,6 +34,7 @@ Open **http://localhost:5173** - You'll see the poker app UI!
 For full functionality including backend Firebase functions:
 
 **Prerequisites:**
+
 ```bash
 # Install Java (required for Firebase emulators)
 brew install openjdk@11
@@ -45,6 +48,7 @@ java -version
 ```
 
 **Run both frontend and backend:**
+
 ```bash
 # Install dependencies
 pnpm install
@@ -54,6 +58,7 @@ pnpm run dev
 ```
 
 **OR run separately:**
+
 ```bash
 # Terminal 1: Backend (Firebase emulators)
 pnpm -w run dev:backend
@@ -119,16 +124,19 @@ You can develop the frontend without Firebase emulators:
 ## Need Help?
 
 **Firebase emulator won't start?**
+
 - Ensure Java is installed: `java -version`
 - Check Firebase CLI: `firebase --version`
 - See detailed troubleshooting in `DEVELOPMENT.md`
 
 **Frontend won't start?**
+
 - Check Node version: `node --version` (need 20+)
 - Check pnpm: `pnpm --version` (need 8+)
 - Reinstall: `rm -rf node_modules && pnpm install`
 
 **TypeScript errors?**
+
 - Check compilation: `pnpm --filter frontend exec tsc --noEmit`
 - All errors should be fixed in latest commit
 

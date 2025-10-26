@@ -73,172 +73,164 @@ export default function CreateTableModal({
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create Table</ModalHeader>
+        <ModalHeader color="gray.800">Create Table</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} align="stretch">
             {/* Use Custom Settings Toggle */}
             <FormControl display="flex" alignItems="center">
-              <FormLabel htmlFor="custom-settings" mb="0">
+              <FormLabel htmlFor="custom-settings" mb="0" color="gray.700">
                 Use custom settings
               </FormLabel>
               <Switch
                 id="custom-settings"
                 isChecked={useCustomSettings}
-                onChange={(e) => setUseCustomSettings(e.target.checked)}
+                onChange={e => setUseCustomSettings(e.target.checked)}
               />
             </FormControl>
 
             {useCustomSettings && (
               <>
-                <Text fontSize="sm" color="gray.400">
+                <Text fontSize="sm" color="gray.600">
                   Customize your table settings below
                 </Text>
 
                 {/* Max Players */}
                 <FormControl>
-                  <FormLabel>Max Players</FormLabel>
+                  <FormLabel color="gray.700">Max Players</FormLabel>
                   <NumberInput
                     value={maxPlayers}
                     onChange={(_, val) => setMaxPlayers(val)}
                     min={2}
                     max={10}
                   >
-                    <NumberInputField />
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Blinds */}
                 <FormControl>
-                  <FormLabel>Small Blind</FormLabel>
-                  <NumberInput
-                    value={smallBlind}
-                    onChange={(_, val) => setSmallBlind(val)}
-                    min={1}
-                  >
-                    <NumberInputField />
+                  <FormLabel color="gray.700">Small Blind</FormLabel>
+                  <NumberInput value={smallBlind} onChange={(_, val) => setSmallBlind(val)} min={1}>
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Big Blind</FormLabel>
+                  <FormLabel color="gray.700">Big Blind</FormLabel>
                   <NumberInput
                     value={bigBlind}
                     onChange={(_, val) => setBigBlind(val)}
                     min={smallBlind + 1}
                   >
-                    <NumberInputField />
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Buy-in and Stack */}
                 <FormControl>
-                  <FormLabel>Minimum Buy-in</FormLabel>
-                  <NumberInput
-                    value={minBuyIn}
-                    onChange={(_, val) => setMinBuyIn(val)}
-                    min={1}
-                  >
-                    <NumberInputField />
+                  <FormLabel color="gray.700">Minimum Buy-in</FormLabel>
+                  <NumberInput value={minBuyIn} onChange={(_, val) => setMinBuyIn(val)} min={1}>
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Maximum Stack</FormLabel>
+                  <FormLabel color="gray.700">Maximum Stack</FormLabel>
                   <NumberInput
                     value={maxStack}
                     onChange={(_, val) => setMaxStack(val)}
                     min={minBuyIn}
                   >
-                    <NumberInputField />
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Max Debt */}
                 <FormControl>
-                  <FormLabel>Max Debt Per Player</FormLabel>
+                  <FormLabel color="gray.700">Max Debt Per Player</FormLabel>
                   <NumberInput
                     value={maxDebtPerPlayer}
                     onChange={(_, val) => setMaxDebtPerPlayer(val)}
                     min={0}
                   >
-                    <NumberInputField />
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Timers */}
                 <FormControl>
-                  <FormLabel>Action Timer (seconds)</FormLabel>
+                  <FormLabel color="gray.700">Action Timer (seconds)</FormLabel>
                   <NumberInput
                     value={actionTimer}
                     onChange={(_, val) => setActionTimer(val)}
                     min={10}
                     max={120}
                   >
-                    <NumberInputField />
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Blind Increase Interval (minutes)</FormLabel>
+                  <FormLabel color="gray.700">Blind Increase Interval (minutes)</FormLabel>
                   <NumberInput
                     value={blindIncreaseInterval}
                     onChange={(_, val) => setBlindIncreaseInterval(val)}
                     min={5}
                     max={60}
                   >
-                    <NumberInputField />
+                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
+                      <NumberIncrementStepper color="gray.600" />
+                      <NumberDecrementStepper color="gray.600" />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Show Hand Strength */}
                 <FormControl display="flex" alignItems="center">
-                  <FormLabel htmlFor="show-hand-strength" mb="0">
+                  <FormLabel htmlFor="show-hand-strength" mb="0" color="gray.700">
                     Show hand strength
                   </FormLabel>
                   <Switch
                     id="show-hand-strength"
                     isChecked={showHandStrength}
-                    onChange={(e) => setShowHandStrength(e.target.checked)}
+                    onChange={e => setShowHandStrength(e.target.checked)}
                   />
                 </FormControl>
               </>
             )}
 
             {!useCustomSettings && (
-              <Text fontSize="sm" color="gray.400">
+              <Text fontSize="sm" color="gray.600">
                 Default settings will be used (10 players, 5/10 blinds, 30s timer)
               </Text>
             )}

@@ -3,17 +3,10 @@
  * Main landing page for creating or joining tables
  */
 
-import {
-  Box,
-  Container,
-  Heading,
-  VStack,
-  Button,
-  useDisclosure,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Container, Heading, VStack, Button, useDisclosure, Text } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { TableSettings } from '@shared/types/table';
 import { useAuth } from '../hooks/useAuth';
 import { useTable } from '../hooks/useTable';
 import CreateTableModal from '../components/Table/CreateTableModal';
@@ -35,7 +28,7 @@ export default function Home() {
     }
   }, [authLoading, user, signIn]);
 
-  const handleCreateTable = async (settings?: Partial<any>) => {
+  const handleCreateTable = async (settings?: Partial<TableSettings>) => {
     setIsCreating(true);
     setError(null);
     try {
@@ -79,10 +72,10 @@ export default function Home() {
       <VStack spacing={8} align="stretch">
         <Box textAlign="center">
           <Heading as="h1" size="2xl" mb={4}>
-            Texas Hold'em Poker
+            Zaddies Game - Texas Hold&apos;em
           </Heading>
           <Text fontSize="lg" color="gray.400">
-            Play poker with your friends
+            poker for dads
           </Text>
         </Box>
 
@@ -103,22 +96,12 @@ export default function Home() {
             <Text fontSize="md" mb={3} textAlign="center" color="gray.400">
               Or join an existing table
             </Text>
-            <JoinTableForm
-              onJoin={handleJoinTable}
-              isLoading={isJoining}
-              isDisabled={!user}
-            />
+            <JoinTableForm onJoin={handleJoinTable} isLoading={isJoining} isDisabled={!user} />
           </Box>
 
           {/* Error Message */}
           {error && (
-            <Box
-              p={4}
-              bg="red.900"
-              borderRadius="md"
-              borderWidth={1}
-              borderColor="red.600"
-            >
+            <Box p={4} bg="red.900" borderRadius="md" borderWidth={1} borderColor="red.600">
               <Text color="red.200">{error}</Text>
             </Box>
           )}

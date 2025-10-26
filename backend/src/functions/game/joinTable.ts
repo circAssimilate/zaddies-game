@@ -20,14 +20,11 @@ import { createLedgerEntry, createPlayerDocument } from './schemas';
  */
 export async function joinTable(
   data: JoinTableRequest,
-  context: { auth?: { uid: string; token?: { email?: string; name?: string } } },
+  context: { auth?: { uid: string; token?: { email?: string; name?: string } } }
 ): Promise<JoinTableResponse> {
   // Validate authentication
   if (!context.auth) {
-    throw new HttpsError(
-      'unauthenticated',
-      'User must be authenticated to join a table',
-    );
+    throw new HttpsError('unauthenticated', 'User must be authenticated to join a table');
   }
 
   const userId = context.auth.uid;
@@ -37,22 +34,16 @@ export async function joinTable(
   try {
     // Validate table ID format
     if (!/^\d{4}$/.test(tableId)) {
-      throw new HttpsError(
-        'invalid-argument',
-        'Table code must be a 4-digit number',
-      );
+      throw new HttpsError('invalid-argument', 'Table code must be a 4-digit number');
     }
 
     // Validate buy-in amount
     if (buyInAmount <= 0) {
-      throw new HttpsError(
-        'invalid-argument',
-        'Buy-in amount must be positive',
-      );
+      throw new HttpsError('invalid-argument', 'Buy-in amount must be positive');
     }
 
     // Use transaction to ensure atomicity
-    const result = await db.runTransaction(async (transaction) => {
+    const result = await db.runTransaction(async transaction => {
       // Get table document
       const tableRef = db.collection('tables').doc(tableId);
       const tableDoc = await transaction.get(tableRef);
@@ -65,33 +56,24 @@ export async function joinTable(
 
       // Validate table status
       if (table.status === 'ended') {
-        throw new HttpsError(
-          'failed-precondition',
-          'Cannot join a table that has ended',
-        );
+        throw new HttpsError('failed-precondition', 'Cannot join a table that has ended');
       }
 
       // Validate table is not full
       if (table.players.length >= table.settings.maxPlayers) {
-        throw new HttpsError(
-          'failed-precondition',
-          'Table is full',
-        );
+        throw new HttpsError('failed-precondition', 'Table is full');
       }
 
       // Validate player is not already at table
-      if (table.players.some((p) => p.id === userId)) {
-        throw new HttpsError(
-          'already-exists',
-          'You are already at this table',
-        );
+      if (table.players.some(p => p.id === userId)) {
+        throw new HttpsError('already-exists', 'You are already at this table');
       }
 
       // Validate buy-in amount meets minimum
       if (buyInAmount < table.settings.minBuyIn) {
         throw new HttpsError(
           'invalid-argument',
-          `Buy-in amount must be at least ${table.settings.minBuyIn}`,
+          `Buy-in amount must be at least ${table.settings.minBuyIn}`
         );
       }
 
@@ -99,7 +81,7 @@ export async function joinTable(
       if (buyInAmount > table.settings.maxStack) {
         throw new HttpsError(
           'invalid-argument',
-          `Buy-in amount cannot exceed ${table.settings.maxStack}`,
+          `Buy-in amount cannot exceed ${table.settings.maxStack}`
         );
       }
 
@@ -110,7 +92,7 @@ export async function joinTable(
           .doc(userId)
           .collection('transactions')
           .orderBy('timestamp', 'desc')
-          .limit(1),
+          .limit(1)
       );
 
       let currentBalance = 0;
@@ -126,12 +108,12 @@ export async function joinTable(
       if (Math.abs(newBalance) > table.settings.maxDebtPerPlayer) {
         throw new HttpsError(
           'permission-denied',
-          `This purchase would exceed the maximum debt limit of ${table.settings.maxDebtPerPlayer}`,
+          `This purchase would exceed the maximum debt limit of ${table.settings.maxDebtPerPlayer}`
         );
       }
 
       // Find first available seat position
-      const occupiedPositions = new Set(table.players.map((p) => p.position));
+      const occupiedPositions = new Set(table.players.map(p => p.position));
       let position = 0;
       for (let i = 0; i < table.settings.maxPlayers; i++) {
         if (!occupiedPositions.has(i)) {
@@ -184,14 +166,10 @@ export async function joinTable(
         'buy',
         -buyInAmount, // Negative for chip purchase
         newBalance,
-        tableId,
+        tableId
       );
 
-      const ledgerRef = db
-        .collection('ledger')
-        .doc(userId)
-        .collection('transactions')
-        .doc(); // Auto-generate ID
+      const ledgerRef = db.collection('ledger').doc(userId).collection('transactions').doc(); // Auto-generate ID
 
       transaction.set(ledgerRef, {
         ...ledgerEntry,
@@ -214,9 +192,6 @@ export async function joinTable(
 
     // Generic error
     console.error('Error joining table:', error);
-    throw new HttpsError(
-      'internal',
-      'Failed to join table',
-    );
+    throw new HttpsError('internal', 'Failed to join table');
   }
 }

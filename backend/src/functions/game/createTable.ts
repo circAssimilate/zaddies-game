@@ -19,14 +19,11 @@ import { generateTableCode } from '../../lib/utils/codeGenerator';
  */
 export async function createTable(
   data: CreateTableRequest,
-  context: { auth?: { uid: string } },
+  context: { auth?: { uid: string } }
 ): Promise<CreateTableResponse> {
   // Validate authentication
   if (!context.auth) {
-    throw new HttpsError(
-      'unauthenticated',
-      'User must be authenticated to create a table',
-    );
+    throw new HttpsError('unauthenticated', 'User must be authenticated to create a table');
   }
 
   const userId = context.auth.uid;
@@ -79,15 +76,12 @@ export async function createTable(
     if (error instanceof Error && error.message.includes('Unable to generate')) {
       throw new HttpsError(
         'resource-exhausted',
-        'Unable to generate unique table code. Please try again.',
+        'Unable to generate unique table code. Please try again.'
       );
     }
 
     // Generic error
-    throw new HttpsError(
-      'internal',
-      'Failed to create table',
-    );
+    throw new HttpsError('internal', 'Failed to create table');
   }
 }
 
@@ -102,26 +96,17 @@ function validateTableSettings(settings: CreateTableRequest['settings']) {
   // Validate maxPlayers
   if (settings.maxPlayers !== undefined) {
     if (settings.maxPlayers < 2 || settings.maxPlayers > 10) {
-      throw new HttpsError(
-        'invalid-argument',
-        'Max players must be between 2 and 10',
-      );
+      throw new HttpsError('invalid-argument', 'Max players must be between 2 and 10');
     }
   }
 
   // Validate blinds
   if (settings.bigBlind !== undefined && settings.bigBlind <= 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Big blind must be positive',
-    );
+    throw new HttpsError('invalid-argument', 'Big blind must be positive');
   }
 
   if (settings.smallBlind !== undefined && settings.smallBlind <= 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Small blind must be positive',
-    );
+    throw new HttpsError('invalid-argument', 'Small blind must be positive');
   }
 
   // Validate small blind < big blind
@@ -130,26 +115,17 @@ function validateTableSettings(settings: CreateTableRequest['settings']) {
     settings.bigBlind !== undefined &&
     settings.smallBlind >= settings.bigBlind
   ) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Small blind must be less than big blind',
-    );
+    throw new HttpsError('invalid-argument', 'Small blind must be less than big blind');
   }
 
   // Validate minBuyIn
   if (settings.minBuyIn !== undefined && settings.minBuyIn <= 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Minimum buy-in must be positive',
-    );
+    throw new HttpsError('invalid-argument', 'Minimum buy-in must be positive');
   }
 
   // Validate maxStack
   if (settings.maxStack !== undefined && settings.maxStack <= 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Maximum stack must be positive',
-    );
+    throw new HttpsError('invalid-argument', 'Maximum stack must be positive');
   }
 
   // Validate maxStack >= minBuyIn
@@ -160,31 +136,22 @@ function validateTableSettings(settings: CreateTableRequest['settings']) {
   ) {
     throw new HttpsError(
       'invalid-argument',
-      'Maximum stack must be greater than or equal to minimum buy-in',
+      'Maximum stack must be greater than or equal to minimum buy-in'
     );
   }
 
   // Validate maxDebtPerPlayer
   if (settings.maxDebtPerPlayer !== undefined && settings.maxDebtPerPlayer < 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Maximum debt per player cannot be negative',
-    );
+    throw new HttpsError('invalid-argument', 'Maximum debt per player cannot be negative');
   }
 
   // Validate actionTimer
   if (settings.actionTimer !== undefined && settings.actionTimer <= 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Action timer must be positive',
-    );
+    throw new HttpsError('invalid-argument', 'Action timer must be positive');
   }
 
   // Validate blindIncreaseInterval
   if (settings.blindIncreaseInterval !== undefined && settings.blindIncreaseInterval <= 0) {
-    throw new HttpsError(
-      'invalid-argument',
-      'Blind increase interval must be positive',
-    );
+    throw new HttpsError('invalid-argument', 'Blind increase interval must be positive');
   }
 }

@@ -140,6 +140,7 @@ cp backend/.env.template backend/.env
 \`\`\`bash
 
 # Ensure you're using the correct Node.js version
+
 nvm use
 
 # Start Firebase emulators + frontend (parallel)
@@ -271,17 +272,22 @@ pnpm install
 **Solution**: You have an older Java version installed. Update to Java 21:
 
 \`\`\`bash
+
 # macOS
+
 brew install openjdk@21
 
 # Update your ~/.zshrc or ~/.bashrc to use Java 21
+
 # Remove or comment out any old Java paths (e.g., openjdk@11)
+
 export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
 export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
 
 # Reload shell and verify
+
 source ~/.zshrc
-java -version  # Should show 21.x.x
+java -version # Should show 21.x.x
 \`\`\`
 
 #### "Port 5000 is not open" or "Port taken"
@@ -308,7 +314,9 @@ If you see `auth/invalid-api-key` or a blank page:
 
 \`\`\`bash
 cp frontend/.env.local.example frontend/.env.local
+
 # Edit .env.local with your Firebase config values
+
 \`\`\`
 
 ### Common pnpm Commands

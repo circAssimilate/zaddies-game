@@ -24,8 +24,8 @@ function getChipColor(value: number): string {
 }
 
 function getTextColor(value: number): string {
-  // White text for dark chips, black for light chips
-  if (value >= 100 || value < 5) return 'white';
+  // Black text for white chips (< 5), white text for all others
+  if (value < 5) return 'black';
   return 'white';
 }
 

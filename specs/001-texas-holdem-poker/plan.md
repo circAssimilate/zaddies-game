@@ -213,7 +213,7 @@ backend/
 │   │   │   ├── handEvaluator.ts
 │   │   │   ├── potCalculator.ts
 │   │   │   ├── shuffler.ts  # Gilbert-Shannon-Reeds
-│   │   │   └── gameEngine.ts
+│   │   │   └── gameEngine.ts  # Includes burn card logic
 │   │   ├── validation/     # Input validation
 │   │   └── utils/          # Helper functions
 │   └── types/              # Shared types
@@ -257,6 +257,29 @@ package.json                 # Root workspace config
 ```
 
 **Structure Decision**: Web application structure (frontend + backend) selected based on client-server architecture requirement. Frontend handles React UI and Firebase SDK real-time listeners. Backend uses Firebase Functions for serverless game logic execution. Shared types package ensures consistency. Modular structure supports independent development and testing of game systems (poker logic, cashier, real-time sync).
+
+## Game Mechanics Implementation
+
+### Burn Cards (Vegas Standard)
+
+The game engine implements authentic casino dealing procedures, including burn cards:
+
+- **Burn Before Flop**: Discard top card, then deal 3 community cards (4 cards consumed)
+- **Burn Before Turn**: Discard top card, then deal 1 community card (2 cards consumed)
+- **Burn Before River**: Discard top card, then deal 1 community card (2 cards consumed)
+
+**Rationale**: While burn cards serve no security purpose in a digital game (unlike preventing marked cards in physical casinos), they are preserved for authentic Vegas-style gameplay and accurate deck counting.
+
+**Implementation**: `backend/src/lib/poker/gameEngine.ts:93-109` (progressToNextPhase function)
+**Tests**: `backend/tests/unit/gameEngine.test.ts:142` (verifies correct deck size after burns)
+
+### Card Shuffling
+
+Gilbert-Shannon-Reeds riffle shuffle algorithm (7 shuffles per deck) - see ADR 002.
+
+### Hand Evaluation
+
+Five-card hand ranking with numeric comparison system - supports all standard poker hands including tie-breaking.
 
 ## Complexity Tracking
 

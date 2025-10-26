@@ -278,14 +278,17 @@ Each poker hand follows this sequence:
    └─ Betting round (starting left of big blind)
 
 2. Flop
+   ├─ Burn 1 card face-down (discard from top of deck)
    ├─ Deal 3 community cards face-up
    └─ Betting round (starting left of dealer button)
 
 3. Turn
+   ├─ Burn 1 card face-down
    ├─ Deal 1 community card face-up (4 total)
    └─ Betting round
 
 4. River
+   ├─ Burn 1 card face-down
    ├─ Deal 1 community card face-up (5 total)
    └─ Betting round
 
@@ -321,6 +324,18 @@ In each betting round, players act in turn (clockwise from the action position):
 - **Small Blind**: Posted by player left of dealer button
 - **Big Blind**: Posted by player left of small blind
 - **Action Order**: Starts left of big blind pre-flop, left of dealer button post-flop
+
+### Burn Cards (Vegas Standard)
+
+Following standard casino rules, the dealer burns (discards face-down) the top card of the deck before dealing community cards:
+
+- **Before Flop**: Burn 1 card, then deal 3 community cards
+- **Before Turn**: Burn 1 card, then deal 1 community card
+- **Before River**: Burn 1 card, then deal 1 community card
+
+**Purpose**: Burn cards prevent cheating by marking or identifying the top card. Even in a digital game, this mechanic is preserved for authentic Vegas-style gameplay.
+
+**Implementation**: `backend/src/lib/poker/gameEngine.ts:93-109`
 
 ---
 

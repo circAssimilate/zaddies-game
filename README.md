@@ -22,9 +22,25 @@ A web-based Texas Hold'em Poker game for friend groups with Vegas-style rules, r
 ## Prerequisites
 
 - Node.js 20 LTS or higher
-- npm 10.x or higher
-- Firebase CLI: `npm install -g firebase-tools`
+- pnpm 8.x or higher
+- Firebase CLI: `pnpm install -g firebase-tools`
 - Git
+
+### Installing pnpm
+
+\`\`\`bash
+# macOS/Linux
+npm install -g pnpm
+
+# Or using Homebrew (macOS)
+brew install pnpm
+
+# Windows
+npm install -g pnpm
+
+# Verify installation
+pnpm --version  # Should output 8.x.x or higher
+\`\`\`
 
 ## Quick Start
 
@@ -33,7 +49,7 @@ A web-based Texas Hold'em Poker game for friend groups with Vegas-style rules, r
 \`\`\`bash
 git clone https://github.com/circAssimilate/zaddies-game.git
 cd zaddies-game
-npm install
+pnpm install
 \`\`\`
 
 ### 2. Firebase Setup
@@ -78,13 +94,17 @@ cp backend/.env.template backend/.env
 
 \`\`\`bash
 
-# Start Firebase emulators
+# Start Firebase emulators + frontend (parallel)
 
+pnpm run dev
+
+# Or start separately:
+
+# Terminal 1: Firebase emulators
 firebase emulators:start
 
-# In another terminal, start frontend
-
-cd frontend && npm run dev
+# Terminal 2: Frontend
+cd frontend && pnpm run dev
 \`\`\`
 
 Visit http://localhost:5173 for the app and http://localhost:4000 for Firebase Emulator UI.
@@ -95,17 +115,22 @@ Visit http://localhost:5173 for the app and http://localhost:4000 for Firebase E
 
 \`\`\`bash
 
-# All tests
+# All tests (all workspaces)
 
-npm test
+pnpm test
+
+# Test specific workspace
+
+pnpm --filter frontend test
+pnpm --filter backend test
 
 # Watch mode
 
-npm test -- --watch
+pnpm --filter frontend test:watch
 
 # With coverage
 
-npm test -- --coverage
+pnpm --filter frontend test:coverage
 \`\`\`
 
 ### Code Quality
@@ -114,19 +139,19 @@ npm test -- --coverage
 
 # Format code
 
-npm run format
+pnpm run format
 
 # Lint
 
-npm run lint
+pnpm run lint
 
 # Fix linting issues
 
-npm run lint:fix
+pnpm run lint:fix
 
 # Run all checks (format + lint + test)
 
-npm run check
+pnpm run check
 \`\`\`
 
 ### Building
@@ -135,15 +160,49 @@ npm run check
 
 # Build everything
 
-npm run build
+pnpm run build
 
 # Build frontend only
 
-cd frontend && npm run build
+pnpm --filter frontend build
 
 # Build backend only
 
-cd backend && npm run build
+pnpm --filter backend build
+\`\`\`
+
+## Troubleshooting
+
+### "Please use pnpm" Error
+
+If you see this error when running npm commands:
+
+\`\`\`
+npm ERR! Unsupported engine: wanted: {"npm":"please-use-pnpm"}
+\`\`\`
+
+**Solution**: This project uses pnpm, not npm. Install pnpm globally and use it instead:
+
+\`\`\`bash
+npm install -g pnpm
+pnpm install
+\`\`\`
+
+### Common pnpm Commands
+
+\`\`\`bash
+# Add dependency to specific workspace
+pnpm --filter frontend add react-router-dom
+
+# Add dev dependency
+pnpm --filter frontend add -D @types/react-router-dom
+
+# Remove dependency
+pnpm --filter frontend remove react-router-dom
+
+# Update dependencies
+pnpm update              # Update all
+pnpm update react        # Update specific package
 \`\`\`
 
 ## Deployment

@@ -2,6 +2,7 @@
 node_modules/
 .pnp
 .pnp.js
+.pnpm-store
 
 # Testing
 coverage/
@@ -38,6 +39,9 @@ firebase-debug.*.log
 
 # Firebase emulator data
 firebase/emulators/data/
+
+# pnpm deployment isolation
+backend/_isolated_/
 
 # Editor directories and files
 .vscode/*

@@ -151,6 +151,49 @@ export function categorizeFiles(files: string[], config?: FilePatternsConfig): F
   const hasConfiguration = categories.some(cat => cat === FileCategory.CONFIGURATION);
   const hasTests = categories.some(cat => cat === FileCategory.TESTS);
 
+  // Detect frontend/backend/shared patterns
+  const frontendPattern = /^frontend\//;
+  const backendPattern = /^backend\//;
+  const sharedPattern = /^shared\//;
+
+  const hasFrontend = normalizedFiles.some(
+    (file, i) =>
+      frontendPattern.test(file) &&
+      (categories[i] === FileCategory.SOURCE_CODE || categories[i] === FileCategory.TESTS)
+  );
+
+  const hasBackend = normalizedFiles.some(
+    (file, i) =>
+      backendPattern.test(file) &&
+      (categories[i] === FileCategory.SOURCE_CODE || categories[i] === FileCategory.TESTS)
+  );
+
+  const hasShared = normalizedFiles.some(
+    (file, i) =>
+      sharedPattern.test(file) &&
+      (categories[i] === FileCategory.SOURCE_CODE || categories[i] === FileCategory.TESTS)
+  );
+
+  // Determine if changes are frontend-only, backend-only, or test-only
+  const sourceCodeFiles = normalizedFiles.filter(
+    (_, i) => categories[i] === FileCategory.SOURCE_CODE
+  );
+  const isFrontendOnly =
+    hasSourceCode &&
+    hasFrontend &&
+    !hasBackend &&
+    !hasShared &&
+    sourceCodeFiles.every(f => frontendPattern.test(f));
+
+  const isBackendOnly =
+    hasSourceCode &&
+    hasBackend &&
+    !hasFrontend &&
+    !hasShared &&
+    sourceCodeFiles.every(f => backendPattern.test(f));
+
+  const isTestOnly = !hasSourceCode && hasTests;
+
   return {
     files: normalizedFiles,
     categories,
@@ -158,6 +201,12 @@ export function categorizeFiles(files: string[], config?: FilePatternsConfig): F
     hasSourceCode,
     hasConfiguration,
     hasTests,
+    hasFrontend,
+    hasBackend,
+    hasShared,
+    isFrontendOnly,
+    isBackendOnly,
+    isTestOnly,
   };
 }
 
@@ -175,40 +224,75 @@ export function determineWorkflowSteps(changeSet: FileChangeSet): WorkflowDecisi
       runTests: false,
       runBuild: false,
       runDeployment: false,
+      runFrontendTests: false,
+      runBackendTests: false,
+      runFrontendBuild: false,
+      runBackendBuild: false,
       reason: 'Documentation-only changes - skipping tests, build, and deployment',
     };
   }
 
-  // Configuration changes: Run everything for safety
-  if (changeSet.hasConfiguration) {
-    return {
-      runLinting: true,
-      runTests: true,
-      runBuild: true,
-      runDeployment: true,
-      reason: 'Configuration changes detected - running full pipeline for safety',
-    };
-  }
-
-  // Source code changes: Run everything
-  if (changeSet.hasSourceCode) {
-    return {
-      runLinting: true,
-      runTests: true,
-      runBuild: true,
-      runDeployment: true,
-      reason: 'Source code changes detected - running full pipeline',
-    };
-  }
-
-  // Test-only changes: Run tests but skip deployment
-  if (changeSet.hasTests) {
+  // Test-only changes: Run tests but skip build and deployment
+  if (changeSet.isTestOnly) {
     return {
       runLinting: true,
       runTests: true,
       runBuild: false,
       runDeployment: false,
-      reason: 'Test-only changes - running tests but skipping deployment',
+      runFrontendTests: changeSet.hasFrontend,
+      runBackendTests: changeSet.hasBackend,
+      runFrontendBuild: false,
+      runBackendBuild: false,
+      reason: 'Test-only changes - running tests but skipping build and deployment',
+    };
+  }
+
+  // Frontend-only changes: Skip backend tests and builds
+  if (changeSet.isFrontendOnly) {
+    return {
+      runLinting: true,
+      runTests: true,
+      runBuild: true,
+      runDeployment: true,
+      runFrontendTests: true,
+      runBackendTests: false,
+      runFrontendBuild: true,
+      runBackendBuild: false,
+      reason: 'Frontend-only changes - skipping backend tests and build',
+    };
+  }
+
+  // Backend-only changes: Skip frontend tests and builds
+  if (changeSet.isBackendOnly) {
+    return {
+      runLinting: true,
+      runTests: true,
+      runBuild: true,
+      runDeployment: true,
+      runFrontendTests: false,
+      runBackendTests: true,
+      runFrontendBuild: false,
+      runBackendBuild: true,
+      reason: 'Backend-only changes - skipping frontend tests and build',
+    };
+  }
+
+  // Configuration changes or mixed source code: Run everything for safety
+  if (changeSet.hasConfiguration || changeSet.hasSourceCode || changeSet.hasShared) {
+    return {
+      runLinting: true,
+      runTests: true,
+      runBuild: true,
+      runDeployment: true,
+      runFrontendTests: true,
+      runBackendTests: true,
+      runFrontendBuild: true,
+      runBackendBuild: true,
+      reason: changeSet.hasConfiguration
+        ? 'Configuration changes detected - running full pipeline for safety'
+        : changeSet.hasShared
+          ? 'Shared code changes detected - running full pipeline'
+          : 'Mixed code changes detected - running full pipeline',
     };
   }
 
@@ -218,6 +302,10 @@ export function determineWorkflowSteps(changeSet: FileChangeSet): WorkflowDecisi
     runTests: true,
     runBuild: true,
     runDeployment: true,
+    runFrontendTests: true,
+    runBackendTests: true,
+    runFrontendBuild: true,
+    runBackendBuild: true,
     reason: 'Unknown file types - running full pipeline for safety',
   };
 }

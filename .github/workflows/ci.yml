@@ -25,19 +25,75 @@ jobs:
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
-          # Check if only documentation changed
+          # Initialize flags
           DOCS_ONLY=true
+          HAS_FRONTEND=false
+          HAS_BACKEND=false
+          HAS_SHARED=false
+          HAS_TESTS_ONLY=true
+          HAS_SOURCE_CODE=false
+
+          # Categorize files
           while IFS= read -r file; do
-            if [[ ! "$file" =~ \.(md)$ ]] && [[ ! "$file" =~ ^docs/ ]] && [[ ! "$file" =~ ^\.github/ISSUE_TEMPLATE/ ]] && [[ ! "$file" =~ ^\.github/PULL_REQUEST_TEMPLATE/ ]]; then
-              DOCS_ONLY=false
-              break
+            # Skip documentation files
+            if [[ "$file" =~ \.(md)$ ]] || [[ "$file" =~ ^docs/ ]] || [[ "$file" =~ ^\.github/ISSUE_TEMPLATE/ ]] || [[ "$file" =~ ^\.github/PULL_REQUEST_TEMPLATE/ ]]; then
+              continue
+            fi
+
+            DOCS_ONLY=false
+
+            # Check for test files
+            if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]] || [[ "$file" =~ \.spec\.(ts|tsx|js|jsx)$ ]] || [[ "$file" =~ /tests/ ]] || [[ "$file" =~ /__tests__/ ]]; then
+              # Test file detected, but don't mark as source code
+              :
+            else
+              # Non-test code file
+              HAS_TESTS_ONLY=false
+
+              # Detect frontend/backend/shared source code
+              if [[ "$file" =~ ^frontend/ ]] && [[ "$file" =~ \.(ts|tsx|js|jsx)$ ]]; then
+                HAS_FRONTEND=true
+                HAS_SOURCE_CODE=true
+              elif [[ "$file" =~ ^backend/ ]] && [[ "$file" =~ \.(ts|tsx|js|jsx)$ ]]; then
+                HAS_BACKEND=true
+                HAS_SOURCE_CODE=true
+              elif [[ "$file" =~ ^shared/ ]] && [[ "$file" =~ \.(ts|tsx|js|jsx)$ ]]; then
+                HAS_SHARED=true
+                HAS_SOURCE_CODE=true
+              fi
             fi
           done <<< "$CHANGED_FILES"
 
-          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
+          # Determine what to run
+          FRONTEND_ONLY=false
+          BACKEND_ONLY=false
 
+          if [ "$HAS_SOURCE_CODE" == "true" ]; then
+            if [ "$HAS_FRONTEND" == "true" ] && [ "$HAS_BACKEND" == "false" ] && [ "$HAS_SHARED" == "false" ]; then
+              FRONTEND_ONLY=true
+            elif [ "$HAS_BACKEND" == "true" ] && [ "$HAS_FRONTEND" == "false" ] && [ "$HAS_SHARED" == "false" ]; then
+              BACKEND_ONLY=true
+            fi
+          fi
+
+          # Set outputs
+          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
+          echo "frontend_only=$FRONTEND_ONLY" >> $GITHUB_OUTPUT
+          echo "backend_only=$BACKEND_ONLY" >> $GITHUB_OUTPUT
+          echo "test_only=$HAS_TESTS_ONLY" >> $GITHUB_OUTPUT
+          echo "has_shared=$HAS_SHARED" >> $GITHUB_OUTPUT
+
+          # Log decision
           if [ "$DOCS_ONLY" == "true" ]; then
-            echo "::notice::📝 Documentation-only changes detected - will skip tests and builds"
+            echo "::notice::📝 Documentation-only changes - will skip tests and builds"
+          elif [ "$HAS_TESTS_ONLY" == "true" ]; then
+            echo "::notice::🧪 Test-only changes - will run tests but skip builds"
+          elif [ "$FRONTEND_ONLY" == "true" ]; then
+            echo "::notice::⚛️  Frontend-only changes - will skip backend tests and build"
+          elif [ "$BACKEND_ONLY" == "true" ]; then
+            echo "::notice::🔧 Backend-only changes - will skip frontend tests and build"
+          elif [ "$HAS_SHARED" == "true" ]; then
+            echo "::notice::🔗 Shared code changes - will run full pipeline"
           else
             echo "::notice::💻 Code changes detected - will run full pipeline"
           fi
@@ -85,37 +141,78 @@ jobs:
         run: pnpm run lint
 
       - name: Run Backend Tests
-        if: steps.changes.outputs.docs_only != 'true'
+        if: steps.changes.outputs.docs_only != 'true' && steps.changes.outputs.frontend_only != 'true' && steps.changes.outputs.test_only != 'true'
         run: cd backend && pnpm test || echo "No tests yet"
 
       - name: Run Frontend Tests
-        if: steps.changes.outputs.docs_only != 'true'
+        if: steps.changes.outputs.docs_only != 'true' && steps.changes.outputs.backend_only != 'true' && steps.changes.outputs.test_only != 'true'
         run: cd frontend && pnpm test || echo "No tests yet"
 
       - name: Build Frontend
-        if: steps.changes.outputs.docs_only != 'true'
+        if: steps.changes.outputs.docs_only != 'true' && steps.changes.outputs.backend_only != 'true' && steps.changes.outputs.test_only != 'true'
         run: cd frontend && pnpm run build
 
       - name: Build Backend
-        if: steps.changes.outputs.docs_only != 'true'
+        if: steps.changes.outputs.docs_only != 'true' && steps.changes.outputs.frontend_only != 'true' && steps.changes.outputs.test_only != 'true'
         run: cd backend && pnpm run build
 
       - name: Workflow Decision Summary
         run: |
           echo "### 🔄 CI Workflow Decision" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
           if [ "${{ steps.changes.outputs.docs_only }}" == "true" ]; then
             echo "**Decision**: Documentation-only changes detected" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
-            echo "⏭️  Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
-            echo "⏭️  Builds: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Frontend Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Backend Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Frontend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Backend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Reason**: Documentation changes don't require compilation or testing" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.changes.outputs.test_only }}" == "true" ]; then
+            echo "**Decision**: Test-only changes detected" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Frontend Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Backend Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Frontend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Backend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason**: Test file changes don't require builds (no deployment needed)" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.changes.outputs.frontend_only }}" == "true" ]; then
+            echo "**Decision**: Frontend-only changes detected" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Frontend Tests: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Backend Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Frontend Build: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Backend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason**: No backend code changes detected" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.changes.outputs.backend_only }}" == "true" ]; then
+            echo "**Decision**: Backend-only changes detected" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Frontend Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Backend Tests: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Frontend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Backend Build: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason**: No frontend code changes detected" >> $GITHUB_STEP_SUMMARY
           else
             echo "**Decision**: Code changes detected - full pipeline executed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Tests: **Ran**" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Builds: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Frontend Tests: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Backend Tests: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Frontend Build: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Backend Build: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ steps.changes.outputs.has_shared }}" == "true" ]; then
+              echo "**Reason**: Shared code changes affect both frontend and backend" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "**Reason**: Mixed code changes detected" >> $GITHUB_STEP_SUMMARY
+            fi
           fi

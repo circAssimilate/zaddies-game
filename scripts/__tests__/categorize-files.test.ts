@@ -215,4 +215,141 @@ describe('determineWorkflowSteps', () => {
     expect(decision.runDeployment).toBe(true);
     expect(decision.reason).toContain('Unknown file types');
   });
+
+  it('should skip backend tests/build for frontend-only changes', () => {
+    const changeSet = categorizeFiles([
+      'frontend/src/App.tsx',
+      'frontend/src/components/Button.tsx',
+    ]);
+    const decision = determineWorkflowSteps(changeSet);
+
+    expect(decision.runLinting).toBe(true);
+    expect(decision.runFrontendTests).toBe(true);
+    expect(decision.runBackendTests).toBe(false);
+    expect(decision.runFrontendBuild).toBe(true);
+    expect(decision.runBackendBuild).toBe(false);
+    expect(decision.runDeployment).toBe(true);
+    expect(decision.reason).toContain('Frontend-only');
+  });
+
+  it('should skip frontend tests/build for backend-only changes', () => {
+    const changeSet = categorizeFiles([
+      'backend/src/functions/index.ts',
+      'backend/src/utils/helpers.ts',
+    ]);
+    const decision = determineWorkflowSteps(changeSet);
+
+    expect(decision.runLinting).toBe(true);
+    expect(decision.runFrontendTests).toBe(false);
+    expect(decision.runBackendTests).toBe(true);
+    expect(decision.runFrontendBuild).toBe(false);
+    expect(decision.runBackendBuild).toBe(true);
+    expect(decision.runDeployment).toBe(true);
+    expect(decision.reason).toContain('Backend-only');
+  });
+
+  it('should run full pipeline for shared code changes', () => {
+    const changeSet = categorizeFiles(['shared/src/types/game.ts']);
+    const decision = determineWorkflowSteps(changeSet);
+
+    expect(decision.runLinting).toBe(true);
+    expect(decision.runFrontendTests).toBe(true);
+    expect(decision.runBackendTests).toBe(true);
+    expect(decision.runFrontendBuild).toBe(true);
+    expect(decision.runBackendBuild).toBe(true);
+    expect(decision.runDeployment).toBe(true);
+    expect(decision.reason).toContain('Shared code changes');
+  });
+
+  it('should run full pipeline for mixed frontend/backend changes', () => {
+    const changeSet = categorizeFiles(['frontend/src/App.tsx', 'backend/src/functions/index.ts']);
+    const decision = determineWorkflowSteps(changeSet);
+
+    expect(decision.runLinting).toBe(true);
+    expect(decision.runFrontendTests).toBe(true);
+    expect(decision.runBackendTests).toBe(true);
+    expect(decision.runFrontendBuild).toBe(true);
+    expect(decision.runBackendBuild).toBe(true);
+    expect(decision.runDeployment).toBe(true);
+    expect(decision.reason).toContain('Mixed code changes');
+  });
+
+  it('should skip build for test-only changes', () => {
+    const changeSet = categorizeFiles([
+      'frontend/tests/App.test.tsx',
+      'backend/tests/unit/helpers.test.ts',
+    ]);
+    const decision = determineWorkflowSteps(changeSet);
+
+    expect(decision.runLinting).toBe(true);
+    expect(decision.runTests).toBe(true);
+    expect(decision.runFrontendTests).toBe(true);
+    expect(decision.runBackendTests).toBe(true);
+    expect(decision.runBuild).toBe(false);
+    expect(decision.runFrontendBuild).toBe(false);
+    expect(decision.runBackendBuild).toBe(false);
+    expect(decision.runDeployment).toBe(false);
+    expect(decision.reason).toContain('Test-only');
+  });
+});
+
+describe('categorizeFiles - frontend/backend/shared detection', () => {
+  it('should detect frontend-only changes', () => {
+    const changeSet = categorizeFiles([
+      'frontend/src/App.tsx',
+      'frontend/src/components/Button.tsx',
+    ]);
+    expect(changeSet.hasFrontend).toBe(true);
+    expect(changeSet.hasBackend).toBe(false);
+    expect(changeSet.hasShared).toBe(false);
+    expect(changeSet.isFrontendOnly).toBe(true);
+    expect(changeSet.isBackendOnly).toBe(false);
+  });
+
+  it('should detect backend-only changes', () => {
+    const changeSet = categorizeFiles([
+      'backend/src/functions/index.ts',
+      'backend/src/utils/helpers.ts',
+    ]);
+    expect(changeSet.hasFrontend).toBe(false);
+    expect(changeSet.hasBackend).toBe(true);
+    expect(changeSet.hasShared).toBe(false);
+    expect(changeSet.isFrontendOnly).toBe(false);
+    expect(changeSet.isBackendOnly).toBe(true);
+  });
+
+  it('should detect shared code changes', () => {
+    const changeSet = categorizeFiles(['shared/src/types/game.ts']);
+    expect(changeSet.hasFrontend).toBe(false);
+    expect(changeSet.hasBackend).toBe(false);
+    expect(changeSet.hasShared).toBe(true);
+    expect(changeSet.isFrontendOnly).toBe(false);
+    expect(changeSet.isBackendOnly).toBe(false);
+  });
+
+  it('should detect mixed frontend/backend changes', () => {
+    const changeSet = categorizeFiles(['frontend/src/App.tsx', 'backend/src/functions/index.ts']);
+    expect(changeSet.hasFrontend).toBe(true);
+    expect(changeSet.hasBackend).toBe(true);
+    expect(changeSet.hasShared).toBe(false);
+    expect(changeSet.isFrontendOnly).toBe(false);
+    expect(changeSet.isBackendOnly).toBe(false);
+  });
+
+  it('should detect test-only changes', () => {
+    const changeSet = categorizeFiles([
+      'frontend/tests/App.test.tsx',
+      'backend/tests/unit/helpers.test.ts',
+    ]);
+    expect(changeSet.hasTests).toBe(true);
+    expect(changeSet.hasSourceCode).toBe(false);
+    expect(changeSet.isTestOnly).toBe(true);
+  });
+
+  it('should not be test-only if source code is also changed', () => {
+    const changeSet = categorizeFiles(['frontend/src/App.tsx', 'frontend/tests/App.test.tsx']);
+    expect(changeSet.hasTests).toBe(true);
+    expect(changeSet.hasSourceCode).toBe(true);
+    expect(changeSet.isTestOnly).toBe(false);
+  });
 });

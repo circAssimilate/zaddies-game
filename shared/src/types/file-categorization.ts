@@ -46,6 +46,24 @@ export interface FileChangeSet {
 
   /** True if any file matches test patterns */
   readonly hasTests: boolean;
+
+  /** True if source code changes are frontend-only */
+  readonly isFrontendOnly: boolean;
+
+  /** True if source code changes are backend-only */
+  readonly isBackendOnly: boolean;
+
+  /** True if all code changes are test-only (no source code) */
+  readonly isTestOnly: boolean;
+
+  /** True if changes include frontend source code */
+  readonly hasFrontend: boolean;
+
+  /** True if changes include backend source code */
+  readonly hasBackend: boolean;
+
+  /** True if changes include shared source code */
+  readonly hasShared: boolean;
 }
 
 /**
@@ -63,6 +81,18 @@ export interface WorkflowDecision {
 
   /** Whether to deploy to Firebase */
   runDeployment: boolean;
+
+  /** Whether to run frontend-specific tests */
+  runFrontendTests: boolean;
+
+  /** Whether to run backend-specific tests */
+  runBackendTests: boolean;
+
+  /** Whether to build frontend */
+  runFrontendBuild: boolean;
+
+  /** Whether to build backend */
+  runBackendBuild: boolean;
 
   /** Human-readable explanation of the decision */
   reason: string;

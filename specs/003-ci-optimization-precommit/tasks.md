@@ -112,16 +112,16 @@
 
 ### Implementation for User Story 3
 
-- [ ] T041 [P] [US3] Add frontend-specific file pattern detection to categorizeFiles logic
-- [ ] T042 [P] [US3] Add backend-specific file pattern detection to categorizeFiles logic
-- [ ] T043 [P] [US3] Add test-only file pattern detection to categorizeFiles logic
-- [ ] T044 [US3] Extend determineWorkflowSteps to handle frontend-only changes
-- [ ] T045 [US3] Extend determineWorkflowSteps to handle backend-only changes
-- [ ] T046 [US3] Extend determineWorkflowSteps to handle test-only changes
-- [ ] T047 [US3] Add conditional logic to ci.yml to skip backend tests for frontend-only changes
-- [ ] T048 [US3] Add conditional logic to ci.yml to skip frontend tests for backend-only changes
-- [ ] T049 [US3] Add conditional logic to ci.yml to skip deployment for test-only changes
-- [ ] T050 [US3] Update workflow decision logging to show granular skip reasons
+- [x] T041 [P] [US3] Add frontend-specific file pattern detection to categorizeFiles logic
+- [x] T042 [P] [US3] Add backend-specific file pattern detection to categorizeFiles logic
+- [x] T043 [P] [US3] Add test-only file pattern detection to categorizeFiles logic
+- [x] T044 [US3] Extend determineWorkflowSteps to handle frontend-only changes
+- [x] T045 [US3] Extend determineWorkflowSteps to handle backend-only changes
+- [x] T046 [US3] Extend determineWorkflowSteps to handle test-only changes
+- [x] T047 [US3] Add conditional logic to ci.yml to skip backend tests for frontend-only changes
+- [x] T048 [US3] Add conditional logic to ci.yml to skip frontend tests for backend-only changes
+- [x] T049 [US3] Add conditional logic to ci.yml to skip deployment for test-only changes
+- [x] T050 [US3] Update workflow decision logging to show granular skip reasons
 - [ ] T051 [US3] Test frontend-only PR to verify backend tests are skipped
 - [ ] T052 [US3] Test backend-only PR to verify frontend tests are skipped
 - [ ] T053 [US3] Test test-only PR to verify deployment is skipped

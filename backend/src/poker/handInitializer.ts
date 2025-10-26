@@ -51,20 +51,31 @@ export function initializeHand(
   const positions = determinePositions(players, previousDealerPosition);
   const { dealerPosition, smallBlindPosition, bigBlindPosition, firstToActPosition } = positions;
 
+  // Deal in players who are sitting at the big blind position
+  // This follows Vegas rules: new players must wait for big blind to be dealt in
+  const playersWithDealIn = dealInPlayersAtBigBlind(players, bigBlindPosition);
+
+  // Filter active players (those who will be dealt cards this hand)
+  const activePlayers = playersWithDealIn.filter(p => p.status !== 'sitting');
+
+  if (activePlayers.length < 2) {
+    throw new Error('Cannot start hand with fewer than 2 active players');
+  }
+
   // Create and shuffle deck
   const deck = createDeck();
   shuffleDeckMultiple(deck, 7); // 7 shuffles for excellent randomness
 
-  // Deal hole cards (2 cards per player)
+  // Deal hole cards only to active players
   const playerHands = new Map<string, [Card, Card]>();
-  for (const player of players) {
+  for (const player of activePlayers) {
     const holeCards = dealCards(deck, 2) as [Card, Card];
     playerHands.set(player.id, holeCards);
   }
 
   // Post blinds and update player states
   const { updatedPlayers, pot } = postBlinds(
-    players,
+    playersWithDealIn,
     settings,
     dealerPosition,
     smallBlindPosition,
@@ -108,6 +119,29 @@ export function initializeHand(
     playerHands,
     updatedPlayers,
   };
+}
+
+/**
+ * Deal in players who are sitting at the big blind position
+ *
+ * Following Vegas rules, new players must wait until they are in the
+ * big blind position before being dealt into the hand.
+ *
+ * @param players - All players at table
+ * @param bigBlindPosition - Position of big blind
+ * @returns Players with updated deal-in status
+ */
+function dealInPlayersAtBigBlind(players: PlayerState[], bigBlindPosition: number): PlayerState[] {
+  return players.map((player, index) => {
+    // If player is sitting and at big blind position, deal them in
+    if (player.status === 'sitting' && index === bigBlindPosition) {
+      return {
+        ...player,
+        status: 'playing', // Change from sitting to playing
+      };
+    }
+    return player;
+  });
 }
 
 /**
@@ -267,4 +301,40 @@ export function getNextPlayerPosition(players: PlayerState[], currentPosition: n
 
   // No active players found
   return -1;
+}
+
+/**
+ * Reset player states after a hand ends
+ *
+ * Prepares players for the next hand by clearing hand-specific state.
+ * Players who were 'folded' or 'allin' return to 'playing' status.
+ * Players who are 'sitting' remain sitting (waiting to be dealt in).
+ *
+ * @param players - Player states after hand completion
+ * @returns Players with reset states for next hand
+ */
+export function resetPlayerStatesForNextHand(players: PlayerState[]): PlayerState[] {
+  return players.map(player => {
+    // Determine status for next hand
+    let nextStatus: PlayerState['status'];
+    if (player.status === 'sitting') {
+      // Sitting players remain sitting until dealt in at big blind
+      nextStatus = 'sitting';
+    } else {
+      // All other statuses reset to 'playing' for next hand
+      nextStatus = 'playing';
+    }
+
+    return {
+      ...player,
+      status: nextStatus,
+      currentBet: 0,
+      hasActed: false,
+      isFolded: false,
+      isAllIn: false,
+      isDealer: false,
+      isSmallBlind: false,
+      isBigBlind: false,
+    };
+  });
 }

@@ -13,6 +13,7 @@ import { Timestamp, getFirestore } from 'firebase-admin/firestore';
 import type { TableDocument } from './schemas';
 import type { Card } from '@shared/types/game';
 import { evaluateShowdown } from '../../poker/showdownHandler';
+import { resetPlayerStatesForNextHand } from '../../poker/handInitializer';
 
 /**
  * End Hand Function - Evaluate showdown and distribute pot
@@ -69,10 +70,13 @@ export async function endHand(tableId: string): Promise<{
       // Evaluate showdown
       const showdownResult = evaluateShowdown(table.players, table.hand, playerHoleCards);
 
+      // Reset player states for next hand (clears folded/allin status, keeps sitting players)
+      const resetPlayers = resetPlayerStatesForNextHand(showdownResult.updatedPlayers);
+
       // Clear hand state and update player chips
       transaction.update(tableRef, {
         hand: null,
-        players: showdownResult.updatedPlayers,
+        players: resetPlayers,
         lastHandResult: {
           handNumber: table.hand.handNumber,
           winners: showdownResult.winners,

@@ -159,7 +159,7 @@
 - [x] T086 [US2] Implement pot distribution logic in backend/src/poker/potCalculator.ts
 - [x] T087 [US2] Implement blind posting logic in backend/src/poker/handInitializer.ts (postBlinds)
 - [x] T088 [US2] Implement dealer button rotation in backend/src/poker/handInitializer.ts (determinePositions)
-- [ ] T089 [US2] Implement player dealing-in rules (wait for big blind)
+- [x] T089 [US2] Implement player dealing-in rules in backend/src/poker/handInitializer.ts (dealInPlayersAtBigBlind, resetPlayerStatesForNextHand)
 - [x] T090 [US2] Implement all-in and side pot handling in backend/src/poker/potCalculator.ts
 - [ ] T091 [P] [US2] Create useGameState hook in frontend/src/hooks/useGameState.ts
 - [ ] T092 [P] [US2] Create usePlayerHand hook in frontend/src/hooks/usePlayerHand.ts (private hole cards)

@@ -78,21 +78,21 @@ A developer makes changes to specific parts of the codebase (e.g., only frontend
 - **FR-004**: System MUST block commits when any pre-commit check fails
 - **FR-005**: System MUST display clear, actionable error messages when pre-commit checks fail
 - **FR-006**: System MUST automatically format files with Prettier before running other checks
-- **FR-007**: System MUST detect changed files in CI and determine which workflow steps are required
-- **FR-008**: System MUST skip build steps when only documentation files have changed
+- **FR-007**: System MUST use GitHub Actions `paths` filtering to trigger workflows based on changed files
+- **FR-008**: System MUST skip all build workflows when only documentation files have changed
 - **FR-009**: System MUST skip deployment steps when only documentation files have changed
 - **FR-010**: System MUST run full CI pipeline when any application code, configuration, or dependency files change
-- **FR-011**: System MUST preserve CI logs indicating which steps were run and which were skipped
-- **FR-012**: System MUST categorize file types (documentation, code, configuration, tests) accurately
+- **FR-011**: GitHub Actions MUST show which workflows ran and which were skipped based on path filters
+- **FR-012**: Workflow `paths` filters MUST accurately match file types (documentation, frontend, backend, shared, configuration)
 - **FR-013**: Pre-commit hooks MUST be automatically installed during project setup
 - **FR-014**: System MUST allow developers to bypass pre-commit checks with explicit flag for emergency situations
 - **FR-015**: System MUST run pre-commit checks only on staged files, not all modified files
 
 ### Key Entities
 
-- **File Change Set**: Collection of files modified in a commit or push, categorized by type (documentation, source code, configuration, tests, workflows)
+- **Workflow Path Filter**: GitHub Actions `paths` or `paths-ignore` configuration that determines when a workflow runs
 - **Pre-commit Check**: Individual validation step (formatting, linting, type checking) with pass/fail status and error output
-- **CI Workflow Step**: Individual CI job or step with execution conditions based on changed files
+- **CI Workflow**: Separate workflow file (lint, frontend, backend, deploy) triggered by specific file path patterns
 - **Check Result**: Outcome of a validation with status, duration, and error details
 
 ## Success Criteria _(mandatory)_

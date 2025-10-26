@@ -224,37 +224,47 @@ pnpm install
 
 **Old Behavior**: Full CI pipeline runs (5+ minutes)
 
-**New Behavior**:
+**New Behavior** (using GitHub Actions `paths-ignore`):
 
-- ✅ Linting runs (markdown linting if configured)
-- ⏭️ Tests skipped
-- ⏭️ Build skipped
+- ⏭️ Lint workflow skipped (documentation excluded via `paths-ignore`)
+- ⏭️ Frontend tests skipped
+- ⏭️ Backend tests skipped
 - ⏭️ Deployment skipped
-- ⏱️ Total time: <2 minutes
+- ⏱️ Total time: <30 seconds (no workflows run)
 
 **How to Verify**:
 
 1. Make a documentation-only change
 2. Push to a PR
-3. Check GitHub Actions workflow logs
-4. Look for "Skipping build - documentation-only changes" messages
+3. Check GitHub Actions tab - should show "No workflows ran"
 
-### Source Code Changes
+### Frontend Code Changes
 
-**Scenario**: You modify any `.ts`, `.tsx`, `.js`, or `.jsx` file
+**Scenario**: You modify files in `frontend/**` or `shared/**`
 
-**Behavior**: Full CI pipeline runs (all checks, build, deployment)
+**Behavior** (using GitHub Actions `paths`):
 
-### Test-Only Changes
+- ✅ Lint workflow runs (applies to all non-docs PRs)
+- ✅ Frontend workflow runs (builds and tests frontend)
+- ⏭️ Backend workflow skipped (backend code unchanged)
+- ✅ Deployment runs when merged to main
 
-**Scenario**: You only modify test files (`*.test.ts`, `*.spec.ts`)
+### Backend Code Changes
 
-**Behavior**:
+**Scenario**: You modify files in `backend/**` or `shared/**`
 
-- ✅ Linting runs
-- ✅ Tests run
-- ⏭️ Build skipped (optional optimization)
-- ⏭️ Deployment skipped
+**Behavior** (using GitHub Actions `paths`):
+
+- ✅ Lint workflow runs (applies to all non-docs PRs)
+- ⏭️ Frontend workflow skipped (frontend code unchanged)
+- ✅ Backend workflow runs (builds and tests backend)
+- ✅ Deployment runs when merged to main
+
+### Shared Code Changes
+
+**Scenario**: You modify files in `shared/**`
+
+**Behavior**: Both frontend and backend workflows run (shared code affects both)
 
 ---
 
@@ -327,13 +337,25 @@ pnpm exec lint-staged && pnpm run type-check
 
 **Modify**: Edit to change which commands run on staged files
 
-### File Categorization Patterns
+### GitHub Actions Workflow Triggers
 
-**File**: `scripts/categorize-files.js` (or embedded in GitHub Actions)
+**Files**: `.github/workflows/*.yml`
 
-**Purpose**: Define which file patterns belong to which categories
+**Purpose**: Define which file path changes trigger each workflow
 
-**Modify**: Edit patterns if you add new directories or file types
+**Modify**: Edit the `paths` or `paths-ignore` arrays if you add new directories or file types
+
+**Example** (from `.github/workflows/frontend.yml`):
+```yaml
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'shared/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+```
 
 ---
 
@@ -372,8 +394,8 @@ After this feature is implemented, we expect:
 
 **CI workflow issues**:
 
-- Check GitHub Actions logs for "Skipping X step" messages
-- Verify file categorization is correct (see workflow decision logs)
+- Check GitHub Actions tab to see which workflows ran
+- If wrong workflow triggered, verify `paths` filters in workflow files
 - Ensure workflows are using latest version from main branch
 
 **Performance issues**:

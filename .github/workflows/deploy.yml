@@ -3,48 +3,17 @@ name: Deploy to Firebase
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Need full history for file diff
-
-      - name: Detect Changed Files
-        id: changes
-        run: |
-          # Get changed files (compare with previous commit)
-          if [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}...HEAD)
-          else
-            # First commit or manual trigger - deploy everything
-            echo "docs_only=false" >> $GITHUB_OUTPUT
-            echo "::notice::🚀 Manual trigger or first commit - deploying everything"
-            exit 0
-          fi
-
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
-          # Check if only documentation changed
-          DOCS_ONLY=true
-          while IFS= read -r file; do
-            if [[ ! "$file" =~ \.(md)$ ]] && [[ ! "$file" =~ ^docs/ ]] && [[ ! "$file" =~ ^\.github/ISSUE_TEMPLATE/ ]] && [[ ! "$file" =~ ^\.github/PULL_REQUEST_TEMPLATE/ ]]; then
-              DOCS_ONLY=false
-              break
-            fi
-          done <<< "$CHANGED_FILES"
-
-          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
-
-          if [ "$DOCS_ONLY" == "true" ]; then
-            echo "::notice::📝 Documentation-only changes - will skip build and deployment"
-          else
-            echo "::notice::💻 Code changes detected - will deploy"
-          fi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -58,63 +27,21 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          START_TIME=$(date +%s)
-          pnpm install --frozen-lockfile
-          END_TIME=$(date +%s)
-          DURATION=$((END_TIME - START_TIME))
-
-          echo "### 📦 Deployment Dependency Installation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| ⏱️ Duration | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🎯 Target (cached) | <15s |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🎯 Target (uncached) | <30s |" >> $GITHUB_STEP_SUMMARY
+        run: pnpm install --frozen-lockfile
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
       - name: Build Frontend
-        if: steps.changes.outputs.docs_only != 'true'
         run: cd frontend && pnpm run build
 
       - name: Build Backend
-        if: steps.changes.outputs.docs_only != 'true'
         run: cd backend && pnpm run build
 
       - name: Isolate Functions Dependencies
-        if: steps.changes.outputs.docs_only != 'true'
-        run: |
-          pnpm deploy --filter backend --prod backend/_isolated_
-          echo "✅ Functions isolated for Firebase deployment" >> $GITHUB_STEP_SUMMARY
+        run: pnpm deploy --filter backend --prod backend/_isolated_
 
       - name: Deploy to Firebase
-        if: steps.changes.outputs.docs_only != 'true'
         run: firebase deploy --only hosting,functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-
-      - name: Workflow Decision Summary
-        run: |
-          echo "### 🚀 Deployment Workflow Decision" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.changes.outputs.docs_only }}" == "true" ]; then
-            echo "**Decision**: Documentation-only changes detected" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Dependencies: **Installed**" >> $GITHUB_STEP_SUMMARY
-            echo "⏭️  Frontend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
-            echo "⏭️  Backend Build: **Skipped**" >> $GITHUB_STEP_SUMMARY
-            echo "⏭️  Functions Isolation: **Skipped**" >> $GITHUB_STEP_SUMMARY
-            echo "⏭️  Firebase Deployment: **Skipped**" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Reason**: Documentation changes don't require deployment" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "**Decision**: Code changes detected - full deployment executed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Dependencies: **Installed**" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Frontend Build: **Completed**" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Backend Build: **Completed**" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Functions Isolation: **Completed**" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Firebase Deployment: **Completed**" >> $GITHUB_STEP_SUMMARY
-          fi

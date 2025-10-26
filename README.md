@@ -378,6 +378,7 @@ zaddies-game/
 
 ## Documentation
 
+- [Gameplay & Rules](./GAMEPLAY.md) - Texas Hold'em rules, hand rankings, and game mechanics
 - [Quickstart Guide](./specs/001-texas-holdem-poker/quickstart.md)
 - [Feature Specification](./specs/001-texas-holdem-poker/spec.md)
 - [Implementation Plan](./specs/001-texas-holdem-poker/plan.md)

@@ -11,10 +11,26 @@ This guide walks through setting up the development environment, running tests, 
 ## Prerequisites
 
 - **Node.js**: 20 LTS or higher
-- **npm**: 10.x or higher
+- **pnpm**: 8.x or higher
 - **Git**: For version control
-- **Firebase CLI**: `npm install -g firebase-tools`
+- **Firebase CLI**: `pnpm install -g firebase-tools`
 - **Code Editor**: VS Code recommended (with Prettier and ESLint extensions)
+
+### Installing pnpm
+
+```bash
+# macOS/Linux
+npm install -g pnpm
+
+# Or using Homebrew (macOS)
+brew install pnpm
+
+# Windows
+npm install -g pnpm
+
+# Verify installation
+pnpm --version  # Should output 8.x.x or higher
+```
 
 ## Initial Setup
 
@@ -28,17 +44,11 @@ cd zaddies-game
 ### 2. Install Dependencies
 
 ```bash
-# Install root dependencies (if using workspace)
-npm install
-
-# Install frontend dependencies
-cd frontend
-npm install
-
-# Install backend dependencies
-cd ../backend
-npm install
+# Install all dependencies (root + all workspaces)
+pnpm install
 ```
+
+That's it! pnpm automatically installs dependencies for all workspaces (frontend, backend, shared) in a single command.
 
 ### 3. Firebase Project Setup
 
@@ -71,12 +81,8 @@ firebase init
     "indexes": "backend/firestore.indexes.json"
   },
   "functions": {
-    "source": "backend",
-    "runtime": "nodejs20",
-    "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint",
-      "npm --prefix \"$RESOURCE_DIR\" run build"
-    ]
+    "source": "backend/_isolated_",
+    "runtime": "nodejs20"
   },
   "hosting": {
     "public": "frontend/dist",
@@ -190,8 +196,8 @@ FIREBASE_CONFIG={"projectId":"zaddies-game","storageBucket":"zaddies-game.appspo
 **Install Dev Dependencies**:
 
 ```bash
-# Root
-npm install --save-dev prettier eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-hooks eslint-config-prettier
+# Root (workspace root with -w flag)
+pnpm add -D -w prettier eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-hooks eslint-config-prettier
 
 # Add to package.json scripts
 {
@@ -226,8 +232,12 @@ This starts:
 In a new terminal:
 
 ```bash
+# Using pnpm filter to run in specific workspace
+pnpm --filter frontend dev
+
+# Or navigate to directory
 cd frontend
-npm run dev
+pnpm run dev
 ```
 
 **Frontend URL**: http://localhost:5173 (Vite default)
@@ -239,25 +249,35 @@ npm run dev
 **Backend Tests**:
 
 ```bash
+# Using pnpm filter
+pnpm --filter backend test                 # Run all tests
+pnpm --filter backend test:watch           # Watch mode
+pnpm --filter backend test:coverage        # With coverage report
+
+# Or navigate to directory
 cd backend
-npm test                 # Run all tests
-npm test -- --watch      # Watch mode
-npm test -- --coverage   # With coverage report
+pnpm test
+pnpm test:watch
 ```
 
 **Frontend Tests**:
 
 ```bash
+# Using pnpm filter
+pnpm --filter frontend test                # Run all tests
+pnpm --filter frontend test:watch          # Watch mode
+pnpm --filter frontend test:coverage       # With coverage
+
+# Or navigate to directory
 cd frontend
-npm test                 # Run all tests
-npm test -- --watch      # Watch mode
-npm test -- --coverage   # With coverage
+pnpm test
+pnpm test:watch
 ```
 
 **Run All Tests (Root)**:
 
 ```bash
-npm test  # Runs both frontend and backend tests
+pnpm test  # Runs tests in all workspaces (frontend + backend)
 ```
 
 ### 4. Code Quality Checks
@@ -266,16 +286,16 @@ Before committing:
 
 ```bash
 # Format code
-npm run format
+pnpm run format
 
 # Lint code
-npm run lint
+pnpm run lint
 
 # Fix linting issues
-npm run lint:fix
+pnpm run lint:fix
 
 # Run all quality checks
-npm run check  # format + lint + test
+pnpm run check  # format + lint + test
 ```
 
 ---
@@ -314,7 +334,7 @@ describe('Hand Evaluator', () => {
 
 ```bash
 cd backend
-npm test handEvaluator.test.ts
+pnpm test handEvaluator.test.ts
 
 # Output: FAIL - evaluateHand is not defined
 ```
@@ -339,7 +359,7 @@ export function evaluateHand(cards: Card[]): HandEvaluation {
 4. **Run Test (Should Pass)**:
 
 ```bash
-npm test handEvaluator.test.ts
+pnpm test handEvaluator.test.ts
 
 # Output: PASS
 ```

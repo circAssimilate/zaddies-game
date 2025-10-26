@@ -22,72 +22,72 @@
 
 ---
 
-## Phase 1: Setup (Shared Infrastructure)
+## Phase 1: Setup (Shared Infrastructure) ✅ COMPLETE
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create root package.json with workspace configuration
-- [ ] T002 Create frontend/ directory structure per plan.md
-- [ ] T003 Create backend/ directory structure per plan.md
-- [ ] T004 Create shared/ directory for common types
-- [ ] T005 [P] Initialize Vite project in frontend/ with React + TypeScript
-- [ ] T006 [P] Initialize Firebase Functions project in backend/
-- [ ] T007 [P] Install frontend dependencies (React, Chakra UI, Emotion, Firebase SDK, Vitest)
-- [ ] T008 [P] Install backend dependencies (Firebase Admin, TypeScript, Vitest)
-- [ ] T009 [P] Configure TypeScript for frontend in frontend/tsconfig.json
-- [ ] T010 [P] Configure TypeScript for backend in backend/tsconfig.json
-- [ ] T011 [P] Configure Vitest for frontend in frontend/vite.config.ts
-- [ ] T012 [P] Configure Vitest for backend in backend/vitest.config.ts
-- [ ] T013 [P] Create .prettierrc with project formatting rules
-- [ ] T014 [P] Create .eslintrc.json with TypeScript + React rules
-- [ ] T015 [P] Install Prettier and ESLint dev dependencies
-- [ ] T016 Create firebase.json configuration per quickstart.md
-- [ ] T017 Create backend/firestore.rules security rules file
-- [ ] T018 Create backend/firestore.indexes.json for required indexes
-- [ ] T019 Create .github/workflows/ci.yml for CI checks (Prettier, ESLint, tests)
-- [ ] T020 Create .github/workflows/deploy.yml for Firebase deployment
-- [ ] T021 Create frontend/.env.local template for Firebase config
-- [ ] T022 Create backend/.env template
-- [ ] T023 Create .gitignore for node_modules, dist, .env files
-- [ ] T024 Create README.md with setup and deployment instructions per quickstart.md
-- [ ] T025 [P] Create docs/adr/ directory for Architecture Decision Records
-- [ ] T026 [P] Create ADR 001: Firebase choice (docs/adr/001-firebase-choice.md)
-- [ ] T027 [P] Create ADR 002: Gilbert-Shannon-Reeds shuffling (docs/adr/002-gilbert-shannon-reeds.md)
-- [ ] T028 [P] Create ADR 003: Color blind accessibility (docs/adr/003-color-blind-accessibility.md)
+- [X] T001 Create root package.json with workspace configuration
+- [X] T002 Create frontend/ directory structure per plan.md
+- [X] T003 Create backend/ directory structure per plan.md
+- [X] T004 Create shared/ directory for common types
+- [X] T005 [P] Initialize Vite project in frontend/ with React + TypeScript
+- [X] T006 [P] Initialize Firebase Functions project in backend/
+- [X] T007 [P] Install frontend dependencies (React, Chakra UI, Emotion, Firebase SDK, Vitest)
+- [X] T008 [P] Install backend dependencies (Firebase Admin, TypeScript, Vitest)
+- [X] T009 [P] Configure TypeScript for frontend in frontend/tsconfig.json
+- [X] T010 [P] Configure TypeScript for backend in backend/tsconfig.json
+- [X] T011 [P] Configure Vitest for frontend in frontend/vite.config.ts
+- [X] T012 [P] Configure Vitest for backend in backend/vitest.config.ts
+- [X] T013 [P] Create .prettierrc with project formatting rules
+- [X] T014 [P] Create .eslintrc.json with TypeScript + React rules
+- [X] T015 [P] Install Prettier and ESLint dev dependencies
+- [X] T016 Create firebase.json configuration per quickstart.md
+- [X] T017 Create backend/firestore.rules security rules file
+- [X] T018 Create backend/firestore.indexes.json for required indexes
+- [X] T019 Create .github/workflows/ci.yml for CI checks (Prettier, ESLint, tests)
+- [X] T020 Create .github/workflows/deploy.yml for Firebase deployment
+- [X] T021 Create frontend/.env.local template for Firebase config
+- [X] T022 Create backend/.env template
+- [X] T023 Create .gitignore for node_modules, dist, .env files
+- [X] T024 Create README.md with setup and deployment instructions per quickstart.md
+- [X] T025 [P] Create docs/adr/ directory for Architecture Decision Records
+- [X] T026 [P] Create ADR 001: Firebase choice (docs/adr/001-firebase-choice.md)
+- [X] T027 [P] Create ADR 002: Gilbert-Shannon-Reeds shuffling (docs/adr/002-gilbert-shannon-reeds.md)
+- [X] T028 [P] Create ADR 003: Color blind accessibility (docs/adr/003-color-blind-accessibility.md)
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+## Phase 2: Foundational (Blocking Prerequisites) ✅ COMPLETE
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T029 Create shared TypeScript types in shared/types/game.ts (Card, Hand, GamePhase)
-- [ ] T030 Create shared TypeScript types in shared/types/player.ts (Player, PlayerState)
-- [ ] T031 Create shared TypeScript types in shared/types/table.ts (Table, TableSettings, SidePot)
-- [ ] T032 Create shared constants in shared/constants/gameRules.ts (hand rankings, default settings)
-- [ ] T033 [P] Implement Gilbert-Shannon-Reeds shuffler in backend/src/lib/poker/shuffler.ts
-- [ ] T034 [P] Write tests for shuffler in backend/tests/unit/shuffler.test.ts (verify distribution)
-- [ ] T035 [P] Implement hand evaluator in backend/src/lib/poker/handEvaluator.ts
-- [ ] T036 [P] Write tests for hand evaluator in backend/tests/unit/handEvaluator.test.ts (all hand types)
-- [ ] T037 Implement pot calculator in backend/src/lib/poker/potCalculator.ts (main pot, side pots)
-- [ ] T038 Write tests for pot calculator in backend/tests/unit/potCalculator.test.ts
+- [X] T029 Create shared TypeScript types in shared/types/game.ts (Card, Hand, GamePhase)
+- [X] T030 Create shared TypeScript types in shared/types/player.ts (Player, PlayerState)
+- [X] T031 Create shared TypeScript types in shared/types/table.ts (Table, TableSettings, SidePot)
+- [X] T032 Create shared constants in shared/constants/gameRules.ts (hand rankings, default settings)
+- [X] T033 [P] Implement Gilbert-Shannon-Reeds shuffler in shared/lib/poker/shuffler.ts
+- [X] T034 [P] Write tests for shuffler in backend/tests/unit/shuffler.test.ts (verify distribution)
+- [X] T035 [P] Implement hand evaluator in shared/lib/poker/handEvaluator.ts
+- [X] T036 [P] Write tests for hand evaluator in backend/tests/unit/handEvaluator.test.ts (all hand types)
+- [X] T037 Implement pot calculator in shared/lib/poker/potCalculator.ts (main pot, side pots)
+- [X] T038 Write tests for pot calculator in backend/tests/unit/potCalculator.test.ts
 - [ ] T039 Implement game engine core in backend/src/lib/poker/gameEngine.ts
 - [ ] T040 Write tests for game engine in backend/tests/unit/gameEngine.test.ts
-- [ ] T041 [P] Configure Firebase Authentication in frontend/src/services/firebase.ts
-- [ ] T042 [P] Create authentication service in frontend/src/services/auth.ts
+- [X] T041 [P] Configure Firebase Authentication in frontend/src/services/firebase/config.ts
+- [X] T042 [P] Create authentication service in frontend/src/services/firebase/auth.ts
 - [ ] T043 [P] Write tests for auth service in frontend/tests/unit/auth.test.ts
-- [ ] T044 [P] Create Firestore service wrapper in frontend/src/services/firestore.ts
-- [ ] T045 [P] Create real-time listener helpers in frontend/src/services/realtime.ts
-- [ ] T046 Create color blind friendly Chakra UI theme in frontend/src/theme/colors.ts
-- [ ] T047 Create custom component styles in frontend/src/theme/components.ts
-- [ ] T048 Create base Card component in frontend/src/components/common/Card.tsx (with suit icons, patterns)
-- [ ] T049 Write tests for Card component in frontend/tests/unit/Card.test.tsx
-- [ ] T050 Create Chip component in frontend/src/components/common/Chip.tsx
-- [ ] T051 Create Timer component in frontend/src/components/common/Timer.tsx
-- [ ] T052 [P] Implement Firestore security rules in backend/firestore.rules per contracts
-- [ ] T053 [P] Create composite indexes in backend/firestore.indexes.json
+- [X] T044 [P] Create Firestore service wrapper in frontend/src/services/firebase/players.ts & tables.ts
+- [X] T045 [P] Create real-time listener helpers in frontend/src/services/firebase/listeners.ts
+- [X] T046 Create color blind friendly Chakra UI theme in frontend/src/theme/index.ts (colors)
+- [X] T047 Create custom component styles in frontend/src/theme/index.ts (components)
+- [X] T048 Create base Card component in frontend/src/components/Card/Card.tsx (with suit icons, patterns)
+- [X] T049 Write tests for Card component in frontend/tests/components/Card.test.tsx
+- [X] T050 Create Chip component in frontend/src/components/Chip/Chip.tsx
+- [X] T051 Create Timer component in frontend/src/components/Timer/Timer.tsx
+- [X] T052 [P] Implement Firestore security rules in backend/firestore.rules per contracts
+- [X] T053 [P] Create composite indexes in backend/firestore.indexes.json
 - [ ] T054 Initialize Firebase Emulators for local development
 - [ ] T055 Create emulator seed data script in backend/scripts/seedData.ts
 
@@ -105,29 +105,29 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T056 [P] [US1] Write contract test for createTable function in backend/tests/integration/createTable.test.ts
-- [ ] T057 [P] [US1] Write contract test for joinTable function in backend/tests/integration/joinTable.test.ts
-- [ ] T058 [P] [US1] Write integration test for table creation flow in frontend/tests/integration/createJoinFlow.test.tsx
+- [X] T056 [P] [US1] Write contract test for createTable function in backend/tests/integration/createTable.test.ts
+- [X] T057 [P] [US1] Write contract test for joinTable function in backend/tests/integration/joinTable.test.ts
+- [X] T058 [P] [US1] Write integration test for table creation flow in frontend/tests/integration/createJoinFlow.test.tsx
 
 ### Implementation for User Story 1
 
-- [ ] T059 [P] [US1] Create Player Firestore collection schema in backend/src/functions/game/schemas.ts
-- [ ] T060 [P] [US1] Create Table Firestore collection schema in backend/src/functions/game/schemas.ts
-- [ ] T061 [US1] Implement createTable Cloud Function in backend/src/functions/game/createTable.ts
-- [ ] T062 [US1] Implement joinTable Cloud Function in backend/src/functions/game/joinTable.ts
-- [ ] T063 [US1] Implement leaveTable Cloud Function in backend/src/functions/game/leaveTable.ts
-- [ ] T064 [US1] Implement 4-digit code generator in backend/src/lib/utils/codeGenerator.ts
-- [ ] T065 [P] [US1] Create useAuth hook in frontend/src/hooks/useAuth.ts
-- [ ] T066 [P] [US1] Create useTable hook in frontend/src/hooks/useTable.ts (real-time table listener)
-- [ ] T067 [P] [US1] Create Home page component in frontend/src/pages/Home.tsx
-- [ ] T068 [P] [US1] Create TableLobby page component in frontend/src/pages/TableLobby.tsx
-- [ ] T069 [US1] Implement CreateTableModal component in frontend/src/components/Table/CreateTableModal.tsx
-- [ ] T070 [US1] Implement JoinTableForm component in frontend/src/components/Table/JoinTableForm.tsx
-- [ ] T071 [US1] Implement PlayerList component in frontend/src/components/Table/PlayerList.tsx
-- [ ] T072 [US1] Implement StartGameButton component in frontend/src/components/Table/StartGameButton.tsx (host only)
-- [ ] T073 [US1] Add routing configuration in frontend/src/App.tsx (Home, TableLobby, Game routes)
-- [ ] T074 [US1] Add error handling and validation in table creation/join flows
-- [ ] T075 [US1] Add loading states for async operations
+- [X] T059 [P] [US1] Create Player Firestore collection schema in backend/src/functions/game/schemas.ts
+- [X] T060 [P] [US1] Create Table Firestore collection schema in backend/src/functions/game/schemas.ts
+- [X] T061 [US1] Implement createTable Cloud Function in backend/src/functions/game/createTable.ts
+- [X] T062 [US1] Implement joinTable Cloud Function in backend/src/functions/game/joinTable.ts
+- [X] T063 [US1] Implement leaveTable Cloud Function in backend/src/functions/game/leaveTable.ts
+- [X] T064 [US1] Implement 4-digit code generator in backend/src/lib/utils/codeGenerator.ts
+- [X] T065 [P] [US1] Create useAuth hook in frontend/src/hooks/useAuth.ts
+- [X] T066 [P] [US1] Create useTable hook in frontend/src/hooks/useTable.ts (real-time table listener)
+- [X] T067 [P] [US1] Create Home page component in frontend/src/pages/Home.tsx
+- [X] T068 [P] [US1] Create TableLobby page component in frontend/src/pages/TableLobby.tsx
+- [X] T069 [US1] Implement CreateTableModal component in frontend/src/components/Table/CreateTableModal.tsx
+- [X] T070 [US1] Implement JoinTableForm component in frontend/src/components/Table/JoinTableForm.tsx
+- [X] T071 [US1] Implement PlayerList component in frontend/src/components/Table/PlayerList.tsx
+- [X] T072 [US1] Implement StartGameButton component in frontend/src/components/Table/StartGameButton.tsx (host only)
+- [X] T073 [US1] Add routing configuration in frontend/src/App.tsx (Home, TableLobby, Game routes)
+- [X] T074 [US1] Add error handling and validation in table creation/join flows
+- [X] T075 [US1] Add loading states for async operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 

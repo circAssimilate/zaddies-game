@@ -1,5 +1,6 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFunctions, Functions } from 'firebase/functions';
 
 // Firebase configuration
 // These values are safe to expose in client-side code
@@ -17,3 +18,6 @@ export const app: FirebaseApp = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db: Firestore = getFirestore(app);
+
+// Initialize Functions
+export const functions: Functions = getFunctions(app);

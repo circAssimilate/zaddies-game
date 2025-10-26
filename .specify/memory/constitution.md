@@ -1,41 +1,36 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version: 1.3.0 → 1.4.0
-Change Type: MINOR (New principle added)
+Version: 1.4.0 → 1.4.1
+Change Type: PATCH (Clarification and expansion of existing principle guidance)
 Date: 2025-10-26
 
 Modified Principles:
-- NEW: IX. Living Documentation
+- VII. Universal Accessibility - Added dark/light mode support requirement using Chakra UI theme detection
 
 Added Sections:
-- Living Documentation principle covering GAMEPLAY.md, README.md, and QUICKSTART.md
-- Information hierarchy to prevent documentation bifurcation
-- Single source of truth requirement: README.md comprehensive, QUICKSTART.md references only
-- Enforcement requirements for keeping all three documentation files synchronized
+- Theme Support requirement under Universal Accessibility
+- Enforcement requirement for color mode testing
 
 Removed Sections:
 - (None)
 
 Templates Requiring Updates:
-✅ .specify/templates/plan-template.md - Constitution Check section will include documentation requirement
-✅ .specify/templates/spec-template.md - Requirements alignment verified
-✅ .specify/templates/tasks-template.md - Task categorization includes documentation updates
+✅ .specify/templates/plan-template.md - Constitution Check includes accessibility (no change needed)
+✅ .specify/templates/spec-template.md - Requirements alignment verified (no change needed)
+✅ .specify/templates/tasks-template.md - Task categorization includes accessibility (no change needed)
 ✅ Command files - No command files found in .specify/templates/commands/
 
 Follow-up TODOs:
-- ✅ Updated Quality Gates section to include Living Documentation check
-- ✅ Updated Code Review Requirements to reference 9 principles
-- ✅ Added Documentation Updates item to Code Review checklist
-- ✅ Added Documentation Duplication check to Code Review checklist
-- ✅ Updated Runtime Development Guidance to reference all documentation files
+- (None - all updates complete)
 
-Rationale for MINOR version bump:
-Adding a new principle (IX. Living Documentation) to ensure documentation stays synchronized
-with implementation. This covers GAMEPLAY.md (game rules), README.md (development reference),
-and QUICKSTART.md (fast-path guide) while preventing documentation bifurcation through a
-single source of truth hierarchy. This codifies documentation maintenance as a first-class
-deliverable without removing existing principles.
+Rationale for PATCH version bump:
+Adding explicit requirement for dark/light mode support to the existing Universal Accessibility
+principle. This clarifies and expands existing guidance without adding a new principle or removing
+existing requirements. The change codifies best practices already implied by WCAG AA compliance
+(which includes color contrast requirements) and makes explicit the use of Chakra UI's
+useColorModeValue for theme-aware components. This is a non-breaking clarification that enhances
+the existing accessibility principle.
 -->
 
 # Zaddies Game Constitution
@@ -187,6 +182,16 @@ All user interfaces MUST be accessible to users of all abilities, including thos
 - **Keyboard Navigation**: All functionality MUST be fully operable via keyboard
 - **Screen Reader Support**: All interactive elements MUST have proper ARIA labels and semantic HTML
 - **Focus Indicators**: Keyboard focus MUST be clearly visible (distinct outline/highlight)
+- **Theme Support**: All UI components MUST support both light and dark color modes with proper contrast in each mode
+
+**Theme Support Requirements**:
+
+- **Dynamic Color Adaptation**: Use Chakra UI's `useColorModeValue` hook to provide theme-aware colors
+- **Light Mode**: Text and interactive elements MUST maintain 4.5:1 contrast on light backgrounds
+- **Dark Mode**: Text and interactive elements MUST maintain 4.5:1 contrast on dark backgrounds
+- **No Hardcoded Colors**: Avoid hardcoded color values that don't adapt to theme (e.g., `gray.800` text on dark bg)
+- **Input Backgrounds**: Form inputs and interactive elements MUST have appropriate backgrounds for both themes
+- **Consistent Experience**: UI functionality and layout MUST remain consistent across both color modes
 
 **Color-Blind Specific Requirements** (per ADR 003):
 
@@ -199,12 +204,13 @@ All user interfaces MUST be accessible to users of all abilities, including thos
 
 - Red/green color combinations without alternative cues
 - Color-only differentiation (must include patterns, shapes, or labels)
-- Interactive elements below 4.5:1 contrast ratio
+- Interactive elements below 4.5:1 contrast ratio in either light or dark mode
+- Hardcoded colors that don't adapt to color mode changes
 - Mouse-only interactions without keyboard alternatives
 - Images or icons without alt text or ARIA labels
 - Automatic carousels or animations without pause controls
 
-**Rationale**: Approximately 8% of males and 0.5% of females have color vision deficiency. WCAG compliance is both a legal requirement in many jurisdictions and an ethical imperative. Universal design principles benefit all users, not just those with disabilities. Games should be enjoyable by everyone regardless of ability.
+**Rationale**: Approximately 8% of males and 0.5% of females have color vision deficiency. WCAG compliance is both a legal requirement in many jurisdictions and an ethical imperative. Universal design principles benefit all users, not just those with disabilities. Supporting both light and dark modes improves accessibility for users with photosensitivity, reduces eye strain, respects user preferences, and ensures text remains readable regardless of ambient lighting conditions. Games should be enjoyable by everyone regardless of ability or environmental context.
 
 **Enforcement**:
 
@@ -213,7 +219,8 @@ All user interfaces MUST be accessible to users of all abilities, including thos
 - Color vision simulations MUST pass for all critical UI elements
 - Keyboard navigation MUST be tested for all user flows
 - Screen reader testing required for key interactions
-- Contrast ratios verified with WebAIM or similar tools
+- Contrast ratios verified with WebAIM or similar tools in BOTH light and dark modes
+- All UI components MUST be tested in both light and dark color modes
 
 ### VIII. Architecture Decision Records (ADRs)
 
@@ -405,7 +412,7 @@ Before implementation begins, features MUST be evaluated against these checks:
 4. **Architecture Alignment**: Does this respect client-server separation?
 5. **Observability**: Are logging, metrics, and debugging hooks planned?
 6. **Mobile-First Design**: Are mobile views designed first with touch optimization?
-7. **Universal Accessibility**: Are WCAG AA and color-blind requirements met?
+7. **Universal Accessibility**: Are WCAG AA, color-blind requirements, and light/dark mode support met?
 8. **ADR Documentation**: Are architectural decisions documented with context and rationale?
 9. **Living Documentation**: Will affected docs (GAMEPLAY.md, README.md, QUICKSTART.md) be updated? Is information in ONE place only?
 
@@ -461,4 +468,4 @@ For day-to-day development guidance and examples, consult:
 - Development setup and reference in `/README.md`
 - Quick start guide in `/QUICKSTART.md`
 
-**Version**: 1.4.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-26
+**Version**: 1.4.1 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-26

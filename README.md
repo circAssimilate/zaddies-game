@@ -81,11 +81,12 @@ firebase init
 
 \`\`\`bash
 
-# Frontend
+# Frontend - Copy template to create local environment file
 
 cp frontend/.env.local.template frontend/.env.local
 
-# Edit frontend/.env.local with your Firebase config
+# The template contains all Firebase config values - just copy it!
+# VITE_USE_EMULATORS=true ensures you use local emulators for development
 
 # Backend
 

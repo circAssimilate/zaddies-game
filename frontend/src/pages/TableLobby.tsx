@@ -27,7 +27,7 @@ export default function TableLobby() {
   const navigate = useNavigate();
   const toast = useToast();
   const { user } = useAuth();
-  const { table, loading, error, leaveTable } = useTable(tableId);
+  const { table, loading, error, leaveTable } = useTable(tableId, user?.uid);
   const [isLeaving, setIsLeaving] = useState(false);
 
   // Redirect if no tableId

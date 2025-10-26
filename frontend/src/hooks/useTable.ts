@@ -27,9 +27,10 @@ export interface TableActions {
 /**
  * Hook to manage table state with real-time updates
  * @param tableId - Optional table ID to subscribe to
+ * @param userId - Optional user ID to check authentication before subscribing
  * @returns {TableState & TableActions} Table state and actions
  */
-export function useTable(tableId?: string): TableState & TableActions {
+export function useTable(tableId?: string, userId?: string | null): TableState & TableActions {
   const [table, setTable] = useState<Table | null>(null);
   const [loading, setLoading] = useState(!!tableId); // Loading if tableId provided
   const [error, setError] = useState<Error | null>(null);
@@ -37,6 +38,20 @@ export function useTable(tableId?: string): TableState & TableActions {
   useEffect(() => {
     if (!tableId) {
       setTable(null);
+      setLoading(false);
+      return;
+    }
+
+    // Wait for authentication before subscribing
+    if (userId === undefined) {
+      // Auth state not yet determined, keep loading
+      setLoading(true);
+      return;
+    }
+
+    if (userId === null) {
+      // User not authenticated
+      setError(new Error('You must be signed in to view this table'));
       setLoading(false);
       return;
     }
@@ -60,7 +75,7 @@ export function useTable(tableId?: string): TableState & TableActions {
 
     // Cleanup subscription
     return () => unsubscribe();
-  }, [tableId]);
+  }, [tableId, userId]);
 
   const createTable = async (settings?: Partial<Table['settings']>): Promise<string> => {
     try {

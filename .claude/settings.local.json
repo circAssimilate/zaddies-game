@@ -20,7 +20,11 @@
       "Bash(pnpm test:*)",
       "Bash(gh pr view:*)",
       "WebFetch(domain:adr.github.io)",
-      "WebFetch(domain:cognitect.com)"
+      "WebFetch(domain:cognitect.com)",
+      "Bash(bash:*)",
+      "Bash(test:*)",
+      "Bash(pnpm run dev:*)",
+      "Bash(firebase emulators:start:*)"
     ],
     "deny": [],
     "ask": []

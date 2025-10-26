@@ -2,7 +2,6 @@ import {
   collection,
   doc,
   getDoc,
-  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -10,13 +9,10 @@ import {
   getDocs,
   DocumentReference,
   CollectionReference,
-  Timestamp,
 } from 'firebase/firestore';
-import { db } from './config';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from './config';
 import { Table, TableStatus, TableSettings } from '@shared/types/table';
-// @ts-expect-error - Hand type used in Table interface
-// eslint-disable-next-line
-import { Hand } from '@shared/types/game';
 
 const TABLES_COLLECTION = 'tables';
 
@@ -35,41 +31,61 @@ function getTableRef(tableId: string): DocumentReference {
 }
 
 /**
- * Create a new table
- * @param tableId - Unique table identifier
- * @param hostId - User ID of the host
- * @param settings - Table settings
- * @returns Created table
+ * Create a new table using Cloud Function
+ * @param settings - Optional partial table settings
+ * @returns Table ID (4-digit code)
  */
-export async function createTable(
-  tableId: string,
-  hostId: string,
-  settings: TableSettings
-): Promise<Table> {
-  const tableRef = getTableRef(tableId);
+export async function createTable(settings?: Partial<TableSettings>): Promise<string> {
+  const createTableFn = httpsCallable<
+    { settings?: Partial<TableSettings> },
+    { success: boolean; tableId: string; message: string }
+  >(functions, 'createTableFunction');
 
-  const now = new Date();
-  const table: Table = {
-    id: tableId,
-    hostId,
-    settings,
-    status: 'waiting',
-    players: {},
-    createdAt: now,
-    updatedAt: now,
-    hand: null,
-  };
+  const result = await createTableFn({ settings });
 
-  // Convert Date to Firestore Timestamp
-  const tableData = {
-    ...table,
-    createdAt: Timestamp.fromDate(table.createdAt),
-    updatedAt: Timestamp.fromDate(table.updatedAt),
-  };
+  if (!result.data.success) {
+    throw new Error(result.data.message || 'Failed to create table');
+  }
 
-  await setDoc(tableRef, tableData);
+  return result.data.tableId;
+}
 
-  return table;
+/**
+ * Join a table using Cloud Function
+ * @param tableId - 4-digit table code
+ * @param buyInAmount - Initial chips to buy
+ * @returns Assigned seat position
+ */
+export async function joinTable(tableId: string, buyInAmount: number): Promise<number> {
+  const joinTableFn = httpsCallable<
+    { tableId: string; buyInAmount: number },
+    { success: boolean; position: number; message: string }
+  >(functions, 'joinTableFunction');
+
+  const result = await joinTableFn({ tableId, buyInAmount });
+
+  if (!result.data.success) {
+    throw new Error(result.data.message || 'Failed to join table');
+  }
+
+  return result.data.position;
+}
+
+/**
+ * Leave a table using Cloud Function
+ * @param tableId - 4-digit table code
+ */
+export async function leaveTable(tableId: string): Promise<void> {
+  const leaveTableFn = httpsCallable<
+    { tableId: string },
+    { success: boolean; chipsCashedOut: number; message: string }
+  >(functions, 'leaveTableFunction');
+
+  const result = await leaveTableFn({ tableId });
+
+  if (!result.data.success) {
+    throw new Error(result.data.message || 'Failed to leave table');
+  }
 }
 
 /**

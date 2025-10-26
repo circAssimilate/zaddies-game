@@ -5,6 +5,8 @@
   "description": "Texas Hold'em Poker game for friend groups",
   "scripts": {
     "dev": "pnpm --filter frontend dev & firebase emulators:start",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "firebase emulators:start",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "eslint \"**/*.{ts,tsx,js,jsx}\"",

@@ -1,0 +1,118 @@
+/**
+ * useTable Hook
+ * Real-time table state listener and actions
+ */
+
+import { useState, useEffect } from 'react';
+import { Table } from '@shared/types/table';
+import { subscribeToTable } from '../services/firebase/listeners';
+import {
+  createTable as createTableFn,
+  joinTable as joinTableFn,
+  leaveTable as leaveTableFn,
+} from '../services/firebase/tables';
+
+export interface TableState {
+  table: Table | null;
+  loading: boolean;
+  error: Error | null;
+}
+
+export interface TableActions {
+  createTable: (settings?: Partial<Table['settings']>) => Promise<string>;
+  joinTable: (tableId: string, buyInAmount: number) => Promise<number>;
+  leaveTable: (tableId: string) => Promise<void>;
+}
+
+/**
+ * Hook to manage table state with real-time updates
+ * @param tableId - Optional table ID to subscribe to
+ * @returns {TableState & TableActions} Table state and actions
+ */
+export function useTable(tableId?: string): TableState & TableActions {
+  const [table, setTable] = useState<Table | null>(null);
+  const [loading, setLoading] = useState(!!tableId); // Loading if tableId provided
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (!tableId) {
+      setTable(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    // Subscribe to real-time table updates
+    const unsubscribe = subscribeToTable(
+      tableId,
+      updatedTable => {
+        setTable(updatedTable);
+        setLoading(false);
+      },
+      err => {
+        console.error('Table subscription error:', err);
+        setError(err);
+        setLoading(false);
+      }
+    );
+
+    // Cleanup subscription
+    return () => unsubscribe();
+  }, [tableId]);
+
+  const createTable = async (settings?: Partial<Table['settings']>): Promise<string> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const newTableId = await createTableFn(settings);
+      return newTableId;
+    } catch (err) {
+      console.error('Create table error:', err);
+      setError(err as Error);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const joinTable = async (targetTableId: string, buyInAmount: number): Promise<number> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const position = await joinTableFn(targetTableId, buyInAmount);
+      return position;
+    } catch (err) {
+      console.error('Join table error:', err);
+      setError(err as Error);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const leaveTable = async (targetTableId: string): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+      await leaveTableFn(targetTableId);
+      setTable(null); // Clear table state after leaving
+    } catch (err) {
+      console.error('Leave table error:', err);
+      setError(err as Error);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    table,
+    loading,
+    error,
+    createTable,
+    joinTable,
+    leaveTable,
+  };
+}

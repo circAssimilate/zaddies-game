@@ -1,7 +1,7 @@
 // Shared table types for Texas Hold'em Poker
 
 import { Hand } from './game';
-import { TablePlayer } from './player';
+import { PlayerState } from './player';
 
 export type TableStatus = 'waiting' | 'playing' | 'ended';
 
@@ -22,10 +22,10 @@ export interface Table {
   hostId: string; // Player ID of current host
   status: TableStatus;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
 
   settings: TableSettings;
-  players: Record<string, TablePlayer>; // Map of player ID to player state
+  players: PlayerState[]; // Array of players at table
   hand: Hand | null; // Null when no hand in progress
 }
 

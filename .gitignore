@@ -11,7 +11,14 @@ coverage/
 # Production builds
 dist/
 build/
+lib/
 *.tsbuildinfo
+
+# TypeScript compiled output (JS from TS files)
+**/*.js
+!*.config.js
+!**/vite.config.js
+!**/vitest.config.js
 
 # Environment variables
 .env

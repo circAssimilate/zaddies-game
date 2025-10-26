@@ -1,38 +1,33 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version: 0.0.0 → 1.0.0
-Change Type: MAJOR (Initial ratification)
+Version: 1.2.0 → 1.3.0
+Change Type: MINOR (New principle added)
 Date: 2025-10-25
 
 Modified Principles:
-- NEW: I. Test-Driven Development (TDD)
-- NEW: II. Modular Architecture
-- NEW: III. Performance-First
-- NEW: IV. Client-Server Separation
-- NEW: V. Observability & Debuggability
+- NEW: VIII. Architecture Decision Records (ADRs)
 
 Added Sections:
-- Core Principles (5 principles)
-- Development Workflow
-- Quality Gates
-- Governance
+- Architecture Decision Records principle requiring documentation of significant decisions
 
 Removed Sections:
-- (None - initial creation)
+- (None)
 
 Templates Requiring Updates:
-✅ .specify/templates/plan-template.md - Constitution Check section verified
+✅ .specify/templates/plan-template.md - Constitution Check section will include ADR requirement
 ✅ .specify/templates/spec-template.md - Requirements alignment verified
-✅ .specify/templates/tasks-template.md - Task categorization verified
-⚠ Command files - Will review for agent-specific references
+✅ .specify/templates/tasks-template.md - Task categorization includes ADR documentation
+✅ Command files - No changes needed
 
 Follow-up TODOs:
-- (None - all required fields filled)
+- ✅ Updated Quality Gates section to include ADR documentation check
+- ✅ Updated Code Review Requirements to reference 8 principles
+- ✅ Added ADR Updates item to Code Review checklist
 
-Rationale for MAJOR version:
-This is the initial ratification of the Zaddies Game constitution, establishing
-the foundational governance and development principles for the project.
+Rationale for MINOR version bump:
+Adding a new principle (VIII. Architecture Decision Records) based on adr.github.io
+best practices. This codifies decision documentation without removing existing principles.
 -->
 
 # Zaddies Game Constitution
@@ -141,6 +136,125 @@ All game systems MUST be observable and debuggable in development and production
 
 **Rationale**: Games are complex stateful systems where issues are hard to reproduce. Comprehensive observability enables rapid debugging, understanding player behavior, and data-driven design decisions.
 
+### VI. Mobile-First UI Design
+
+All frontend user interfaces MUST be designed and implemented with a mobile-first approach. Desktop and larger screen experiences are progressive enhancements built on top of a fully functional mobile foundation.
+
+**Mobile-First Requirements**:
+
+- **Design Mobile First**: UI components MUST be designed for mobile screens (320px-428px width) before desktop
+- **Touch-Optimized**: All interactive elements MUST have minimum 44x44px touch targets
+- **Responsive by Default**: Layouts MUST use fluid grids, flexible images, and CSS media queries
+- **Performance on Mobile**: Initial page load MUST be under 3 seconds on 3G networks
+- **Progressive Enhancement**: Advanced features for larger screens MUST NOT break mobile experience
+- **Mobile Testing Required**: All PRs MUST include mobile viewport testing (iOS Safari, Android Chrome minimum)
+
+**Prohibited**:
+
+- Desktop-first designs that are retrofitted to mobile
+- Fixed-width layouts that require horizontal scrolling on mobile
+- Interactive elements smaller than 44x44px touch targets
+- Features that only work on desktop without mobile fallback
+- Assuming mouse/keyboard input (must support touch, keyboard, and assistive technologies)
+
+**Rationale**: Mobile devices represent the majority of web traffic and the primary access point for many users. Mobile-first design ensures accessibility, performance, and usability across all devices. Starting with mobile constraints forces focus on core functionality and prevents bloat. Games and interactive applications must be enjoyable on mobile to reach the widest audience.
+
+**Enforcement**:
+
+- Design mockups MUST show mobile views first (320px, 375px, 428px widths)
+- CSS MUST use min-width media queries (mobile-first breakpoints)
+- Performance budgets MUST prioritize mobile network conditions
+- Accessibility testing MUST include mobile screen readers
+- All user stories MUST define mobile acceptance criteria
+
+### VII. Universal Accessibility
+
+All user interfaces MUST be accessible to users of all abilities, including those with visual, motor, cognitive, and auditory disabilities. Accessibility is a core requirement, not an optional enhancement.
+
+**Accessibility Requirements**:
+
+- **WCAG AA Compliance**: All UI components MUST meet WCAG 2.1 Level AA standards
+- **Color-Blind Safe**: Visual information MUST NOT rely solely on color (use patterns, shapes, labels)
+- **Contrast Ratios**: Text and interactive elements MUST meet 4.5:1 minimum contrast ratio
+- **Keyboard Navigation**: All functionality MUST be fully operable via keyboard
+- **Screen Reader Support**: All interactive elements MUST have proper ARIA labels and semantic HTML
+- **Focus Indicators**: Keyboard focus MUST be clearly visible (distinct outline/highlight)
+
+**Color-Blind Specific Requirements** (per ADR 003):
+
+- **Blue/Orange Palette**: Use blue (#2563EB, #1E40AF) and orange (#F97316, #EA580C) instead of red/green
+- **Pattern Redundancy**: Combine color with patterns/textures for differentiation
+- **Suit Differentiation**: Spades (solid blue), Clubs (blue + dots), Hearts (solid orange), Diamonds (orange + stripes)
+- **Testing Required**: Validate with Chrome DevTools color vision simulations (protanopia, deuteranopia, tritanopia)
+
+**Prohibited**:
+
+- Red/green color combinations without alternative cues
+- Color-only differentiation (must include patterns, shapes, or labels)
+- Interactive elements below 4.5:1 contrast ratio
+- Mouse-only interactions without keyboard alternatives
+- Images or icons without alt text or ARIA labels
+- Automatic carousels or animations without pause controls
+
+**Rationale**: Approximately 8% of males and 0.5% of females have color vision deficiency. WCAG compliance is both a legal requirement in many jurisdictions and an ethical imperative. Universal design principles benefit all users, not just those with disabilities. Games should be enjoyable by everyone regardless of ability.
+
+**Enforcement**:
+
+- Design mockups MUST demonstrate color-blind safe palettes
+- All PRs MUST include accessibility testing (axe DevTools, WAVE, or similar)
+- Color vision simulations MUST pass for all critical UI elements
+- Keyboard navigation MUST be tested for all user flows
+- Screen reader testing required for key interactions
+- Contrast ratios verified with WebAIM or similar tools
+
+### VIII. Architecture Decision Records (ADRs)
+
+All architecturally significant decisions MUST be documented in Architecture Decision Records (ADRs). An ADR captures a single architectural decision, its context, rationale, and consequences to maintain institutional knowledge and prevent future teams from inadvertently reversing decisions without understanding their original justification.
+
+**When to Create ADRs**:
+
+- **Structural Changes**: Modifications affecting system structure, components, or modules
+- **Non-Functional Requirements**: Decisions impacting performance, security, scalability, or reliability
+- **Technology Choices**: Selection of frameworks, libraries, databases, or infrastructure
+- **Interface Contracts**: Changes to APIs, protocols, or integration patterns
+- **Construction Techniques**: Build processes, deployment strategies, or development workflows
+- **Dependency Management**: Addition or removal of significant external dependencies
+
+**Required ADR Structure** (per Michael Nygard format):
+
+1. **Title**: Short noun phrase (e.g., "ADR 003: Use Blue/Orange Color Palette for Accessibility")
+2. **Status**: One of "proposed", "accepted", "deprecated", "superseded by [ADR-NNN]"
+3. **Context**: Forces at play (technological, political, social, project constraints) in neutral language
+4. **Decision**: Team's response in active voice ("We will...")
+5. **Consequences**: All effects (positive, negative, neutral) resulting from this decision
+
+**ADR Management**:
+
+- Store in version control at `docs/adr/NNN-decision-title.md`
+- Use Markdown format (lightweight, readable)
+- Number sequentially starting from 001 (never reuse numbers)
+- Keep documents to 1-2 pages maximum
+- Write in complete sentences and conversational style
+- Reference related ADRs when superseding or building upon previous decisions
+
+**Prohibited**:
+
+- Making significant architectural decisions without documenting rationale
+- Deleting or renaming existing ADRs (mark as deprecated/superseded instead)
+- Writing ADRs after implementation is complete (document during decision-making)
+- Vague or evaluative language in Context section (remain factual and neutral)
+- Missing consequences section (document all trade-offs, even if negative)
+
+**Rationale**: Architecture erodes over time as original decision-makers leave and context is forgotten. ADRs create a decision log that explains "why" not just "what", preventing future developers from needing to reverse-engineer project rationale. This practice is essential for long-lived projects and teams with changing membership. The lightweight format (1-2 pages in Markdown) keeps documentation sustainable while preserving critical institutional knowledge.
+
+**Enforcement**:
+
+- PRs with architectural impact MUST include or update relevant ADRs
+- ADRs MUST be reviewed alongside code changes
+- Constitution amendments MUST reference ADR process in governance section
+- Feature specifications SHOULD reference existing ADRs when applicable
+- Quarterly ADR review to mark deprecated decisions and identify missing documentation
+
 ## Development Workflow
 
 ### Code Review Requirements
@@ -148,10 +262,11 @@ All game systems MUST be observable and debuggable in development and production
 All code changes MUST be reviewed and approved before merge:
 
 1. **Tests First**: Reviewer verifies tests were written before implementation
-2. **Constitution Compliance**: Verify adherence to all five core principles
+2. **Constitution Compliance**: Verify adherence to all eight core principles
 3. **Performance Validation**: Confirm performance benchmarks pass
 4. **Documentation**: Ensure module interfaces and contracts are documented
 5. **Security**: Check for client-side exploits, data validation issues
+6. **ADR Updates**: Verify architectural decisions are documented in ADRs
 
 ### Branch Strategy
 
@@ -180,6 +295,9 @@ Before implementation begins, features MUST be evaluated against these checks:
 3. **Performance Impact**: Are performance benchmarks defined and testable?
 4. **Architecture Alignment**: Does this respect client-server separation?
 5. **Observability**: Are logging, metrics, and debugging hooks planned?
+6. **Mobile-First Design**: Are mobile views designed first with touch optimization?
+7. **Universal Accessibility**: Are WCAG AA and color-blind requirements met?
+8. **ADR Documentation**: Are architectural decisions documented with context and rationale?
 
 **Complexity Justification**: Any violation of core principles MUST be documented with:
 
@@ -230,4 +348,4 @@ For day-to-day development guidance and examples, consult:
 - Feature specifications in `/specs/[###-feature]/spec.md`
 - Task breakdowns in `/specs/[###-feature]/tasks.md`
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25
+**Version**: 1.3.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25

@@ -143,9 +143,9 @@
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T076 [P] [US2] Write contract test for playerAction function in backend/tests/integration/playerAction.test.ts
-- [ ] T077 [P] [US2] Write contract test for startGame function in backend/tests/integration/startGame.test.ts
-- [ ] T078 [P] [US2] Write integration test for complete hand flow in backend/tests/integration/handFlow.test.ts
+- [x] T076 [P] [US2] Write contract test for playerAction function in backend/tests/integration/playerAction.test.ts
+- [x] T077 [P] [US2] Write contract test for startGame function in backend/tests/integration/startGame.test.ts
+- [x] T078 [P] [US2] Write integration test for complete hand flow in backend/tests/integration/handFlow.test.ts
 
 ### Implementation for User Story 2
 

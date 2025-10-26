@@ -36,6 +36,21 @@ export async function leaveTable(
       throw new HttpsError('invalid-argument', 'Table code must be a 4-digit number');
     }
 
+    // Get player's current ledger balance BEFORE transaction (queries not allowed in transactions)
+    const ledgerSnapshot = await db
+      .collection('ledger')
+      .doc(userId)
+      .collection('transactions')
+      .orderBy('timestamp', 'desc')
+      .limit(1)
+      .get();
+
+    let currentBalance = 0;
+    if (!ledgerSnapshot.empty) {
+      const lastTransaction = ledgerSnapshot.docs[0].data();
+      currentBalance = lastTransaction.runningBalance || 0;
+    }
+
     // Use transaction to ensure atomicity
     const result = await db.runTransaction(async transaction => {
       // Get table document
@@ -89,22 +104,6 @@ export async function leaveTable(
       }
 
       transaction.update(tableRef, tableUpdate);
-
-      // Get player's current ledger balance
-      const ledgerSnapshot = await transaction.get(
-        db
-          .collection('ledger')
-          .doc(userId)
-          .collection('transactions')
-          .orderBy('timestamp', 'desc')
-          .limit(1)
-      );
-
-      let currentBalance = 0;
-      if (!ledgerSnapshot.empty) {
-        const lastTransaction = ledgerSnapshot.docs[0].data();
-        currentBalance = lastTransaction.runningBalance || 0;
-      }
 
       // Calculate new balance after cash out
       const newBalance = currentBalance + chipsToCashOut;

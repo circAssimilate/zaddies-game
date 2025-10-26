@@ -42,7 +42,7 @@
 - [x] T007 Implement categorizeFiles function in scripts/categorize-files.ts
 - [x] T008 Implement getDefaultPatterns function for file pattern configuration in scripts/categorize-files.ts
 - [x] T009 Implement normalizeFilePaths utility function in scripts/categorize-files.ts
-- [x] T010 Add unit tests for file categorization logic in scripts/__tests__/categorize-files.test.ts
+- [x] T010 Add unit tests for file categorization logic in scripts/**tests**/categorize-files.test.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -168,18 +168,21 @@
 ### Within Each User Story
 
 **User Story 1**:
+
 1. Package.json configuration tasks (T011-T013) can run in parallel
 2. Husky initialization (T014) must complete before hook creation (T015)
 3. Hook configuration (T016-T019) sequential
 4. Testing tasks (T020-T024) can run after implementation complete
 
 **User Story 2**:
+
 1. Script implementation (T026-T027) can run in parallel
 2. CI workflow modifications (T028-T032) sequential within ci.yml
 3. Deploy workflow modifications (T033-T036) can run in parallel with ci.yml changes
 4. Testing tasks (T037-T040) sequential after workflow changes deployed
 
 **User Story 3**:
+
 1. Pattern detection tasks (T041-T043) can run in parallel
 2. Workflow logic extension (T044-T046) can run in parallel
 3. CI conditional logic (T047-T050) sequential

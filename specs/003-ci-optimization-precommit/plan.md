@@ -18,6 +18,7 @@ The primary goal is to reduce failed CI builds by 80% and decrease CI resource u
 
 **Language/Version**: TypeScript 5.3+, Node.js 20 LTS
 **Primary Dependencies**:
+
 - Git hooks: NEEDS CLARIFICATION (Husky vs lint-staged vs simple-git-hooks)
 - Prettier 3.0.0 (already in project)
 - ESLint 8.50.0 with TypeScript plugin (already in project)
@@ -28,17 +29,20 @@ The primary goal is to reduce failed CI builds by 80% and decrease CI resource u
 **Target Platform**: Developer workstations (macOS, Linux, Windows) + GitHub Actions runners (Ubuntu)
 **Project Type**: Web application (monorepo with frontend/backend/shared packages)
 **Performance Goals**:
+
 - Pre-commit checks complete in <60 seconds for typical commits
 - Documentation-only CI runs complete in <2 minutes
 - Zero impact on commit performance when hooks are bypassed
 
 **Constraints**:
+
 - Must work across all developer platforms (macOS, Linux, Windows)
 - Must not break existing git workflows or IDE integrations
 - Must be installable automatically (no manual setup steps)
 - Hook scripts must handle edge cases gracefully (crashes, timeouts)
 
 **Scale/Scope**:
+
 - Current codebase: ~5,000 LOC across frontend/backend/shared
 - Typical commit: 5-50 files changed
 - Team size: Small (2-5 developers)
@@ -53,6 +57,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 **Status**: PASS (with justification)
 
 **Justification**: This feature is primarily tooling and configuration (pre-commit hooks, GitHub Actions workflow modifications). Testing approach:
+
 - Pre-commit hooks: Integration tests that verify hooks run and block commits with errors
 - CI workflow logic: Test file categorization logic with unit tests for path matching
 - End-to-end validation: Manually verify hooks install correctly and CI skips appropriate steps
@@ -64,6 +69,7 @@ TDD applies where logic exists (file categorization), but infrastructure configu
 **Status**: PASS
 
 **Analysis**:
+
 - Pre-commit hook system is independent module (hook scripts, installation logic)
 - CI workflow modifications are isolated to GitHub Actions YAML files
 - File categorization logic can be extracted as standalone utility function
@@ -75,6 +81,7 @@ TDD applies where logic exists (file categorization), but infrastructure configu
 **Status**: PASS
 
 **Performance Benchmarks Defined**:
+
 - Pre-commit checks complete in <60 seconds (SC-002)
 - Documentation-only CI runs complete in <2 minutes (SC-003)
 - CI resource usage decreases by 30% (SC-004)
@@ -93,6 +100,7 @@ TDD applies where logic exists (file categorization), but infrastructure configu
 **Status**: PASS
 
 **Observability**:
+
 - Pre-commit hooks must output clear error messages (FR-005, SC-006)
 - CI workflows must log which steps were run/skipped (FR-011)
 - Hook execution can include timing information for debugging slow checks
@@ -116,6 +124,7 @@ TDD applies where logic exists (file categorization), but infrastructure configu
 **Status**: REQUIRES ADR
 
 **Architectural Decisions Requiring Documentation**:
+
 1. **Choice of git hook framework** (Husky vs lint-staged vs simple-git-hooks) - affects developer setup, cross-platform compatibility, and maintenance
 2. **File categorization strategy** for CI workflow optimization - defines which file patterns trigger which CI steps
 3. **Pre-commit check sequencing** - why Prettier runs before linting/type checking (auto-formatting reduces false errors)
@@ -191,6 +200,7 @@ pnpm-workspace.yaml        # UNCHANGED
 ```
 
 **Structure Decision**: Web application monorepo structure (existing). This feature adds:
+
 1. Git hook framework integration (directory TBD based on research: .husky/ vs .git-hooks/)
 2. Shared utility script for file categorization logic
 3. Modifications to existing CI/CD workflow files

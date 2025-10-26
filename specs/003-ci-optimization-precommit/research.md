@@ -17,6 +17,7 @@ This research resolves the "NEEDS CLARIFICATION" item from Technical Context and
 ### Context
 
 Need to select a git hook framework that:
+
 - Works cross-platform (macOS, Linux, Windows)
 - Installs automatically via npm scripts
 - Has minimal configuration overhead
@@ -28,6 +29,7 @@ Need to select a git hook framework that:
 #### Option A: Husky + lint-staged
 
 **Pros**:
+
 - Most popular solution (7M+ weekly npm downloads for husky)
 - Mature and battle-tested
 - Excellent integration with lint-staged for running commands on staged files only
@@ -35,6 +37,7 @@ Need to select a git hook framework that:
 - Works well with pnpm workspaces
 
 **Cons**:
+
 - Two dependencies instead of one (husky + lint-staged)
 - Slightly more configuration (two config files/sections)
 - Husky v8+ requires explicit installation step in package.json prepare script
@@ -44,11 +47,13 @@ Need to select a git hook framework that:
 #### Option B: simple-git-hooks
 
 **Pros**:
+
 - Minimal and lightweight (zero dependencies)
 - Simple configuration (single package.json section)
 - Works with pnpm
 
 **Cons**:
+
 - No built-in support for running on staged files only (would need custom scripting)
 - Less popular than Husky (~300K weekly downloads)
 - Less community support and examples
@@ -58,10 +63,12 @@ Need to select a git hook framework that:
 #### Option C: Pre-commit framework (Python-based)
 
 **Pros**:
+
 - Language-agnostic
 - Very powerful plugin system
 
 **Cons**:
+
 - Requires Python installation (extra dependency)
 - Not JavaScript-native (team may be less familiar)
 - Overkill for our simple use case
@@ -71,6 +78,7 @@ Need to select a git hook framework that:
 **CHOSEN: Husky + lint-staged**
 
 **Rationale**:
+
 1. Industry standard with proven track record
 2. lint-staged provides critical "staged files only" filtering out of the box
 3. Excellent pnpm support and monorepo compatibility
@@ -78,10 +86,12 @@ Need to select a git hook framework that:
 5. Automatic installation via pnpm install when prepare script is configured
 
 **Alternatives Considered**:
+
 - simple-git-hooks rejected: Would require custom scripting to match lint-staged functionality
 - pre-commit framework rejected: Adds Python dependency and unnecessary complexity
 
 **Trade-offs Accepted**:
+
 - Two dependencies instead of one (acceptable for better DX)
 - Requires prepare script in package.json (standard practice)
 
@@ -90,6 +100,7 @@ Need to select a git hook framework that:
 ### Context
 
 Need to define which file patterns should trigger which CI workflow steps. Goals:
+
 - Skip build/deployment for documentation-only changes
 - Maintain safety (don't skip critical checks)
 - Be explicit and maintainable
@@ -99,6 +110,7 @@ Need to define which file patterns should trigger which CI workflow steps. Goals
 #### Category 1: Documentation Only (Skip Build/Deploy)
 
 **Patterns**:
+
 ```
 **/*.md
 docs/**/*
@@ -116,6 +128,7 @@ CONTRIBUTING.md
 #### Category 2: Configuration (Run Full Pipeline)
 
 **Patterns**:
+
 ```
 package.json
 pnpm-lock.yaml
@@ -135,6 +148,7 @@ firebase.json
 #### Category 3: Source Code (Run Full Pipeline)
 
 **Patterns**:
+
 ```
 frontend/src/**
 backend/src/**
@@ -152,6 +166,7 @@ shared/src/**
 #### Category 4: Tests Only (Run Tests, Skip Deployment)
 
 **Patterns**:
+
 ```
 **/*.test.ts
 **/*.test.tsx
@@ -184,6 +199,7 @@ on:
 **Decision**: Use **conditional job steps** instead of `paths-ignore` for more granular control
 
 **Rationale**:
+
 - paths-ignore is all-or-nothing (entire workflow skips or runs)
 - Conditional steps allow running some checks (like markdown linting) while skipping others (build/deploy)
 - Better observability (can log which steps were skipped and why)
@@ -197,6 +213,7 @@ Need to determine optimal order for running Prettier, ESLint, and TypeScript com
 ### Sequence Chosen
 
 **Order**:
+
 1. **Prettier** (auto-format)
 2. **ESLint** (lint)
 3. **TypeScript Compiler** (type-check)
@@ -210,6 +227,7 @@ Need to determine optimal order for running Prettier, ESLint, and TypeScript com
 3. **TypeScript Last**: Most expensive check. Only runs if formatting and linting pass. Catches type errors across entire project.
 
 **Performance Optimization**:
+
 - lint-staged runs Prettier and ESLint only on staged files (fast)
 - TypeScript compiler runs on entire project (necessary for type checking cross-file references)
 - Expected total time: 10-30 seconds for typical commit
@@ -219,6 +237,7 @@ Need to determine optimal order for running Prettier, ESLint, and TypeScript com
 **Parallel Execution**: Run all three simultaneously
 
 **Rejected Because**:
+
 - Prettier auto-formatting would create conflicts with ESLint if run in parallel
 - No performance benefit (Prettier is fast, TypeScript dominates execution time)
 - Sequential execution with fast-fail provides faster feedback for common issues
@@ -227,12 +246,12 @@ Need to determine optimal order for running Prettier, ESLint, and TypeScript com
 
 Based on current codebase (~5,000 LOC):
 
-| Check                    | Scope         | Expected Time | Limit  |
-| ------------------------ | ------------- | ------------- | ------ |
-| Prettier                 | Staged files  | 1-5 seconds   | 10s    |
-| ESLint                   | Staged files  | 2-10 seconds  | 20s    |
-| TypeScript (full build)  | Entire repo   | 10-30 seconds | 40s    |
-| **Total (typical)**      | -             | 13-45 seconds | 60s    |
+| Check                   | Scope        | Expected Time | Limit |
+| ----------------------- | ------------ | ------------- | ----- |
+| Prettier                | Staged files | 1-5 seconds   | 10s   |
+| ESLint                  | Staged files | 2-10 seconds  | 20s   |
+| TypeScript (full build) | Entire repo  | 10-30 seconds | 40s   |
+| **Total (typical)**     | -            | 13-45 seconds | 60s   |
 
 **Escape Hatch**: Developers can use `git commit --no-verify` to bypass hooks in emergencies (FR-014)
 
@@ -241,6 +260,7 @@ Based on current codebase (~5,000 LOC):
 ### Cross-Platform Compatibility
 
 **Considerations**:
+
 - Use pnpm scripts for all commands (works on macOS, Linux, Windows)
 - Husky uses sh scripts - works natively on macOS/Linux, uses Git Bash on Windows
 - Avoid platform-specific shell commands (test on Windows if possible)
@@ -248,6 +268,7 @@ Based on current codebase (~5,000 LOC):
 ### Installation Automation
 
 **Approach**:
+
 ```json
 {
   "scripts": {
@@ -258,6 +279,7 @@ Based on current codebase (~5,000 LOC):
 ```
 
 **Behavior**:
+
 - `prepare` runs automatically after `pnpm install`
 - Husky hooks install without manual developer action
 - New developers get hooks automatically on first checkout
@@ -265,6 +287,7 @@ Based on current codebase (~5,000 LOC):
 ### Error Handling
 
 **Requirements**:
+
 - Clear error messages indicating which check failed
 - Show exact file and line number for errors
 - Provide suggestion for how to fix (or use --no-verify to bypass)
@@ -277,6 +300,7 @@ Based on Constitution Principle VIII, the following ADR must be created:
 **ADR 005: Git Hook Framework and CI Optimization Strategy**
 
 **Required Sections**:
+
 1. **Title**: "ADR 005: Use Husky + lint-staged for Pre-commit Hooks"
 2. **Status**: "accepted"
 3. **Context**: Team needs to catch code quality issues before CI runs, reduce failed builds, and optimize CI resource usage for a pnpm monorepo with TypeScript, Prettier, and ESLint.

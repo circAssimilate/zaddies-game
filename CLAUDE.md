@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2025-10-25
 
 ## Active Technologies
+
 - TypeScript 5.3+, Node.js 20 LTS (003-ci-optimization-precommit)
 - N/A (workflow configuration and hook scripts only) (003-ci-optimization-precommit)
 
@@ -27,6 +28,7 @@ pnpm test && pnpm run lint
 TypeScript 5.3+ (frontend and backend), Node.js 20 LTS (backend runtime): Follow standard conventions
 
 ## Recent Changes
+
 - 003-ci-optimization-precommit: Added TypeScript 5.3+, Node.js 20 LTS
 
 - 002-migrate-to-pnpm: Added TypeScript 5.3+ (frontend/backend), Node.js 20 LTS, pnpm 8.x

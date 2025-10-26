@@ -22,6 +22,7 @@ pnpm install
 The `prepare` script in `package.json` runs `husky install` automatically, setting up git hooks for you.
 
 **Verify Installation**:
+
 ```bash
 # Check that hooks are installed
 ls -la .husky/
@@ -58,6 +59,7 @@ git commit -m "feat: add new component"
 ```
 
 **What Happens**:
+
 1. Prettier formats your staged files (auto-fixes)
 2. ESLint checks for code quality issues
 3. TypeScript compiler checks for type errors
@@ -106,6 +108,7 @@ git commit --no-verify -m "emergency: hotfix for production"
 **Cause**: Husky not installed or not in PATH
 
 **Fix**:
+
 ```bash
 pnpm install
 pnpm exec husky install
@@ -116,6 +119,7 @@ pnpm exec husky install
 **Cause**: TypeScript compilation slow on large projects
 
 **Temporary Workaround**:
+
 ```bash
 # Skip TypeScript check just for this commit
 SKIP_TSC=1 git commit -m "your message"
@@ -128,6 +132,7 @@ SKIP_TSC=1 git commit -m "your message"
 **Cause**: Hook script not executable
 
 **Fix**:
+
 ```bash
 chmod +x .husky/pre-commit
 ```
@@ -137,6 +142,7 @@ chmod +x .husky/pre-commit
 **Cause**: Dependencies not installed
 
 **Fix**:
+
 ```bash
 pnpm install
 ```
@@ -152,13 +158,15 @@ pnpm install
 **Old Behavior**: Full CI pipeline runs (5+ minutes)
 
 **New Behavior**:
+
 - ✅ Linting runs (markdown linting if configured)
-- ⏭️  Tests skipped
-- ⏭️  Build skipped
-- ⏭️  Deployment skipped
-- ⏱️  Total time: <2 minutes
+- ⏭️ Tests skipped
+- ⏭️ Build skipped
+- ⏭️ Deployment skipped
+- ⏱️ Total time: <2 minutes
 
 **How to Verify**:
+
 1. Make a documentation-only change
 2. Push to a PR
 3. Check GitHub Actions workflow logs
@@ -175,10 +183,11 @@ pnpm install
 **Scenario**: You only modify test files (`*.test.ts`, `*.spec.ts`)
 
 **Behavior**:
+
 - ✅ Linting runs
 - ✅ Tests run
-- ⏭️  Build skipped (optional optimization)
-- ⏭️  Deployment skipped
+- ⏭️ Build skipped (optional optimization)
+- ⏭️ Deployment skipped
 
 ---
 
@@ -225,6 +234,7 @@ pnpm exec eslint src/components/Button.tsx
 **File**: `.husky/pre-commit`
 
 **Contents**:
+
 ```bash
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
@@ -239,13 +249,11 @@ pnpm exec lint-staged && pnpm run type-check
 **File**: `package.json` (or `.lintstagedrc.json`)
 
 **Contents**:
+
 ```json
 {
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+    "*.{ts,tsx,js,jsx}": ["prettier --write", "eslint --fix"]
   }
 }
 ```
@@ -264,12 +272,12 @@ pnpm exec lint-staged && pnpm run type-check
 
 ## Performance Expectations
 
-| Check                 | Typical Time | Maximum Allowed |
-| --------------------- | ------------ | --------------- |
-| Prettier              | 1-5 seconds  | 10 seconds      |
-| ESLint                | 2-10 seconds | 20 seconds      |
-| TypeScript            | 10-30 seconds| 40 seconds      |
-| **Total (typical)**   | 13-45 seconds| 60 seconds      |
+| Check               | Typical Time  | Maximum Allowed |
+| ------------------- | ------------- | --------------- |
+| Prettier            | 1-5 seconds   | 10 seconds      |
+| ESLint              | 2-10 seconds  | 20 seconds      |
+| TypeScript          | 10-30 seconds | 40 seconds      |
+| **Total (typical)** | 13-45 seconds | 60 seconds      |
 
 If checks consistently exceed maximums, file a performance bug report.
 
@@ -290,16 +298,19 @@ After this feature is implemented, we expect:
 ## Getting Help
 
 **Pre-commit hook issues**:
+
 - Check that Husky is installed: `pnpm list husky`
 - Verify hook is executable: `ls -la .husky/pre-commit`
 - Try manual install: `pnpm run prepare`
 
 **CI workflow issues**:
+
 - Check GitHub Actions logs for "Skipping X step" messages
 - Verify file categorization is correct (see workflow decision logs)
 - Ensure workflows are using latest version from main branch
 
 **Performance issues**:
+
 - Profile TypeScript compilation: `pnpm exec tsc --noEmit --diagnostics`
 - Check for large file counts: `git diff --cached --name-only | wc -l`
 - Consider `--no-verify` for very large commits (then fix in separate commit)
@@ -316,6 +327,7 @@ After this feature is implemented, we expect:
 ---
 
 **Related Documentation**:
+
 - [Feature Specification](./spec.md) - What this feature does and why
 - [Implementation Plan](./plan.md) - Technical approach
 - [Research](./research.md) - Technology choices (Husky vs alternatives)

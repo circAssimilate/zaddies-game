@@ -36,6 +36,7 @@ Use **Husky 8.x** and **lint-staged 15.x** to run automated quality checks befor
   - TypeScript compiler type-checks entire project (necessary for cross-file type validation)
 
 Configuration approach:
+
 - Add `prepare` script to package.json: `"prepare": "husky install"`
 - Configure lint-staged in package.json with file-pattern-based commands
 - Create `.husky/pre-commit` hook that calls lint-staged and TypeScript compiler
@@ -53,6 +54,7 @@ Use **GitHub Actions conditional steps** with file change detection to skip unne
 - Log workflow decisions for observability
 
 Implementation approach:
+
 - Create `scripts/categorize-files.ts` utility for file categorization logic
 - Add file change detection step at start of CI workflows
 - Apply conditional logic to expensive steps (build, deployment)

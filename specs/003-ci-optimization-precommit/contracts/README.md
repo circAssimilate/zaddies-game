@@ -17,6 +17,7 @@ This directory contains TypeScript interface definitions (contracts) for the API
 **Purpose**: Define interfaces for categorizing file changes and making workflow decisions
 
 **Key Exports**:
+
 - `FileCategory` enum - Documentation, source code, configuration, tests, other
 - `FileChangeSet` interface - Categorized collection of changed files
 - `WorkflowDecision` interface - Which CI steps to run
@@ -24,10 +25,12 @@ This directory contains TypeScript interface definitions (contracts) for the API
 - `determineWorkflowSteps()` - Derive CI decisions from categorization
 
 **Used By**:
+
 - GitHub Actions workflows (`.github/workflows/ci.yml`, `deploy.yml`)
 - Utility script (`scripts/categorize-files.ts` or `.js`)
 
 **Example Usage**:
+
 ```typescript
 import { categorizeFiles, determineWorkflowSteps } from './contracts/file-categorization-api';
 
@@ -46,6 +49,7 @@ if (decision.isDocumentationOnly) {
 **Purpose**: Define interfaces for running pre-commit quality checks
 
 **Key Exports**:
+
 - `CheckStatus` enum - Passed, failed, skipped
 - `CheckResult` interface - Result of a single check (Prettier, ESLint, or TypeScript)
 - `PrecommitCheckSummary` interface - Aggregate result of all checks
@@ -54,11 +58,13 @@ if (decision.isDocumentationOnly) {
 - `formatCheckSummary()` - Format results for terminal display
 
 **Used By**:
+
 - `.husky/pre-commit` hook script
 - CI workflows (for consistency validation)
 - Manual check scripts (`pnpm run precommit`)
 
 **Example Usage**:
+
 ```typescript
 import { runPrecommitChecks, formatCheckSummary } from './contracts/precommit-check-api';
 
@@ -79,6 +85,7 @@ if (!summary.passed) {
 ### Type Safety
 
 All implementations MUST:
+
 - Use TypeScript for type safety
 - Export functions matching the contract signatures exactly
 - Throw errors for invalid inputs (empty arrays, absolute paths, etc.)
@@ -87,6 +94,7 @@ All implementations MUST:
 ### Error Handling
 
 Implementations MUST handle:
+
 - Missing tools (Prettier, ESLint, TypeScript not installed)
 - Timeout scenarios (checks taking too long)
 - Invalid file paths (absolute paths, paths escaping repo root)
@@ -95,6 +103,7 @@ Implementations MUST handle:
 ### Testing
 
 Each contract implementation MUST have:
+
 - Unit tests for all exported functions
 - Integration tests for end-to-end workflows
 - Edge case tests (empty input, invalid paths, tool failures)
@@ -102,6 +111,7 @@ Each contract implementation MUST have:
 ### Performance
 
 Implementations MUST meet:
+
 - File categorization: <1 second for 1000 files
 - Pre-commit checks: <60 seconds for typical commits (per SC-002)
 - TypeScript compilation: <40 seconds (per research.md benchmarks)
@@ -134,9 +144,9 @@ Implementations MUST meet:
 
 ## Version History
 
-| Version | Date       | Changes                                    |
-| ------- | ---------- | ------------------------------------------ |
-| 1.0.0   | 2025-10-25 | Initial contract definitions for Phase 1   |
+| Version | Date       | Changes                                  |
+| ------- | ---------- | ---------------------------------------- |
+| 1.0.0   | 2025-10-25 | Initial contract definitions for Phase 1 |
 
 ---
 

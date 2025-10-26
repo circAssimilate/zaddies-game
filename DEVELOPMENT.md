@@ -6,7 +6,11 @@
 
 - Node.js 20 LTS or higher
 - pnpm 8.x or higher
+- **Java 11 or higher** (required for Firebase emulators)
+  - Install: `brew install openjdk@11` (macOS)
+  - Or download from: https://www.oracle.com/java/technologies/downloads/
 - Firebase CLI (optional for backend development)
+  - Install: `npm install -g firebase-tools`
 
 ### Installation
 
@@ -155,11 +159,27 @@ pnpm --filter backend exec tsc --noEmit
 
 ### Firebase Emulator Issues
 
-If the Firebase emulators fail to start:
+**Error: "Unable to locate a Java Runtime"**
+
+The Firebase emulators require Java to run. Install it:
+
+```bash
+# macOS (recommended)
+brew install openjdk@11
+
+# After install, add to PATH
+echo 'export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# Verify installation
+java -version
+```
+
+**Other emulator issues:**
 
 1. Ensure Firebase CLI is installed: `npm install -g firebase-tools`
 2. Login to Firebase: `firebase login`
-3. Initialize project: `firebase init` (if not already done)
+3. Check Java is in PATH: `java -version`
 
 ### Port Conflicts
 

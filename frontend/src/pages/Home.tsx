@@ -3,9 +3,21 @@
  * Main landing page for creating or joining tables
  */
 
-import { Box, Container, Heading, VStack, Button, useDisclosure, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  Heading,
+  VStack,
+  Button,
+  useDisclosure,
+  Text,
+  IconButton,
+  useColorMode,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import type { TableSettings } from '@shared/types/table';
 import { useAuth } from '../hooks/useAuth';
 import { useTable } from '../hooks/useTable';
@@ -14,6 +26,7 @@ import JoinTableForm from '../components/Table/JoinTableForm';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { colorMode, toggleColorMode } = useColorMode();
   const { user, loading: authLoading, signIn } = useAuth();
   const { createTable, joinTable } = useTable();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -68,7 +81,25 @@ export default function Home() {
   }
 
   return (
-    <Container maxW="container.md" py={20}>
+    <Container maxW="container.md" py={20} position="relative">
+      {/* Color Mode Toggle - Development Only */}
+      {import.meta.env.DEV && (
+        <Tooltip
+          label={colorMode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          placement="left"
+        >
+          <IconButton
+            aria-label="Toggle color mode"
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            onClick={toggleColorMode}
+            position="absolute"
+            top={4}
+            right={4}
+            size="md"
+          />
+        </Tooltip>
+      )}
+
       <VStack spacing={8} align="stretch">
         <Box textAlign="center">
           <Heading as="h1" size="2xl" mb={4}>

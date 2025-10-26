@@ -178,6 +178,26 @@ pnpm --filter frontend build
 pnpm --filter backend build
 \`\`\`
 
+### Pre-commit Hooks
+
+**Automatic quality checks run before every commit:**
+
+- ✨ Prettier formatting (auto-fixes)
+- 🔍 ESLint linting (auto-fixes)
+- 📝 TypeScript type checking (entire project)
+
+**Hooks install automatically** when you run \`pnpm install\`.
+
+**If a check fails**, your commit is blocked with clear error messages. Fix the errors and try again.
+
+**Emergency bypass** (use sparingly):
+
+\`\`\`bash
+git commit --no-verify -m "emergency fix"
+\`\`\`
+
+**See also**: [docs/adr/005-precommit-hooks-and-ci-optimization.md](docs/adr/005-precommit-hooks-and-ci-optimization.md)
+
 ## Troubleshooting
 
 ### "Please use pnpm" Error

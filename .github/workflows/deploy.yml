@@ -3,7 +3,11 @@ name: Deploy to Firebase
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
 
 jobs:
   deploy:
@@ -23,19 +27,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          START_TIME=$(date +%s)
-          pnpm install --frozen-lockfile
-          END_TIME=$(date +%s)
-          DURATION=$((END_TIME - START_TIME))
-
-          echo "### 📦 Deployment Dependency Installation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| ⏱️ Duration | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🎯 Target (cached) | <15s |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🎯 Target (uncached) | <30s |" >> $GITHUB_STEP_SUMMARY
+        run: pnpm install --frozen-lockfile
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
@@ -47,9 +39,7 @@ jobs:
         run: cd backend && pnpm run build
 
       - name: Isolate Functions Dependencies
-        run: |
-          pnpm deploy --filter backend --prod backend/_isolated_
-          echo "✅ Functions isolated for Firebase deployment" >> $GITHUB_STEP_SUMMARY
+        run: pnpm deploy --filter backend --prod backend/_isolated_
 
       - name: Deploy to Firebase
         run: firebase deploy --only hosting,functions

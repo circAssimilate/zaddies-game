@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnpm-store
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Lock files (don't format)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.min.js
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# pnpm deployment isolation
+backend/_isolated_/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

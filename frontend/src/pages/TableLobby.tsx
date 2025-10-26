@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTable } from '../hooks/useTable';
+import { useGameState } from '../hooks/useGameState';
 import PlayerList from '../components/Table/PlayerList';
 import StartGameButton from '../components/Table/StartGameButton';
 
@@ -28,6 +29,7 @@ export default function TableLobby() {
   const toast = useToast();
   const { user } = useAuth();
   const { table, loading, error, leaveTable } = useTable(tableId, user?.uid);
+  const { startGame, loading: gameLoading } = useGameState(table, user?.uid ?? null);
   const [isLeaving, setIsLeaving] = useState(false);
 
   // Redirect if no tableId
@@ -102,18 +104,21 @@ export default function TableLobby() {
   };
 
   const handleStartGame = async () => {
-    if (!tableId) return;
+    if (!tableId || !table) return;
 
     try {
-      // TODO: Call startGame Cloud Function when user is host
-      // The table status will update to 'playing' via Firestore subscription
-      // and the useEffect above will redirect to the game page
       toast({
         title: 'Starting game',
         description: 'Dealing cards and posting blinds...',
         status: 'info',
         duration: 2000,
       });
+
+      // Call startGame Cloud Function
+      await startGame();
+
+      // The table status will update to 'playing' via Firestore subscription
+      // and the useEffect above will redirect to the game page
     } catch (err) {
       console.error('Failed to start game:', err);
       toast({
@@ -229,6 +234,7 @@ export default function TableLobby() {
             <StartGameButton
               onClick={handleStartGame}
               isDisabled={!canStartGame}
+              isLoading={gameLoading}
               tooltip={playerCount < 2 ? 'Need at least 2 players to start' : undefined}
             />
           ) : (

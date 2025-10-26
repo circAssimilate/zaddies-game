@@ -64,7 +64,9 @@ pnpm -w run dev:frontend
 
 Open **http://localhost:5173** for the app, **http://localhost:4000** for Firebase Emulator UI
 
-## Current Error: Java Not Found
+## Common Errors
+
+### Error: Java Not Found
 
 If you see:
 
@@ -74,6 +76,31 @@ Unable to locate a Java Runtime
 ```
 
 **Solution:** Install Java using the commands in Option 2 above.
+
+### Error: Library not loaded (ICU4C)
+
+If you see:
+
+```
+dyld: Library not loaded: /opt/homebrew/opt/icu4c/lib/libicui18n.73.dylib
+```
+
+**This means Node is linked to an old ICU4C version.** Fix it:
+
+```bash
+# If using nvm (recommended):
+nvm install 20 --latest-npm
+nvm use 20
+nvm alias default 20
+
+# Verify
+node --version  # Should show v20.19.5 or newer
+
+# If using Homebrew node:
+brew reinstall node
+```
+
+**Why this happens:** Homebrew updated ICU4C but your Node installation wasn't recompiled.
 
 ## Alternative: Skip Backend for Now
 

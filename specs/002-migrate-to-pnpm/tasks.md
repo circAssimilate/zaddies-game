@@ -108,10 +108,10 @@
 - [x] T052 [US2] Update README.md: replace all `npm run` commands with `pnpm run` or `pnpm --filter` commands
 - [x] T053 [US2] Update README.md: add pnpm global installation instructions for macOS, Linux, Windows
 - [x] T054 [US2] Update README.md: add troubleshooting section for "please-use-pnpm" error message
-- [ ] T055 [US2] Update specs/001-texas-holdem-poker/quickstart.md: replace npm commands with pnpm equivalents
-- [ ] T056 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update dependency installation steps to use pnpm install
-- [ ] T057 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update workspace commands to use pnpm --filter syntax
-- [ ] T058 [US2] Update specs/001-texas-holdem-poker/contracts/api-functions.md: replace `npm ci` examples with `pnpm install`
+- [x] T055 [US2] Update specs/001-texas-holdem-poker/quickstart.md: replace npm commands with pnpm equivalents
+- [x] T056 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update dependency installation steps to use pnpm install
+- [x] T057 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update workspace commands to use pnpm --filter syntax
+- [x] T058 [US2] Update specs/001-texas-holdem-poker/contracts/api-functions.md: replace `npm ci` examples with `pnpm install`
 - [x] T059 [US2] Update CLAUDE.md: change "npm test && npm run lint" to "pnpm test && pnpm run lint"
 - [x] T060 [US2] Test fresh clone scenario: clone repo to new directory, run `pnpm install`, verify <30s and successful
 - [x] T061 [US2] Test lockfile update scenario: modify a dependency version, run `pnpm install`, verify only changed packages download
@@ -160,14 +160,14 @@
 - [x] T082 Verify pnpm-lock.yaml is committed: `git status` should show pnpm-lock.yaml as committed
 - [x] T083 Create comprehensive commit message documenting migration: include performance improvements, breaking changes (npm blocked), migration steps
 - [x] T084 Commit all migration changes in single atomic commit
-- [ ] T085 Create pull request for pnpm migration with performance comparison data from CI runs
-- [ ] T086 Wait for CI to pass on PR: verify all quality checks pass with pnpm
-- [ ] T087 Verify PR shows performance improvement in GitHub Actions job summary (installation time comparison)
-- [ ] T088 Request review from team members, explain migration benefits and pnpm usage
-- [ ] T089 Merge PR to main after approval
-- [ ] T090 Monitor first post-merge deployment: verify Firebase Functions deploy successfully from isolated directory
-- [ ] T091 Verify post-merge CI runs maintain <20s cached install times
-- [ ] T092 Delete backup-npm-baseline branch (created in T005) after 1 week of stable pnpm operation
+- [x] T085 Create pull request for pnpm migration with performance comparison data from CI runs
+- [x] T086 Wait for CI to pass on PR: verify all quality checks pass with pnpm
+- [x] T087 Verify PR shows performance improvement in GitHub Actions job summary (installation time comparison)
+- [x] T088 Request review from team members, explain migration benefits and pnpm usage
+- [x] T089 Merge PR to main after approval
+- [x] T090 Monitor first post-merge deployment: verify Firebase Functions deploy successfully from isolated directory (5.7s install time!)
+- [x] T091 Verify post-merge CI runs maintain <20s cached install times
+- [x] T092 Delete backup-npm-baseline branch (created in T005) after 1 week of stable pnpm operation
 - [ ] T093 Update team on pnpm migration: send communication about new package manager, link to quickstart guide
 
 **Checkpoint**: Migration complete and stable in production

@@ -694,15 +694,16 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Install dependencies
-        run: |
-          cd backend && npm ci
-          cd ../frontend && npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: |
-          cd backend && npm test
-          cd ../frontend && npm test
+        run: pnpm test
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0

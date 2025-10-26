@@ -10,6 +10,7 @@ A web-based Texas Hold'em Poker game for friend groups with Vegas-style rules, r
 - 📺 **Shareable Views**: Stream-friendly URLs for Discord/OBS
 - ♿ **Accessibility**: 100% color blind friendly design
 - 🔐 **Security**: Server-authoritative game logic prevents cheating
+- ⚡ **CI/CD Optimization**: Pre-commit hooks and intelligent CI workflows for faster development
 
 ## Tech Stack
 

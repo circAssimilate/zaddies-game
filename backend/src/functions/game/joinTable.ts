@@ -112,6 +112,10 @@ export async function joinTable(
         );
       }
 
+      // Get player document (must read before any writes)
+      const playerRef = db.collection('players').doc(userId);
+      const playerDoc = await transaction.get(playerRef);
+
       // Find first available seat position
       const occupiedPositions = new Set(table.players.map(p => p.position));
       let position = 0;
@@ -143,8 +147,6 @@ export async function joinTable(
       });
 
       // Create or update player document
-      const playerRef = db.collection('players').doc(userId);
-      const playerDoc = await transaction.get(playerRef);
 
       if (!playerDoc.exists) {
         // Create new player document

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "lib/functions/index.js",
+  "main": "lib/index.js",
   "files": [
     "lib/**/*",
     "package.json"
@@ -13,8 +13,9 @@
     "pnpm": ">=8.0.0"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "node build.mjs",
+    "build:types": "tsc --noEmit",
+    "watch": "node build.mjs --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
@@ -35,6 +36,7 @@
     "@types/node": "^20.8.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "esbuild": "^0.25.11",
     "eslint": "^8.50.0",
     "ts-node": "^10.9.0",
     "tsx": "^4.20.6",

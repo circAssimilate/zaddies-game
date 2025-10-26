@@ -22,8 +22,8 @@ export const app: FirebaseApp = initializeApp(firebaseConfig);
 // Initialize Firestore
 export const db: Firestore = getFirestore(app);
 
-// Initialize Functions
-export const functions: Functions = getFunctions(app);
+// Initialize Functions with explicit region
+export const functions: Functions = getFunctions(app, 'us-central1');
 
 // Initialize Auth
 export const auth: Auth = getAuth(app);
@@ -36,7 +36,11 @@ if (import.meta.env.DEV) {
     connectFirestoreEmulator(db, 'localhost', 8080);
     connectFunctionsEmulator(functions, 'localhost', 5001);
     console.log('✅ Connected to Firebase Emulators');
+    console.log('  - Auth: http://localhost:9099');
+    console.log('  - Firestore: localhost:8080');
+    console.log('  - Functions: localhost:5001');
+    console.log('  - Functions instance:', functions);
   } catch (error) {
-    console.warn('⚠️ Firebase Emulators not running. Some features may not work.');
+    console.error('⚠️ Failed to connect to Firebase Emulators:', error);
   }
 }

@@ -9,6 +9,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Need full history for file diff
+
+      - name: Detect Changed Files
+        id: changes
+        run: |
+          # Get changed files
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          else
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}...HEAD)
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Check if only documentation changed
+          DOCS_ONLY=true
+          while IFS= read -r file; do
+            if [[ ! "$file" =~ \.(md)$ ]] && [[ ! "$file" =~ ^docs/ ]] && [[ ! "$file" =~ ^\.github/ISSUE_TEMPLATE/ ]] && [[ ! "$file" =~ ^\.github/PULL_REQUEST_TEMPLATE/ ]]; then
+              DOCS_ONLY=false
+              break
+            fi
+          done <<< "$CHANGED_FILES"
+
+          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
+
+          if [ "$DOCS_ONLY" == "true" ]; then
+            echo "::notice::📝 Documentation-only changes detected - will skip tests and builds"
+          else
+            echo "::notice::💻 Code changes detected - will run full pipeline"
+          fi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -53,13 +85,37 @@ jobs:
         run: pnpm run lint
 
       - name: Run Backend Tests
+        if: steps.changes.outputs.docs_only != 'true'
         run: cd backend && pnpm test || echo "No tests yet"
 
       - name: Run Frontend Tests
+        if: steps.changes.outputs.docs_only != 'true'
         run: cd frontend && pnpm test || echo "No tests yet"
 
       - name: Build Frontend
+        if: steps.changes.outputs.docs_only != 'true'
         run: cd frontend && pnpm run build
 
       - name: Build Backend
+        if: steps.changes.outputs.docs_only != 'true'
         run: cd backend && pnpm run build
+
+      - name: Workflow Decision Summary
+        run: |
+          echo "### 🔄 CI Workflow Decision" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.changes.outputs.docs_only }}" == "true" ]; then
+            echo "**Decision**: Documentation-only changes detected" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Tests: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️  Builds: **Skipped**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason**: Documentation changes don't require compilation or testing" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Decision**: Code changes detected - full pipeline executed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Linting: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Tests: **Ran**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Builds: **Ran**" >> $GITHUB_STEP_SUMMARY
+          fi

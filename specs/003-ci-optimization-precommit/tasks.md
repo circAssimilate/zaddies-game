@@ -84,17 +84,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T026 [P] [US2] Implement determineWorkflowSteps function in scripts/categorize-files.ts
-- [ ] T027 [P] [US2] Create GitHub Actions workflow helper script in scripts/get-changed-files.sh
-- [ ] T028 [US2] Add file change detection step to .github/workflows/ci.yml
-- [ ] T029 [US2] Add conditional logic to ci.yml to skip tests for documentation-only changes
-- [ ] T030 [US2] Add conditional logic to ci.yml to skip backend build for documentation-only changes
-- [ ] T031 [US2] Add conditional logic to ci.yml to skip frontend build for documentation-only changes
-- [ ] T032 [US2] Add workflow decision logging step to ci.yml
-- [ ] T033 [US2] Add file change detection step to .github/workflows/deploy.yml
-- [ ] T034 [US2] Add conditional logic to deploy.yml to skip build for documentation-only changes
-- [ ] T035 [US2] Add conditional logic to deploy.yml to skip Firebase deployment for documentation-only changes
-- [ ] T036 [US2] Add workflow decision logging step to deploy.yml
+- [x] T026 [P] [US2] Implement determineWorkflowSteps function in scripts/categorize-files.ts
+- [x] T027 [P] [US2] Create GitHub Actions workflow helper script in scripts/get-changed-files.sh
+- [x] T028 [US2] Add file change detection step to .github/workflows/ci.yml
+- [x] T029 [US2] Add conditional logic to ci.yml to skip tests for documentation-only changes
+- [x] T030 [US2] Add conditional logic to ci.yml to skip backend build for documentation-only changes
+- [x] T031 [US2] Add conditional logic to ci.yml to skip frontend build for documentation-only changes
+- [x] T032 [US2] Add workflow decision logging step to ci.yml
+- [x] T033 [US2] Add file change detection step to .github/workflows/deploy.yml
+- [x] T034 [US2] Add conditional logic to deploy.yml to skip build for documentation-only changes
+- [x] T035 [US2] Add conditional logic to deploy.yml to skip Firebase deployment for documentation-only changes
+- [x] T036 [US2] Add workflow decision logging step to deploy.yml
 - [ ] T037 [US2] Test documentation-only PR to verify CI skips build and deployment
 - [ ] T038 [US2] Test mixed changes (code + docs) to verify full pipeline runs
 - [ ] T039 [US2] Test configuration file changes to verify full pipeline runs

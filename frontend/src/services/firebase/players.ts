@@ -20,7 +20,7 @@ const PLAYERS_COLLECTION = 'players';
 const LEDGER_COLLECTION = 'ledger';
 
 /**
- * Get reference to players collection
+ * Get reference to players collection (for queries like leaderboard)
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPlayersCollection(): CollectionReference {
@@ -44,31 +44,45 @@ function getLedgerCollection(): CollectionReference {
 /**
  * Create or update player profile
  * @param playerId - User ID
- * @param name - Player's display name
+ * @param username - Player's display name
+ * @param email - Player's email
  * @returns Player
  */
-export async function upsertPlayer(playerId: string, name: string): Promise<Player> {
+export async function upsertPlayer(
+  playerId: string,
+  username: string,
+  email: string
+): Promise<Player> {
   const playerRef = getPlayerRef(playerId);
   const snapshot = await getDoc(playerRef);
+  const now = new Date();
 
   if (snapshot.exists()) {
     // Update existing player
     const data = snapshot.data();
     const player: Player = {
+      ...data,
       id: playerId,
-      name,
-      balance: data.balance || 0,
-    };
-    await updateDoc(playerRef, { name });
+      username,
+      lastSeen: now,
+    } as Player;
+    await updateDoc(playerRef, { username, lastSeen: Timestamp.fromDate(now) });
     return player;
   } else {
     // Create new player
     const player: Player = {
       id: playerId,
-      name,
-      balance: 0,
+      username,
+      email,
+      createdAt: now,
+      lastSeen: now,
     };
-    await setDoc(playerRef, player);
+    const playerData = {
+      ...player,
+      createdAt: Timestamp.fromDate(now),
+      lastSeen: Timestamp.fromDate(now),
+    };
+    await setDoc(playerRef, playerData);
     return player;
   }
 }
@@ -86,17 +100,12 @@ export async function getPlayer(playerId: string): Promise<Player | null> {
     return null;
   }
 
-  return snapshot.data() as Player;
-}
-
-/**
- * Update player balance
- * @param playerId - User ID
- * @param balance - New balance
- */
-export async function updatePlayerBalance(playerId: string, balance: number): Promise<void> {
-  const playerRef = getPlayerRef(playerId);
-  await updateDoc(playerRef, { balance });
+  const data = snapshot.data();
+  return {
+    ...data,
+    createdAt: data.createdAt.toDate(),
+    lastSeen: data.lastSeen.toDate(),
+  } as Player;
 }
 
 /**
@@ -213,4 +222,14 @@ export async function getPlayerTotalCashOuts(playerId: string): Promise<number> 
   return entries
     .filter(entry => entry.type === 'cashout')
     .reduce((sum, entry) => sum + entry.amount, 0);
+}
+
+/**
+ * Calculate player's current balance from ledger
+ * @param playerId - User ID
+ * @returns Current balance (most recent runningBalance)
+ */
+export async function getPlayerBalance(playerId: string): Promise<number> {
+  const entries = await getPlayerLedger(playerId, 1);
+  return entries.length > 0 ? entries[0].runningBalance : 0;
 }

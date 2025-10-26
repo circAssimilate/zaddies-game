@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './config';
 import { Table, TableStatus, TableSettings } from '@shared/types/table';
+import { Hand } from '@shared/types/game';
 
 const TABLES_COLLECTION = 'tables';
 
@@ -45,14 +46,14 @@ export async function createTable(
 ): Promise<Table> {
   const tableRef = getTableRef(tableId);
 
-  const table: Table = {
+  const table: Omit<Table, 'updatedAt'> & { createdAt: Date; hand: Hand | null } = {
     id: tableId,
     hostId,
     settings,
     status: 'waiting',
-    players: [],
+    players: {},
     createdAt: new Date(),
-    currentHand: null,
+    hand: null,
   };
 
   // Convert Date to Firestore Timestamp

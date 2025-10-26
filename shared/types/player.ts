@@ -8,7 +8,6 @@ export interface Player {
   email: string; // From Firebase Auth (immutable)
   createdAt: Date;
   lastSeen: Date;
-
   stats?: PlayerStats;
 }
 

@@ -69,7 +69,7 @@ export function useGameState(table: Table | null, userId: string | null): GameSt
       setLoading(true);
       setError(null);
 
-      const startGameFn = httpsCallable(functions, 'startGame');
+      const startGameFn = httpsCallable(functions, 'startGameFunction');
       await startGameFn({ tableId: table.id });
     } catch (err) {
       console.error('Start game error:', err);
@@ -99,7 +99,7 @@ export function useGameState(table: Table | null, userId: string | null): GameSt
         setLoading(true);
         setError(null);
 
-        const playerActionFn = httpsCallable(functions, 'playerAction');
+        const playerActionFn = httpsCallable(functions, 'playerActionFunction');
         await playerActionFn({
           tableId: table.id,
           action,

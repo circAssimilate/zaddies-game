@@ -71,3 +71,10 @@ vite.config.ts.timestamp-*
 # Temporary files
 *.tmp
 .cache/
+.claude/settings.local.json
+
+# TypeScript/JavaScript build artifacts
+backend/lib/backend/
+backend/lib/shared/
+shared/**/*.js
+!shared/**/*.test.js

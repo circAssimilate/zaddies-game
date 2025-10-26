@@ -108,10 +108,10 @@
 - [x] T052 [US2] Update README.md: replace all `npm run` commands with `pnpm run` or `pnpm --filter` commands
 - [x] T053 [US2] Update README.md: add pnpm global installation instructions for macOS, Linux, Windows
 - [x] T054 [US2] Update README.md: add troubleshooting section for "please-use-pnpm" error message
-- [X] T055 [US2] Update specs/001-texas-holdem-poker/quickstart.md: replace npm commands with pnpm equivalents
-- [X] T056 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update dependency installation steps to use pnpm install
-- [X] T057 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update workspace commands to use pnpm --filter syntax
-- [X] T058 [US2] Update specs/001-texas-holdem-poker/contracts/api-functions.md: replace `npm ci` examples with `pnpm install`
+- [x] T055 [US2] Update specs/001-texas-holdem-poker/quickstart.md: replace npm commands with pnpm equivalents
+- [x] T056 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update dependency installation steps to use pnpm install
+- [x] T057 [US2] Update specs/001-texas-holdem-poker/quickstart.md: update workspace commands to use pnpm --filter syntax
+- [x] T058 [US2] Update specs/001-texas-holdem-poker/contracts/api-functions.md: replace `npm ci` examples with `pnpm install`
 - [x] T059 [US2] Update CLAUDE.md: change "npm test && npm run lint" to "pnpm test && pnpm run lint"
 - [x] T060 [US2] Test fresh clone scenario: clone repo to new directory, run `pnpm install`, verify <30s and successful
 - [x] T061 [US2] Test lockfile update scenario: modify a dependency version, run `pnpm install`, verify only changed packages download

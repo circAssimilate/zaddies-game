@@ -86,6 +86,7 @@ firebase init
 cp frontend/.env.local.template frontend/.env.local
 
 # The template contains all Firebase config values - just copy it!
+
 # VITE_USE_EMULATORS=true ensures you use local emulators for development
 
 # Backend

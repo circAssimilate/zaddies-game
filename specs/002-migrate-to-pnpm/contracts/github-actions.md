@@ -49,7 +49,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'  # Changed from 'npm'
+          cache: 'pnpm' # Changed from 'npm'
 
       # STEP 3: Install dependencies with performance monitoring
       - name: Install dependencies
@@ -79,35 +79,37 @@ jobs:
 
       # STEP 4: Prettier Check
       - name: Prettier Check
-        run: pnpm run format:check  # Changed from 'npm run'
+        run: pnpm run format:check # Changed from 'npm run'
 
       # STEP 5: ESLint
       - name: ESLint
-        run: pnpm run lint  # Changed from 'npm run'
+        run: pnpm run lint # Changed from 'npm run'
 
       # STEP 6: Run Backend Tests
       - name: Run Backend Tests
-        run: cd backend && pnpm test  # Changed from 'npm test'
+        run: cd backend && pnpm test # Changed from 'npm test'
 
       # STEP 7: Run Frontend Tests
       - name: Run Frontend Tests
-        run: cd frontend && pnpm test  # Changed from 'npm test'
+        run: cd frontend && pnpm test # Changed from 'npm test'
 
       # STEP 8: Build Frontend
       - name: Build Frontend
-        run: cd frontend && pnpm run build  # Changed from 'npm run build'
+        run: cd frontend && pnpm run build # Changed from 'npm run build'
 
       # STEP 9: Build Backend
       - name: Build Backend
-        run: cd backend && pnpm run build  # Changed from 'npm run build'
+        run: cd backend && pnpm run build # Changed from 'npm run build'
 ```
 
 **Performance Assertions**:
+
 - Installation with cache hit: <20s (fail warning if >20s)
 - Installation with lockfile change: <45s (fail warning if >45s)
 - Total pipeline should be ~30s faster than npm baseline
 
 **Error Handling**:
+
 - `pnpm install --frozen-lockfile` fails if lockfile out of sync with package.json
 - Warnings logged to GitHub Actions summary if performance targets missed
 - All commands fail fast on error (default GitHub Actions behavior)
@@ -119,6 +121,7 @@ jobs:
 **Purpose**: Deploy Firebase Functions and Frontend to production
 
 **Firebase Functions Challenge**:
+
 - Firebase CLI doesn't natively support pnpm workspaces
 - Functions deployment expects flat node_modules structure
 - Workspace dependencies (e.g., `shared` package) use `workspace:*` protocol incompatible with Firebase
@@ -207,6 +210,7 @@ jobs:
    - Maintains proper module resolution for Firebase Functions runtime
 
 2. **Firebase.json Configuration**:
+
    ```json
    {
      "functions": {
@@ -215,10 +219,12 @@ jobs:
      }
    }
    ```
+
    - `source` points to isolated directory (not `backend/`)
    - Remove `predeploy` hooks (build happens before isolation)
 
 3. **Build Sequence**:
+
    ```
    pnpm install → build all workspaces → isolate backend → copy dist → firebase deploy
    ```
@@ -229,18 +235,19 @@ jobs:
    - No interactive browser login required in CI
 
 **Performance Targets**:
+
 - Cached install: <15s
 - Uncached install: <30s
 - Total deployment: <3 minutes (including build + deploy)
 
 **Error Scenarios**:
 
-| Error | Cause | Resolution |
-|-------|-------|------------|
-| `pnpm-isolate-workspace: command not found` | Tool not installed | Use `pnpx` to auto-install |
-| `Firebase deploy failed: Cannot find module 'shared'` | Isolation didn't convert workspace:* | Verify `_isolated_/package.json` has relative paths |
-| `Functions build failed` | Build step skipped | Ensure `pnpm run build` runs before isolation |
-| `Authentication failed` | Missing/invalid GCP_SA_KEY | Check secret configuration in GitHub repo settings |
+| Error                                                 | Cause                                 | Resolution                                          |
+| ----------------------------------------------------- | ------------------------------------- | --------------------------------------------------- |
+| `pnpm-isolate-workspace: command not found`           | Tool not installed                    | Use `pnpx` to auto-install                          |
+| `Firebase deploy failed: Cannot find module 'shared'` | Isolation didn't convert workspace:\* | Verify `_isolated_/package.json` has relative paths |
+| `Functions build failed`                              | Build step skipped                    | Ensure `pnpm run build` runs before isolation       |
+| `Authentication failed`                               | Missing/invalid GCP_SA_KEY            | Check secret configuration in GitHub repo settings  |
 
 ## Cache Behavior Contract
 
@@ -251,6 +258,7 @@ jobs:
 **Cache Lifecycle**:
 
 1. **First run (cache miss)**:
+
    ```
    Restore cache: Not found
    pnpm install: Download all packages → Save to store → Link to node_modules
@@ -259,6 +267,7 @@ jobs:
    ```
 
 2. **Subsequent run (cache hit, no changes)**:
+
    ```
    Restore cache: Success (~5-10s)
    pnpm install: Link from cache (no downloads)
@@ -275,11 +284,13 @@ jobs:
    ```
 
 **Cache Invalidation**:
+
 - Automatic when `pnpm-lock.yaml` changes
 - Manual via GitHub Actions UI (delete cache)
 - Automatic weekly cleanup of old caches
 
 **Cache Size**:
+
 - Expected: 100-300MB (vs 500MB+ for node_modules)
 - Maximum: 500MB-1GB (GitHub Actions default limit: 10GB total)
 
@@ -309,6 +320,7 @@ Before merging workflow changes, verify:
 ## Summary
 
 GitHub Actions workflows require five key changes:
+
 1. Add pnpm/action-setup before setup-node
 2. Configure pnpm caching via setup-node
 3. Replace npm commands with pnpm equivalents

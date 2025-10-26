@@ -60,6 +60,7 @@ pnpm test  # Should run tests in all workspaces
 ```
 
 **Expected output**:
+
 ```
 Scope: all 3 workspace projects
 ...
@@ -202,7 +203,7 @@ pnpm install
 
 ```typescript
 // frontend/src/App.tsx
-import something from 'some-package';  // ❌ Error: Cannot find module 'some-package'
+import something from 'some-package'; // ❌ Error: Cannot find module 'some-package'
 ```
 
 **Cause**: Package was accessible via npm hoisting but not declared in package.json
@@ -230,6 +231,7 @@ pnpm --filter frontend add react@^18.0.0
 ```
 
 **Alternative**: Enable auto-install in `.npmrc` (already configured):
+
 ```ini
 auto-install-peers=true
 ```
@@ -291,11 +293,11 @@ firebase deploy --only functions
 
 ### Installation Times
 
-| Scenario | Expected Duration | Notes |
-|----------|------------------|-------|
-| First install (no cache) | 20-30s | Downloading all packages |
-| Subsequent install (cached) | 5-10s | Linking from cache |
-| After lockfile change | 10-20s | Downloading only changed packages |
+| Scenario                    | Expected Duration | Notes                             |
+| --------------------------- | ----------------- | --------------------------------- |
+| First install (no cache)    | 20-30s            | Downloading all packages          |
+| Subsequent install (cached) | 5-10s             | Linking from cache                |
+| After lockfile change       | 10-20s            | Downloading only changed packages |
 
 **If significantly slower**: Check network connection, clear cache, or check for npm interference
 
@@ -355,6 +357,7 @@ git commit -m "Migrate to pnpm"
 ## Best Practices
 
 ### DO:
+
 - ✅ Use `pnpm install` for adding/updating dependencies
 - ✅ Commit `pnpm-lock.yaml` to git
 - ✅ Use `--filter` to run commands in specific workspaces
@@ -362,6 +365,7 @@ git commit -m "Migrate to pnpm"
 - ✅ Run `pnpm install --frozen-lockfile` in CI/CD
 
 ### DON'T:
+
 - ❌ Use npm commands (blocked by engine-strict)
 - ❌ Manually edit pnpm-lock.yaml
 - ❌ Commit node_modules directories
@@ -389,6 +393,7 @@ If you encounter issues not covered here:
 ## Summary
 
 **Key Commands**:
+
 - `pnpm install` - Install all dependencies
 - `pnpm run dev` - Start development environment
 - `pnpm test` - Run all tests

@@ -29,17 +29,22 @@ A web-based Texas Hold'em Poker game for friend groups with Vegas-style rules, r
 ### Installing pnpm
 
 \`\`\`bash
+
 # macOS/Linux
+
 npm install -g pnpm
 
 # Or using Homebrew (macOS)
+
 brew install pnpm
 
 # Windows
+
 npm install -g pnpm
 
 # Verify installation
-pnpm --version  # Should output 8.x.x or higher
+
+pnpm --version # Should output 8.x.x or higher
 \`\`\`
 
 ## Quick Start
@@ -101,9 +106,11 @@ pnpm run dev
 # Or start separately:
 
 # Terminal 1: Firebase emulators
+
 firebase emulators:start
 
 # Terminal 2: Frontend
+
 cd frontend && pnpm run dev
 \`\`\`
 
@@ -191,18 +198,23 @@ pnpm install
 ### Common pnpm Commands
 
 \`\`\`bash
+
 # Add dependency to specific workspace
+
 pnpm --filter frontend add react-router-dom
 
 # Add dev dependency
+
 pnpm --filter frontend add -D @types/react-router-dom
 
 # Remove dependency
+
 pnpm --filter frontend remove react-router-dom
 
 # Update dependencies
-pnpm update              # Update all
-pnpm update react        # Update specific package
+
+pnpm update # Update all
+pnpm update react # Update specific package
 \`\`\`
 
 ## Deployment

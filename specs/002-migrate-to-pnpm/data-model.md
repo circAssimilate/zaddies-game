@@ -15,6 +15,7 @@ This document defines the data structures and configuration schemas for the pnpm
 **Purpose**: Record exact dependency versions and resolution metadata for reproducible installations
 
 **npm lockfile** (`package-lock.json` - to be removed):
+
 ```json
 {
   "name": "zaddies-game",
@@ -41,6 +42,7 @@ This document defines the data structures and configuration schemas for the pnpm
 ```
 
 **pnpm lockfile** (`pnpm-lock.yaml` - new):
+
 ```yaml
 lockfileVersion: '6.0'
 
@@ -67,19 +69,21 @@ importers:
 
 packages:
   /typescript@5.3.3:
-    resolution: {integrity: sha512-...}
-    engines: {node: '>=14.17'}
+    resolution: { integrity: sha512-... }
+    engines: { node: '>=14.17' }
     hasBin: true
     dev: true
 ```
 
 **Key differences**:
+
 - **Format**: JSON (npm) vs YAML (pnpm)
 - **Structure**: Flat node_modules tree (npm) vs importers + packages (pnpm)
 - **Workspace handling**: Single packages object (npm) vs separate importers per workspace (pnpm)
 - **Metadata**: pnpm includes settings section for configuration
 
 **Validation rules**:
+
 - Lockfile MUST be committed to git
 - Lockfile MUST NOT be manually edited
 - Version resolution MUST be deterministic across platforms
@@ -88,6 +92,7 @@ packages:
 ### 2. Package Configuration
 
 **Root `package.json`** (modified):
+
 ```json
 {
   "name": "zaddies-game",
@@ -117,12 +122,14 @@ packages:
 ```
 
 **Changes from npm version**:
+
 - **Added**: `engines.pnpm` field (enforces pnpm version)
 - **Modified**: `engines.npm` with error message
 - **Removed**: `workspaces` field (moved to pnpm-workspace.yaml)
 - **Updated**: Script commands to use pnpm-specific syntax (`pnpm -r`, `pnpm --filter`)
 
 **Workspace `package.json`** (frontend/backend/shared):
+
 ```json
 {
   "name": "frontend",
@@ -147,6 +154,7 @@ packages:
 ```
 
 **Inheritance**:
+
 - Workspace packages inherit node version from root
 - Workspace packages can override engines if needed
 - devDependencies in workspaces only affect that workspace
@@ -154,6 +162,7 @@ packages:
 ### 3. Package Manager Configuration
 
 **`.npmrc`** (new/modified):
+
 ```ini
 # Enforce pnpm usage
 engine-strict=true
@@ -172,6 +181,7 @@ prefer-workspace-packages=true
 ```
 
 **Field explanations**:
+
 - `engine-strict=true`: Enforces package.json engines field (blocks npm)
 - `shamefully-hoist=false`: Maintains strict node_modules isolation (prevents phantom dependencies)
 - `auto-install-peers=true`: Automatically install peer dependencies to reduce warnings
@@ -180,12 +190,14 @@ prefer-workspace-packages=true
 - `prefer-workspace-packages=true`: Use local workspace version when version range matches
 
 **Security considerations**:
+
 - Registry URLs should use HTTPS only
 - Consider using lock-file-only mode in CI: `pnpm install --frozen-lockfile`
 
 ### 4. Workspace Configuration
 
 **`pnpm-workspace.yaml`** (new):
+
 ```yaml
 packages:
   - 'frontend'
@@ -194,6 +206,7 @@ packages:
 ```
 
 **Alternative patterns**:
+
 ```yaml
 # Glob patterns (if scaling to many packages)
 packages:
@@ -209,6 +222,7 @@ packages:
 ```
 
 **Validation rules**:
+
 - All paths MUST be relative to repository root
 - Paths MUST NOT overlap (no nested workspaces)
 - Each path MUST contain a valid package.json
@@ -217,6 +231,7 @@ packages:
 ### 5. CI/CD Workflow Configuration
 
 **GitHub Actions workflow** (`.github/workflows/ci.yml` and `.github/workflows/deploy.yml`):
+
 ```yaml
 jobs:
   quality-checks:
@@ -254,6 +269,7 @@ jobs:
 ```
 
 **Key changes from npm version**:
+
 - **Added**: `pnpm/action-setup@v2` step (must come before setup-node)
 - **Modified**: `cache: 'npm'` → `cache: 'pnpm'`
 - **Modified**: `npm ci` → `pnpm install --frozen-lockfile`
@@ -262,6 +278,7 @@ jobs:
 - **Added**: Timing instrumentation for performance monitoring
 
 **Cache behavior**:
+
 - Cache key: Hash of `pnpm-lock.yaml`
 - Cache location: `~/.pnpm-store` (global pnpm store)
 - Cache size: Typically 100-300MB (vs 500MB+ for node_modules caching)
@@ -276,6 +293,7 @@ jobs:
 ```
 
 **State definitions**:
+
 1. **Start**: Repository using npm, package-lock.json exists
 2. **Backup npm state**: Git commit with clean npm state as baseline
 3. **Import lockfile**: `pnpm import` creates pnpm-lock.yaml
@@ -287,6 +305,7 @@ jobs:
 9. **Merged**: Migration complete, npm state removed
 
 **Rollback (NOT SUPPORTED)**:
+
 - Per clarification: Migration is permanent, no rollback mechanism
 - If critical issues found post-merge, forward-fix required
 - Pre-merge validation critical to avoid post-merge issues
@@ -302,6 +321,7 @@ jobs:
 ```
 
 **States**:
+
 - **No node_modules**: Fresh clone or after `rm -rf node_modules`
 - **pnpm install**: Downloads packages to global store if not cached
 - **Linking**: Creates hard links from store to project node_modules

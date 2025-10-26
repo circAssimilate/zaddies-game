@@ -15,6 +15,7 @@ Migrate the zaddies-game project from npm to pnpm as the package manager to achi
 
 **Language/Version**: TypeScript 5.3+ (frontend/backend), Node.js 20 LTS, pnpm 8.x
 **Primary Dependencies**:
+
 - Package Manager: pnpm 8.x (migration target from npm 10.x)
 - CI/CD: GitHub Actions (actions/setup-node@v3, pnpm/action-setup@v2)
 - Build Tools: Vite 5.x, TypeScript compiler, Vitest 1.x
@@ -25,6 +26,7 @@ Migrate the zaddies-game project from npm to pnpm as the package manager to achi
 **Target Platform**: Development (macOS/Linux/Windows), CI/CD (GitHub Actions Ubuntu runners), Deployment (Firebase/Cloud hosting)
 **Project Type**: Web application monorepo (frontend + backend + shared workspaces)
 **Performance Goals**:
+
 - CI cached install: <20s (from ~60s npm)
 - CI uncached/changed: <45s (from ~90s npm)
 - Deployment cached: <15s
@@ -33,6 +35,7 @@ Migrate the zaddies-game project from npm to pnpm as the package manager to achi
 - Cache hit rate: >80%
 
 **Constraints**:
+
 - Zero dependency version changes during migration (lockfile equivalence)
 - All existing tests must pass identically
 - All existing scripts must work without modification
@@ -40,6 +43,7 @@ Migrate the zaddies-game project from npm to pnpm as the package manager to achi
 - GitHub Actions runner disk space: 500MB-1GB for pnpm cache
 
 **Scale/Scope**:
+
 - 3 workspaces (frontend, backend, shared)
 - ~50-100 direct dependencies across workspaces
 - GitHub Actions: 2 workflows (CI, Deploy)
@@ -57,7 +61,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
   - ✅ Tests defined: Performance benchmarks, lockfile equivalence validation, script compatibility tests
   - ✅ Success criteria measurable: Installation time targets, cache hit rates, zero version changes
   - ✅ Test environment: CI/CD pipelines provide automated validation, local testing for developer workflows
-  - ⚠️  TDD applicability: Infrastructure migration - tests are validation scripts rather than unit tests, but success criteria are pre-defined and measurable
+  - ⚠️ TDD applicability: Infrastructure migration - tests are validation scripts rather than unit tests, but success criteria are pre-defined and measurable
 
 **Note**: While this is an infrastructure migration rather than feature development, validation criteria are defined upfront and will be verified before declaring success.
 

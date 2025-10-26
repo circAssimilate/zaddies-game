@@ -17,7 +17,8 @@
       "Bash(npx isolate:*)",
       "Bash(cat:*)",
       "Bash(pnpm run lint:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(gh pr view:*)"
     ],
     "deny": [],
     "ask": []

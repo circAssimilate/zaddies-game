@@ -63,6 +63,7 @@ This document defines the contract for package.json, .npmrc, pnpm-workspace.yaml
    - Other scripts remain unchanged (lint, format run at root level)
 
 **Validation Rules**:
+
 - ✅ engines.node >= 20.0.0 (project requirement)
 - ✅ engines.pnpm >= 8.0.0 (migration target)
 - ✅ engines.npm is NOT a valid semver version (triggers error with engine-strict)
@@ -182,7 +183,7 @@ This document defines the contract for package.json, .npmrc, pnpm-workspace.yaml
 1. **name field**: MANDATORY for workspace resolution (pnpm requires it)
 2. **main field**: Required for backend (Firebase Functions entry point)
 3. **engines.pnpm**: Should match root or be >= root version
-4. **workspace:* protocol**: Used for local workspace dependencies
+4. **workspace:\* protocol**: Used for local workspace dependencies
    - `"shared": "workspace:*"` means "use local workspace, any version"
    - Alternative: `"workspace:^"` (must match semver range)
 5. **private: true**: Prevents accidental publishing to npm
@@ -230,15 +231,15 @@ registry=https://registry.npmjs.org/
 
 **Field Explanations**:
 
-| Field | Value | Purpose |
-|-------|-------|---------|
-| `engine-strict` | `true` | Combined with package.json engines, blocks npm usage |
-| `shamefully-hoist` | `false` | Prevents dependency hoisting, enforces strict resolution |
-| `auto-install-peers` | `true` | Automatically installs peer dependencies (convenience) |
-| `strict-peer-dependencies` | `false` | Warns on peer mismatches but doesn't fail (compatibility) |
-| `link-workspace-packages` | `true` | Links local workspace packages instead of downloading from registry |
-| `prefer-workspace-packages` | `true` | Uses workspace version when semver range matches |
-| `registry` | npm URL | Package download source (can be private registry) |
+| Field                       | Value   | Purpose                                                             |
+| --------------------------- | ------- | ------------------------------------------------------------------- |
+| `engine-strict`             | `true`  | Combined with package.json engines, blocks npm usage                |
+| `shamefully-hoist`          | `false` | Prevents dependency hoisting, enforces strict resolution            |
+| `auto-install-peers`        | `true`  | Automatically installs peer dependencies (convenience)              |
+| `strict-peer-dependencies`  | `false` | Warns on peer mismatches but doesn't fail (compatibility)           |
+| `link-workspace-packages`   | `true`  | Links local workspace packages instead of downloading from registry |
+| `prefer-workspace-packages` | `true`  | Uses workspace version when semver range matches                    |
+| `registry`                  | npm URL | Package download source (can be private registry)                   |
 
 **Error Message When npm Used**:
 
@@ -302,6 +303,7 @@ packages:
 ```
 
 **Validation Rules**:
+
 - ✅ All paths relative to repository root
 - ✅ No overlapping paths (no nested workspaces)
 - ✅ Each path contains valid package.json with "name" field
@@ -309,11 +311,11 @@ packages:
 
 **Error Scenarios**:
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `ERR_PNPM_NO_MATCHING_VERSION` | Workspace not found | Verify path in pnpm-workspace.yaml |
-| `ERR_PNPM_WORKSPACE_PKG_NOT_FOUND` | Missing package.json | Add package.json to workspace directory |
-| `ERR_PNPM_DUPLICATE_WORKSPACE_NAME` | Two workspaces same name | Rename one workspace in package.json |
+| Error                               | Cause                    | Fix                                     |
+| ----------------------------------- | ------------------------ | --------------------------------------- |
+| `ERR_PNPM_NO_MATCHING_VERSION`      | Workspace not found      | Verify path in pnpm-workspace.yaml      |
+| `ERR_PNPM_WORKSPACE_PKG_NOT_FOUND`  | Missing package.json     | Add package.json to workspace directory |
+| `ERR_PNPM_DUPLICATE_WORKSPACE_NAME` | Two workspaces same name | Rename one workspace in package.json    |
 
 ## firebase.json Contract
 
@@ -325,11 +327,7 @@ packages:
 {
   "hosting": {
     "public": "frontend/dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
@@ -340,12 +338,7 @@ packages:
   "functions": {
     "source": "backend/_isolated_",
     "runtime": "nodejs20",
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log"
-    ]
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
   },
   "emulators": {
     "functions": {
@@ -369,6 +362,7 @@ packages:
    - Contains flattened dependencies compatible with Firebase deployment
 
 2. **Remove predeploy hooks** (if present):
+
    ```json
    // REMOVE THIS:
    "functions": {
@@ -378,6 +372,7 @@ packages:
      ]
    }
    ```
+
    - Build happens before isolation in CI/CD
    - Predeploy runs inside _isolated_ directory where build is already complete
 
@@ -396,17 +391,20 @@ packages:
 **Why Isolation is Required**:
 
 Firebase Functions deployment:
+
 1. Reads `firebase.json` → finds `functions.source` → `backend/_isolated_`
 2. Looks for `package.json` in source directory
 3. Runs `npm install --production` inside source (ignores pnpm)
 4. Bundles node_modules + code for deployment
 
 Without isolation:
+
 - `backend/package.json` has `"shared": "workspace:*"`
 - npm doesn't understand `workspace:*` protocol
 - Deployment fails: `Cannot find module 'shared'`
 
 With isolation:
+
 - `backend/_isolated_/package.json` has `"shared": "file:../../shared"`
 - npm understands `file:` protocol
 - Shared code bundled correctly in deployment
@@ -424,7 +422,7 @@ Before committing pnpm migration:
 - [ ] `package.json` (workspaces): All have name field
 - [ ] `package.json` (workspaces): All have engines.pnpm
 - [ ] `package.json` (backend): Has main field pointing to dist/index.js
-- [ ] `package.json` (backend): Uses "workspace:*" for shared dependency
+- [ ] `package.json` (backend): Uses "workspace:\*" for shared dependency
 - [ ] `.npmrc`: engine-strict=true
 - [ ] `.npmrc`: shamefully-hoist=false
 - [ ] `.npmrc`: auto-install-peers=true
@@ -466,7 +464,7 @@ Before committing pnpm migration:
 
 Package configuration for pnpm migration requires:
 
-1. **package.json updates**: engines enforcement, workspace:* protocol, pnpm commands
+1. **package.json updates**: engines enforcement, workspace:\* protocol, pnpm commands
 2. **.npmrc creation**: engine-strict + pnpm-specific settings
 3. **pnpm-workspace.yaml creation**: explicit workspace list
 4. **firebase.json update**: source = "_isolated_" for Functions deployment

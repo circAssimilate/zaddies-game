@@ -74,7 +74,6 @@ vite.config.ts.timestamp-*
 .claude/settings.local.json
 
 # TypeScript/JavaScript build artifacts
-backend/lib/backend/
-backend/lib/shared/
+backend/lib/
 shared/**/*.js
 !shared/**/*.test.js

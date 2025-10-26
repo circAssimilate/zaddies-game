@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import type { TableSettings } from '@shared/types/table';
 import { useAuth } from '../hooks/useAuth';
@@ -145,6 +145,15 @@ export default function Home() {
           onCreate={handleCreateTable}
           isLoading={isCreating}
         />
+
+        {/* Demo Link */}
+        <Box textAlign="center" mt={8} pt={8} borderTopWidth={1} borderTopColor="gray.700">
+          <Link to="/demo">
+            <Text as="span" color="blue.400" _hover={{ textDecoration: 'underline' }}>
+              Demo
+            </Text>
+          </Link>
+        </Box>
       </VStack>
     </Container>
   );

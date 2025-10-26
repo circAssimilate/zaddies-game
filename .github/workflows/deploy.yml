@@ -11,22 +11,45 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --workspaces --include-workspace-root
+        run: |
+          START_TIME=$(date +%s)
+          pnpm install --frozen-lockfile
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+
+          echo "### 📦 Deployment Dependency Installation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ⏱️ Duration | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎯 Target (cached) | <15s |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎯 Target (uncached) | <30s |" >> $GITHUB_STEP_SUMMARY
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
       - name: Build Frontend
-        run: cd frontend && npm run build
+        run: cd frontend && pnpm run build
 
       - name: Build Backend
-        run: cd backend && npm run build
+        run: cd backend && pnpm run build
+
+      - name: Isolate Functions Dependencies
+        run: |
+          pnpm deploy --filter backend --prod backend/_isolated_
+          echo "✅ Functions isolated for Firebase deployment" >> $GITHUB_STEP_SUMMARY
 
       - name: Deploy to Firebase
         run: firebase deploy --only hosting,functions

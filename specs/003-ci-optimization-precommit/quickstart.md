@@ -346,6 +346,7 @@ pnpm exec lint-staged && pnpm run type-check
 **Modify**: Edit the `paths` or `paths-ignore` arrays if you add new directories or file types
 
 **Example** (from `.github/workflows/frontend.yml`):
+
 ```yaml
 on:
   pull_request:

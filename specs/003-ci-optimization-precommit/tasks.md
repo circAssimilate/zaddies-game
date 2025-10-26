@@ -51,7 +51,7 @@ This feature was implemented using a simplified v2 approach after discovering th
 ### Phase 4: Cleanup (v1 to v2 Migration)
 
 - [x] T028: Delete scripts/categorize-files.ts (custom categorization engine - no longer needed)
-- [x] T029: Delete scripts/__tests__/categorize-files.test.ts (tests for deleted engine)
+- [x] T029: Delete scripts/**tests**/categorize-files.test.ts (tests for deleted engine)
 - [x] T030: Delete scripts/get-changed-files.sh (bash helper - no longer needed)
 - [x] T031: Delete shared/src/types/file-categorization.ts (types for deleted engine)
 - [x] T032: Delete shared/src/types/precommit-checks.ts (types for deleted engine)
@@ -68,6 +68,7 @@ This feature was implemented using a simplified v2 approach after discovering th
 Initial implementation (v1) created ~4,000 lines of custom file categorization logic, unit tests, type definitions, and bash scripting. After review, we discovered GitHub Actions already provides `paths` and `paths-ignore` filtering natively.
 
 **v2 Benefits**:
+
 - 96% less code (4000 lines → 165 lines)
 - Zero custom logic to maintain
 - Platform-maintained feature (GitHub maintains it, not us)
@@ -81,6 +82,7 @@ See ADR 005 for full decision rationale.
 ## File Changes Summary
 
 ### Files Added (v2 Implementation)
+
 - `.github/workflows/lint.yml` (38 lines) - Lint workflow with paths-ignore
 - `.github/workflows/frontend.yml` (36 lines) - Frontend tests/build with paths filter
 - `.github/workflows/backend.yml` (36 lines) - Backend tests/build with paths filter
@@ -89,9 +91,11 @@ See ADR 005 for full decision rationale.
 - `docs/adr/005-precommit-hooks-and-ci-optimization.md` (246 lines)
 
 ### Files Modified
+
 - `.github/workflows/deploy.yml` - Added paths-ignore for docs
 
 ### Files Deleted (v1 Cleanup)
+
 - `.github/workflows/ci.yml` - Replaced by separate workflows
 - `scripts/categorize-files.ts` - Custom categorization engine
 - `scripts/__tests__/categorize-files.test.ts` - Tests for custom engine
@@ -104,6 +108,7 @@ See ADR 005 for full decision rationale.
 ## Testing Completed
 
 ### Pre-commit Hooks
+
 - ✅ Commit with formatting errors blocked (Prettier auto-fixes)
 - ✅ Commit with linting errors blocked (clear error messages)
 - ✅ Commit with TypeScript errors blocked (clear error messages)
@@ -112,6 +117,7 @@ See ADR 005 for full decision rationale.
 - ✅ Hook bypass via `--no-verify` works
 
 ### CI Workflows (v2)
+
 - ✅ Docs-only changes skip all workflows
 - ✅ Frontend changes trigger lint + frontend workflows only
 - ✅ Backend changes trigger lint + backend workflows only

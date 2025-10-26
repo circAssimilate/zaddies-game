@@ -5,6 +5,7 @@
 Superseded (original approach), Accepted (simplified approach)
 
 **Version History**:
+
 - v1 (2025-10-25): Initial decision using custom file categorization (SUPERSEDED)
 - v2 (2025-10-25): Simplified approach using GitHub's native `paths` feature (ACCEPTED)
 
@@ -45,6 +46,7 @@ Use **Husky 8.x** and **lint-staged 15.x** to run automated quality checks befor
   - TypeScript compiler type-checks entire project (cross-file validation)
 
 Configuration:
+
 ```json
 {
   "scripts": {
@@ -52,15 +54,13 @@ Configuration:
     "type-check": "pnpm -r exec tsc --noEmit"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+    "*.{ts,tsx,js,jsx}": ["prettier --write", "eslint --fix"]
   }
 }
 ```
 
 Hook script (`.husky/pre-commit`):
+
 ```bash
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
@@ -74,12 +74,14 @@ pnpm run type-check
 **Instead of** custom file categorization logic, use **GitHub Actions native `paths` and `paths-ignore` filters** with **separate workflow files per concern**:
 
 **Separate Workflows Approach**:
+
 - `.github/workflows/lint.yml` - Runs on all non-docs PRs
 - `.github/workflows/frontend.yml` - Runs only when frontend/** or shared/** changes
 - `.github/workflows/backend.yml` - Runs only when backend/** or shared/** changes
 - `.github/workflows/deploy.yml` - Skips deployment for docs-only changes
 
 Example workflow with `paths` filtering:
+
 ```yaml
 # .github/workflows/frontend.yml
 name: Frontend CI
@@ -103,6 +105,7 @@ jobs:
 ```
 
 Example workflow with `paths-ignore` filtering:
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy
@@ -127,6 +130,7 @@ jobs:
 ### Positive
 
 **Pre-commit Hooks** (unchanged):
+
 - ✅ **Automatic Setup**: Husky installs via `prepare` script - no manual developer action
 - ✅ **Performance**: lint-staged runs checks only on staged files, <30s typical time
 - ✅ **Industry Standard**: Husky has 7M+ weekly npm downloads
@@ -134,6 +138,7 @@ jobs:
 - ✅ **Team Familiarity**: JavaScript ecosystem standard
 
 **CI Optimization** (dramatically simplified):
+
 - ✅ **96% Less Code**: ~165 lines vs ~4000 lines (simplified approach)
 - ✅ **Zero Custom Logic**: GitHub maintains `paths` filtering, not us
 - ✅ **Easier to Understand**: Separate workflow files are self-documenting
@@ -146,10 +151,12 @@ jobs:
 ### Negative
 
 **Pre-commit Hooks**:
+
 - ⚠️ **Two Dependencies**: Requires both Husky and lint-staged
 - ⚠️ **TypeScript Performance**: Type-checking entire project 10-30s (but necessary)
 
 **CI Optimization**:
+
 - ⚠️ **Multiple Workflow Files**: 4 files instead of 1 (but clearer)
 - ⚠️ **No Fine-Grained Logging**: Don't get custom "workflow decision summaries"
 - ⚠️ **All-or-Nothing per Workflow**: Entire workflow skips or runs (acceptable trade-off)
@@ -165,6 +172,7 @@ jobs:
 ### Custom File Categorization Engine (v1 - REJECTED)
 
 **What we built initially**:
+
 - TypeScript categorization engine (`scripts/categorize-files.ts`, ~220 lines)
 - Comprehensive type definitions (`shared/src/types/file-categorization.ts`, ~100 lines)
 - Unit tests (`scripts/__tests__/categorize-files.test.ts`, ~350 lines)
@@ -173,6 +181,7 @@ jobs:
 - **Total**: ~4000 lines of custom code
 
 **Why rejected**:
+
 - **Over-engineered**: Reinvents GitHub's native `paths` feature
 - **High Maintenance**: Custom logic to test, debug, and maintain
 - **Violates Simplicity**: 4000 lines when 165 lines accomplishes same goal
@@ -182,12 +191,14 @@ jobs:
 ### GitHub Actions `paths` Filters (v2 - ACCEPTED)
 
 **What we're using**:
+
 - Native GitHub Actions `paths` and `paths-ignore`
 - Separate workflow files per concern
 - Zero custom categorization code
 - **Total**: ~165 lines
 
 **Why accepted**:
+
 - **Platform Feature**: GitHub maintains it, not us
 - **Simple**: Any developer can understand in <5 minutes
 - **Proven**: Used by millions of GitHub repositories
@@ -205,6 +216,7 @@ jobs:
 ## Migration from v1 to v2
 
 **Files to Remove** (from over-engineered v1):
+
 - `scripts/categorize-files.ts`
 - `scripts/__tests__/categorize-files.test.ts`
 - `scripts/get-changed-files.sh`
@@ -213,6 +225,7 @@ jobs:
 - Complex conditional logic in `.github/workflows/ci.yml`
 
 **Files to Create** (simplified v2):
+
 - `.github/workflows/lint.yml` (~30 lines)
 - `.github/workflows/frontend.yml` (~35 lines)
 - `.github/workflows/backend.yml` (~35 lines)

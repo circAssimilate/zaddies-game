@@ -153,14 +153,14 @@
 - [x] T080 [P] [US2] Create PlayerHand subcollection schema in backend/src/functions/game/schemas.ts
 - [x] T081 [US2] Implement startGame Cloud Function in backend/src/functions/game/startGame.ts
 - [x] T082 [US2] Implement playerAction Cloud Function in backend/src/functions/game/playerAction.ts
-- [ ] T083 [US2] Implement hand initialization logic in backend/src/lib/poker/handManager.ts
-- [ ] T084 [US2] Implement betting round logic in backend/src/lib/poker/bettingRound.ts
-- [ ] T085 [US2] Implement showdown logic in backend/src/lib/poker/showdownHandler.ts
-- [ ] T086 [US2] Implement pot distribution logic using potCalculator
-- [ ] T087 [US2] Implement blind posting logic in backend/src/lib/poker/blindManager.ts
-- [ ] T088 [US2] Implement dealer button rotation in backend/src/lib/poker/dealerManager.ts
+- [x] T083 [US2] Implement hand initialization logic in backend/src/poker/handInitializer.ts
+- [x] T084 [US2] Implement phase transition logic in backend/src/poker/phaseManager.ts
+- [x] T085 [US2] Implement showdown logic in backend/src/poker/showdownHandler.ts
+- [x] T086 [US2] Implement pot distribution logic in backend/src/poker/potCalculator.ts
+- [x] T087 [US2] Implement blind posting logic in backend/src/poker/handInitializer.ts (postBlinds)
+- [x] T088 [US2] Implement dealer button rotation in backend/src/poker/handInitializer.ts (determinePositions)
 - [ ] T089 [US2] Implement player dealing-in rules (wait for big blind)
-- [ ] T090 [US2] Implement all-in and side pot handling
+- [x] T090 [US2] Implement all-in and side pot handling in backend/src/poker/potCalculator.ts
 - [ ] T091 [P] [US2] Create useGameState hook in frontend/src/hooks/useGameState.ts
 - [ ] T092 [P] [US2] Create usePlayerHand hook in frontend/src/hooks/usePlayerHand.ts (private hole cards)
 - [ ] T093 [P] [US2] Create Game page component in frontend/src/pages/Game.tsx

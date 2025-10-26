@@ -10,6 +10,11 @@ import { Timestamp, getFirestore } from 'firebase-admin/firestore';
 import type { PlayerActionRequest, PlayerActionResponse } from './types';
 import type { TableDocument } from './schemas';
 import { getNextPlayerPosition } from '../../poker/handInitializer';
+import {
+  advancePhase,
+  resetBettingRoundState,
+  isBettingRoundComplete,
+} from '../../poker/phaseManager';
 
 /**
  * Player Action Function
@@ -247,13 +252,29 @@ function processAction(
   hand.bettingRound.playerActions[player.id] = action;
 
   // Check if betting round is complete
-  const bettingRoundComplete = isBettingRoundComplete(players);
+  const bettingRoundComplete = isBettingRoundComplete(players, hand.bettingRound.currentBet);
 
   if (bettingRoundComplete) {
-    // TODO: Advance to next phase (flop, turn, river, showdown)
-    // For now, just move to next player
-    // This will be implemented in T083-T090
-    hand.currentPlayerPosition = getNextPlayerPosition(players, playerIndex);
+    // Advance to next phase (flop, turn, river, showdown)
+    const { hand: nextHand, shouldEndHand } = advancePhase(hand, players);
+
+    if (shouldEndHand) {
+      // Hand is over - showdown phase
+      // Note: Actual showdown evaluation happens in a separate endHand function
+      // This function just advances to showdown phase
+      return {
+        updatedPlayers: players,
+        updatedHand: nextHand,
+      };
+    }
+
+    // Reset player betting round state for new phase
+    const playersWithResetBets = resetBettingRoundState(players);
+
+    return {
+      updatedPlayers: playersWithResetBets,
+      updatedHand: nextHand,
+    };
   } else {
     // Move to next active player
     hand.currentPlayerPosition = getNextPlayerPosition(players, playerIndex);
@@ -264,42 +285,10 @@ function processAction(
       const actionTimer = table.settings.actionTimer;
       hand.actionDeadline = Timestamp.fromMillis(Date.now() + actionTimer * 1000);
     }
+
+    return {
+      updatedPlayers: players,
+      updatedHand: hand,
+    };
   }
-
-  return {
-    updatedPlayers: players,
-    updatedHand: hand,
-  };
-}
-
-/**
- * Check if the betting round is complete
- *
- * A betting round is complete when all active players have either:
- * - Folded
- * - Gone all-in
- * - Acted and matched the current bet
- *
- * @param players - Player states
- * @returns True if betting round is complete
- */
-function isBettingRoundComplete(players: TableDocument['players']): boolean {
-  const activePlayers = players.filter(p => !p.isFolded && !p.isAllIn);
-
-  // If 0 or 1 active players, round is complete
-  if (activePlayers.length <= 1) {
-    return true;
-  }
-
-  // All active players must have acted
-  const allActed = activePlayers.every(p => p.hasActed);
-  if (!allActed) {
-    return false;
-  }
-
-  // All active players must have same current bet
-  const currentBets = activePlayers.map(p => p.currentBet);
-  const allBetsEqual = currentBets.every(bet => bet === currentBets[0]);
-
-  return allBetsEqual;
 }

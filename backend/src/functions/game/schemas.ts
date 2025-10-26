@@ -99,6 +99,25 @@ export interface TableDocument {
   hand: HandState | null; // Current hand state (null when not playing)
   blindLevel: number; // Current blind level (for tournaments)
   lastBlindIncrease: Timestamp | null; // When blinds last increased
+  lastHandResult?: HandResult | null; // Result of most recent hand
+}
+
+/**
+ * Hand result stored after showdown
+ */
+export interface HandResult {
+  handNumber: number;
+  winners: string[]; // Player IDs
+  winningHands: {
+    [playerId: string]: {
+      handRank: string;
+      cards: Card[];
+    };
+  };
+  payouts: {
+    [playerId: string]: number;
+  };
+  timestamp: Timestamp;
 }
 
 /**

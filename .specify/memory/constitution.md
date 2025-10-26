@@ -1,38 +1,32 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version: 0.0.0 → 1.0.0
-Change Type: MAJOR (Initial ratification)
+Version: 1.0.0 → 1.1.0
+Change Type: MINOR (New principle added)
 Date: 2025-10-25
 
 Modified Principles:
-- NEW: I. Test-Driven Development (TDD)
-- NEW: II. Modular Architecture
-- NEW: III. Performance-First
-- NEW: IV. Client-Server Separation
-- NEW: V. Observability & Debuggability
+- NEW: VI. Mobile-First UI Design
 
 Added Sections:
-- Core Principles (5 principles)
-- Development Workflow
-- Quality Gates
-- Governance
+- Mobile-First UI Design principle with requirements, enforcement, and rationale
 
 Removed Sections:
-- (None - initial creation)
+- (None)
 
 Templates Requiring Updates:
-✅ .specify/templates/plan-template.md - Constitution Check section verified
+✅ .specify/templates/plan-template.md - Constitution Check section will include mobile-first
 ✅ .specify/templates/spec-template.md - Requirements alignment verified
-✅ .specify/templates/tasks-template.md - Task categorization verified
-⚠ Command files - Will review for agent-specific references
+✅ .specify/templates/tasks-template.md - Task categorization includes mobile testing
+✅ Command files - No changes needed
 
 Follow-up TODOs:
-- (None - all required fields filled)
+- ✅ Updated Quality Gates section to include mobile-first check
+- ✅ Updated Code Review Requirements to reference 6 principles
 
-Rationale for MAJOR version:
-This is the initial ratification of the Zaddies Game constitution, establishing
-the foundational governance and development principles for the project.
+Rationale for MINOR version bump:
+Adding a new principle (VI. Mobile-First UI Design) without removing or redefining
+existing principles. This is a non-breaking change that expands governance guidance.
 -->
 
 # Zaddies Game Constitution
@@ -141,6 +135,37 @@ All game systems MUST be observable and debuggable in development and production
 
 **Rationale**: Games are complex stateful systems where issues are hard to reproduce. Comprehensive observability enables rapid debugging, understanding player behavior, and data-driven design decisions.
 
+### VI. Mobile-First UI Design
+
+All frontend user interfaces MUST be designed and implemented with a mobile-first approach. Desktop and larger screen experiences are progressive enhancements built on top of a fully functional mobile foundation.
+
+**Mobile-First Requirements**:
+
+- **Design Mobile First**: UI components MUST be designed for mobile screens (320px-428px width) before desktop
+- **Touch-Optimized**: All interactive elements MUST have minimum 44x44px touch targets
+- **Responsive by Default**: Layouts MUST use fluid grids, flexible images, and CSS media queries
+- **Performance on Mobile**: Initial page load MUST be under 3 seconds on 3G networks
+- **Progressive Enhancement**: Advanced features for larger screens MUST NOT break mobile experience
+- **Mobile Testing Required**: All PRs MUST include mobile viewport testing (iOS Safari, Android Chrome minimum)
+
+**Prohibited**:
+
+- Desktop-first designs that are retrofitted to mobile
+- Fixed-width layouts that require horizontal scrolling on mobile
+- Interactive elements smaller than 44x44px touch targets
+- Features that only work on desktop without mobile fallback
+- Assuming mouse/keyboard input (must support touch, keyboard, and assistive technologies)
+
+**Rationale**: Mobile devices represent the majority of web traffic and the primary access point for many users. Mobile-first design ensures accessibility, performance, and usability across all devices. Starting with mobile constraints forces focus on core functionality and prevents bloat. Games and interactive applications must be enjoyable on mobile to reach the widest audience.
+
+**Enforcement**:
+
+- Design mockups MUST show mobile views first (320px, 375px, 428px widths)
+- CSS MUST use min-width media queries (mobile-first breakpoints)
+- Performance budgets MUST prioritize mobile network conditions
+- Accessibility testing MUST include mobile screen readers
+- All user stories MUST define mobile acceptance criteria
+
 ## Development Workflow
 
 ### Code Review Requirements
@@ -148,7 +173,7 @@ All game systems MUST be observable and debuggable in development and production
 All code changes MUST be reviewed and approved before merge:
 
 1. **Tests First**: Reviewer verifies tests were written before implementation
-2. **Constitution Compliance**: Verify adherence to all five core principles
+2. **Constitution Compliance**: Verify adherence to all six core principles
 3. **Performance Validation**: Confirm performance benchmarks pass
 4. **Documentation**: Ensure module interfaces and contracts are documented
 5. **Security**: Check for client-side exploits, data validation issues
@@ -180,6 +205,7 @@ Before implementation begins, features MUST be evaluated against these checks:
 3. **Performance Impact**: Are performance benchmarks defined and testable?
 4. **Architecture Alignment**: Does this respect client-server separation?
 5. **Observability**: Are logging, metrics, and debugging hooks planned?
+6. **Mobile-First Design**: Are mobile views designed first with touch optimization?
 
 **Complexity Justification**: Any violation of core principles MUST be documented with:
 
@@ -230,4 +256,4 @@ For day-to-day development guidance and examples, consult:
 - Feature specifications in `/specs/[###-feature]/spec.md`
 - Task breakdowns in `/specs/[###-feature]/tasks.md`
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25
+**Version**: 1.1.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25

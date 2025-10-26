@@ -149,8 +149,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T079 [P] [US2] Create Hand schema in backend/src/functions/game/schemas.ts
-- [ ] T080 [P] [US2] Create PlayerHand subcollection schema in backend/src/functions/game/schemas.ts
+- [x] T079 [P] [US2] Create Hand schema in backend/src/functions/game/schemas.ts
+- [x] T080 [P] [US2] Create PlayerHand subcollection schema in backend/src/functions/game/schemas.ts
 - [ ] T081 [US2] Implement startGame Cloud Function in backend/src/functions/game/startGame.ts
 - [ ] T082 [US2] Implement playerAction Cloud Function in backend/src/functions/game/playerAction.ts
 - [ ] T083 [US2] Implement hand initialization logic in backend/src/lib/poker/handManager.ts

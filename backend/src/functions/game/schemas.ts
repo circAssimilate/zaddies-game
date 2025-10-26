@@ -103,19 +103,35 @@ export interface TableDocument {
 
 /**
  * Hand state embedded in Table document
+ * Contract: specs/001-texas-holdem-poker/data-model.md
  */
 export interface HandState {
   handNumber: number;
   phase: 'preflop' | 'flop' | 'turn' | 'river' | 'showdown';
-  dealerPosition: number;
+  dealerPosition: number; // Seat number of dealer button
   smallBlindPosition: number;
   bigBlindPosition: number;
-  currentPlayerPosition: number;
-  communityCards: Card[];
-  pot: number;
-  sidePots: SidePot[];
-  currentBet: number;
-  actions: ActionHistory[];
+  currentPlayerPosition: number; // Whose turn it is
+  communityCards: Card[]; // 0-5 cards visible to all
+  deck: Card[]; // Remaining cards (server-side only, not sent to clients)
+  pot: number; // Main pot
+  sidePots: SidePot[]; // For all-in situations
+
+  // Betting round state
+  bettingRound: {
+    currentBet: number; // Current bet to match
+    minRaise: number; // Minimum raise amount
+    playerActions: {
+      [playerId: string]: 'fold' | 'call' | 'raise' | 'check' | 'allin';
+    };
+  };
+
+  // Timing
+  actionDeadline: Timestamp | null; // When current player must act (null if no timer)
+  blindIncreaseAt: Timestamp; // When blinds increase next
+
+  // History (for current hand only)
+  actions: ActionHistory[]; // Complete action history for replay/audit
 }
 
 export interface SidePot {

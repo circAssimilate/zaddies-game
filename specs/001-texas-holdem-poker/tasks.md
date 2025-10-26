@@ -177,7 +177,24 @@
 - [ ] T104 [US2] Add sound effects for actions (optional, accessibility)
 - [ ] T105 [US2] Add animations for card dealing and pot distribution
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
+### Refactor: Move Game Logic to Backend
+
+- [ ] T106 [P] [REFACTOR] Refactor Demo.tsx to use real Cloud Functions instead of client-side shuffling
+  - Replace `@shared/lib/poker/shuffler` usage with backend `startGameFunction` calls
+  - Connect Demo to Firebase emulator or create demo table in Firestore
+  - Remove client-side deck shuffling (security issue - clients should never shuffle)
+  - Update demo to showcase actual game flow (create table, join, start, play actions)
+- [ ] T107 [P] [REFACTOR] Move hand evaluator from `@shared/lib/poker/handEvaluator` to backend
+  - Hand evaluation affects pot distribution and must be server-authoritative
+  - Create `backend/src/poker/handEvaluator.ts` (move from shared)
+  - Remove or deprecate `@shared/lib/poker/handEvaluator`
+  - Update any tests that depend on client-side hand evaluation
+- [ ] T108 [REFACTOR] Remove duplicate shuffler from shared (`@shared/lib/poker/shuffler`)
+  - Deck shuffling is now exclusively in `backend/src/poker/deck.ts`
+  - Remove shared shuffler to maintain single source of truth
+  - Update any remaining references to use backend implementation
+
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently, and Demo.tsx demonstrates real backend functionality
 
 ---
 

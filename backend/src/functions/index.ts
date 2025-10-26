@@ -10,6 +10,8 @@ import { onCall } from 'firebase-functions/v2/https';
 import { createTable } from './game/createTable';
 import { joinTable } from './game/joinTable';
 import { leaveTable } from './game/leaveTable';
+import { startGame } from './game/startGame';
+import { playerAction } from './game/playerAction';
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -42,9 +44,27 @@ export const leaveTableFunction = onCall({ cors: true }, async request => {
   return leaveTable(request.data, request);
 });
 
+// ============================================================================
+// Game Action Functions
+// ============================================================================
+
+/**
+ * Start Game
+ * Start the poker game at a table (host only, requires ≥2 players)
+ */
+export const startGameFunction = onCall({ cors: true }, async request => {
+  return startGame(request.data, request);
+});
+
+/**
+ * Player Action
+ * Execute a player action (fold, call, check, raise, allin)
+ */
+export const playerActionFunction = onCall({ cors: true }, async request => {
+  return playerAction(request.data, request);
+});
+
 // TODO: Export additional functions as they are implemented
-// - startGame
-// - playerAction
 // - buyChips
 // - cashOut
 // - getLedger

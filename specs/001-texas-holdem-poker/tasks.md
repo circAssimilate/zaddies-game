@@ -151,8 +151,8 @@
 
 - [x] T079 [P] [US2] Create Hand schema in backend/src/functions/game/schemas.ts
 - [x] T080 [P] [US2] Create PlayerHand subcollection schema in backend/src/functions/game/schemas.ts
-- [ ] T081 [US2] Implement startGame Cloud Function in backend/src/functions/game/startGame.ts
-- [ ] T082 [US2] Implement playerAction Cloud Function in backend/src/functions/game/playerAction.ts
+- [x] T081 [US2] Implement startGame Cloud Function in backend/src/functions/game/startGame.ts
+- [x] T082 [US2] Implement playerAction Cloud Function in backend/src/functions/game/playerAction.ts
 - [ ] T083 [US2] Implement hand initialization logic in backend/src/lib/poker/handManager.ts
 - [ ] T084 [US2] Implement betting round logic in backend/src/lib/poker/bettingRound.ts
 - [ ] T085 [US2] Implement showdown logic in backend/src/lib/poker/showdownHandler.ts

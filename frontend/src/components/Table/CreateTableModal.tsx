@@ -22,6 +22,7 @@ import {
   NumberDecrementStepper,
   Switch,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import type { TableSettings } from '@shared/types/table';
@@ -39,6 +40,13 @@ export default function CreateTableModal({
   onCreate,
   isLoading = false,
 }: CreateTableModalProps) {
+  // Color mode values for proper contrast in both light and dark modes
+  const headerColor = useColorModeValue('gray.900', 'white');
+  const labelColor = useColorModeValue('gray.700', 'gray.200');
+  const helperTextColor = useColorModeValue('gray.600', 'gray.400');
+  const inputTextColor = useColorModeValue('gray.900', 'white');
+  const inputBg = useColorModeValue('white', 'gray.700');
+
   // Default settings
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [smallBlind, setSmallBlind] = useState(5);
@@ -73,13 +81,13 @@ export default function CreateTableModal({
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader color="gray.800">Create Table</ModalHeader>
+        <ModalHeader color={headerColor}>Create Table</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} align="stretch">
             {/* Use Custom Settings Toggle */}
             <FormControl display="flex" alignItems="center">
-              <FormLabel htmlFor="custom-settings" mb="0" color="gray.700">
+              <FormLabel htmlFor="custom-settings" mb="0" color={labelColor}>
                 Use custom settings
               </FormLabel>
               <Switch
@@ -91,133 +99,133 @@ export default function CreateTableModal({
 
             {useCustomSettings && (
               <>
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize="sm" color={helperTextColor}>
                   Customize your table settings below
                 </Text>
 
                 {/* Max Players */}
                 <FormControl>
-                  <FormLabel color="gray.700">Max Players</FormLabel>
+                  <FormLabel color={labelColor}>Max Players</FormLabel>
                   <NumberInput
                     value={maxPlayers}
                     onChange={(_, val) => setMaxPlayers(val)}
                     min={2}
                     max={10}
                   >
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Blinds */}
                 <FormControl>
-                  <FormLabel color="gray.700">Small Blind</FormLabel>
+                  <FormLabel color={labelColor}>Small Blind</FormLabel>
                   <NumberInput value={smallBlind} onChange={(_, val) => setSmallBlind(val)} min={1}>
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel color="gray.700">Big Blind</FormLabel>
+                  <FormLabel color={labelColor}>Big Blind</FormLabel>
                   <NumberInput
                     value={bigBlind}
                     onChange={(_, val) => setBigBlind(val)}
                     min={smallBlind + 1}
                   >
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Buy-in and Stack */}
                 <FormControl>
-                  <FormLabel color="gray.700">Minimum Buy-in</FormLabel>
+                  <FormLabel color={labelColor}>Minimum Buy-in</FormLabel>
                   <NumberInput value={minBuyIn} onChange={(_, val) => setMinBuyIn(val)} min={1}>
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel color="gray.700">Maximum Stack</FormLabel>
+                  <FormLabel color={labelColor}>Maximum Stack</FormLabel>
                   <NumberInput
                     value={maxStack}
                     onChange={(_, val) => setMaxStack(val)}
                     min={minBuyIn}
                   >
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Max Debt */}
                 <FormControl>
-                  <FormLabel color="gray.700">Max Debt Per Player</FormLabel>
+                  <FormLabel color={labelColor}>Max Debt Per Player</FormLabel>
                   <NumberInput
                     value={maxDebtPerPlayer}
                     onChange={(_, val) => setMaxDebtPerPlayer(val)}
                     min={0}
                   >
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Timers */}
                 <FormControl>
-                  <FormLabel color="gray.700">Action Timer (seconds)</FormLabel>
+                  <FormLabel color={labelColor}>Action Timer (seconds)</FormLabel>
                   <NumberInput
                     value={actionTimer}
                     onChange={(_, val) => setActionTimer(val)}
                     min={10}
                     max={120}
                   >
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel color="gray.700">Blind Increase Interval (minutes)</FormLabel>
+                  <FormLabel color={labelColor}>Blind Increase Interval (minutes)</FormLabel>
                   <NumberInput
                     value={blindIncreaseInterval}
                     onChange={(_, val) => setBlindIncreaseInterval(val)}
                     min={5}
                     max={60}
                   >
-                    <NumberInputField color="gray.800" _placeholder={{ color: 'gray.500' }} />
+                    <NumberInputField bg={inputBg} color={inputTextColor} />
                     <NumberInputStepper>
-                      <NumberIncrementStepper color="gray.600" />
-                      <NumberDecrementStepper color="gray.600" />
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
                 </FormControl>
 
                 {/* Show Hand Strength */}
                 <FormControl display="flex" alignItems="center">
-                  <FormLabel htmlFor="show-hand-strength" mb="0" color="gray.700">
+                  <FormLabel htmlFor="show-hand-strength" mb="0" color={labelColor}>
                     Show hand strength
                   </FormLabel>
                   <Switch
@@ -230,7 +238,7 @@ export default function CreateTableModal({
             )}
 
             {!useCustomSettings && (
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize="sm" color={helperTextColor}>
                 Default settings will be used (10 players, 5/10 blinds, 30s timer)
               </Text>
             )}

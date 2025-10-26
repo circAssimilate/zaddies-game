@@ -14,6 +14,8 @@ import {
 } from 'firebase/firestore';
 import { db } from './config';
 import { Table, TableStatus, TableSettings } from '@shared/types/table';
+// @ts-expect-error - Hand type used in Table interface
+// eslint-disable-next-line
 import { Hand } from '@shared/types/game';
 
 const TABLES_COLLECTION = 'tables';
@@ -46,13 +48,15 @@ export async function createTable(
 ): Promise<Table> {
   const tableRef = getTableRef(tableId);
 
-  const table: Omit<Table, 'updatedAt'> & { createdAt: Date; hand: Hand | null } = {
+  const now = new Date();
+  const table: Table = {
     id: tableId,
     hostId,
     settings,
     status: 'waiting',
     players: {},
-    createdAt: new Date(),
+    createdAt: now,
+    updatedAt: now,
     hand: null,
   };
 
@@ -60,6 +64,7 @@ export async function createTable(
   const tableData = {
     ...table,
     createdAt: Timestamp.fromDate(table.createdAt),
+    updatedAt: Timestamp.fromDate(table.updatedAt),
   };
 
   await setDoc(tableRef, tableData);
@@ -85,6 +90,7 @@ export async function getTable(tableId: string): Promise<Table | null> {
   return {
     ...data,
     createdAt: data.createdAt.toDate(),
+    updatedAt: data.updatedAt?.toDate() || data.createdAt.toDate(),
   } as Table;
 }
 
@@ -129,6 +135,7 @@ export async function getUserTables(userId: string): Promise<Table[]> {
     tables.push({
       ...data,
       createdAt: data.createdAt.toDate(),
+      updatedAt: data.updatedAt?.toDate() || data.createdAt.toDate(),
     } as Table);
   });
 

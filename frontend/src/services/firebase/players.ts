@@ -21,8 +21,10 @@ const LEDGER_COLLECTION = 'ledger';
 
 /**
  * Get reference to players collection (for queries like leaderboard)
+ * Will be used in Phase 3 for leaderboard functionality
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// @ts-expect-error - Reserved for Phase 3 leaderboard
+// eslint-disable-next-line
 function getPlayersCollection(): CollectionReference {
   return collection(db, PLAYERS_COLLECTION);
 }

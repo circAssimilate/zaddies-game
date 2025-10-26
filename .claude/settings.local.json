@@ -18,7 +18,9 @@
       "Bash(cat:*)",
       "Bash(pnpm run lint:*)",
       "Bash(pnpm test:*)",
-      "Bash(gh pr view:*)"
+      "Bash(gh pr view:*)",
+      "WebFetch(domain:adr.github.io)",
+      "WebFetch(domain:cognitect.com)"
     ],
     "deny": [],
     "ask": []

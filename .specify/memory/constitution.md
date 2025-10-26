@@ -1,32 +1,33 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version: 1.1.0 → 1.2.0
+Version: 1.2.0 → 1.3.0
 Change Type: MINOR (New principle added)
 Date: 2025-10-25
 
 Modified Principles:
-- NEW: VII. Universal Accessibility
+- NEW: VIII. Architecture Decision Records (ADRs)
 
 Added Sections:
-- Universal Accessibility principle with WCAG AA compliance and color-blind requirements
+- Architecture Decision Records principle requiring documentation of significant decisions
 
 Removed Sections:
 - (None)
 
 Templates Requiring Updates:
-✅ .specify/templates/plan-template.md - Constitution Check section will include accessibility
+✅ .specify/templates/plan-template.md - Constitution Check section will include ADR requirement
 ✅ .specify/templates/spec-template.md - Requirements alignment verified
-✅ .specify/templates/tasks-template.md - Task categorization includes accessibility testing
+✅ .specify/templates/tasks-template.md - Task categorization includes ADR documentation
 ✅ Command files - No changes needed
 
 Follow-up TODOs:
-- ✅ Updated Quality Gates section to include accessibility check
-- ✅ Updated Code Review Requirements to reference 7 principles
+- ✅ Updated Quality Gates section to include ADR documentation check
+- ✅ Updated Code Review Requirements to reference 8 principles
+- ✅ Added ADR Updates item to Code Review checklist
 
 Rationale for MINOR version bump:
-Adding a new principle (VII. Universal Accessibility) based on ADR 003 color-blind
-accessibility requirements. This expands governance without removing existing principles.
+Adding a new principle (VIII. Architecture Decision Records) based on adr.github.io
+best practices. This codifies decision documentation without removing existing principles.
 -->
 
 # Zaddies Game Constitution
@@ -206,6 +207,54 @@ All user interfaces MUST be accessible to users of all abilities, including thos
 - Screen reader testing required for key interactions
 - Contrast ratios verified with WebAIM or similar tools
 
+### VIII. Architecture Decision Records (ADRs)
+
+All architecturally significant decisions MUST be documented in Architecture Decision Records (ADRs). An ADR captures a single architectural decision, its context, rationale, and consequences to maintain institutional knowledge and prevent future teams from inadvertently reversing decisions without understanding their original justification.
+
+**When to Create ADRs**:
+
+- **Structural Changes**: Modifications affecting system structure, components, or modules
+- **Non-Functional Requirements**: Decisions impacting performance, security, scalability, or reliability
+- **Technology Choices**: Selection of frameworks, libraries, databases, or infrastructure
+- **Interface Contracts**: Changes to APIs, protocols, or integration patterns
+- **Construction Techniques**: Build processes, deployment strategies, or development workflows
+- **Dependency Management**: Addition or removal of significant external dependencies
+
+**Required ADR Structure** (per Michael Nygard format):
+
+1. **Title**: Short noun phrase (e.g., "ADR 003: Use Blue/Orange Color Palette for Accessibility")
+2. **Status**: One of "proposed", "accepted", "deprecated", "superseded by [ADR-NNN]"
+3. **Context**: Forces at play (technological, political, social, project constraints) in neutral language
+4. **Decision**: Team's response in active voice ("We will...")
+5. **Consequences**: All effects (positive, negative, neutral) resulting from this decision
+
+**ADR Management**:
+
+- Store in version control at `docs/adr/NNN-decision-title.md`
+- Use Markdown format (lightweight, readable)
+- Number sequentially starting from 001 (never reuse numbers)
+- Keep documents to 1-2 pages maximum
+- Write in complete sentences and conversational style
+- Reference related ADRs when superseding or building upon previous decisions
+
+**Prohibited**:
+
+- Making significant architectural decisions without documenting rationale
+- Deleting or renaming existing ADRs (mark as deprecated/superseded instead)
+- Writing ADRs after implementation is complete (document during decision-making)
+- Vague or evaluative language in Context section (remain factual and neutral)
+- Missing consequences section (document all trade-offs, even if negative)
+
+**Rationale**: Architecture erodes over time as original decision-makers leave and context is forgotten. ADRs create a decision log that explains "why" not just "what", preventing future developers from needing to reverse-engineer project rationale. This practice is essential for long-lived projects and teams with changing membership. The lightweight format (1-2 pages in Markdown) keeps documentation sustainable while preserving critical institutional knowledge.
+
+**Enforcement**:
+
+- PRs with architectural impact MUST include or update relevant ADRs
+- ADRs MUST be reviewed alongside code changes
+- Constitution amendments MUST reference ADR process in governance section
+- Feature specifications SHOULD reference existing ADRs when applicable
+- Quarterly ADR review to mark deprecated decisions and identify missing documentation
+
 ## Development Workflow
 
 ### Code Review Requirements
@@ -213,10 +262,11 @@ All user interfaces MUST be accessible to users of all abilities, including thos
 All code changes MUST be reviewed and approved before merge:
 
 1. **Tests First**: Reviewer verifies tests were written before implementation
-2. **Constitution Compliance**: Verify adherence to all seven core principles
+2. **Constitution Compliance**: Verify adherence to all eight core principles
 3. **Performance Validation**: Confirm performance benchmarks pass
 4. **Documentation**: Ensure module interfaces and contracts are documented
 5. **Security**: Check for client-side exploits, data validation issues
+6. **ADR Updates**: Verify architectural decisions are documented in ADRs
 
 ### Branch Strategy
 
@@ -247,6 +297,7 @@ Before implementation begins, features MUST be evaluated against these checks:
 5. **Observability**: Are logging, metrics, and debugging hooks planned?
 6. **Mobile-First Design**: Are mobile views designed first with touch optimization?
 7. **Universal Accessibility**: Are WCAG AA and color-blind requirements met?
+8. **ADR Documentation**: Are architectural decisions documented with context and rationale?
 
 **Complexity Justification**: Any violation of core principles MUST be documented with:
 
@@ -297,4 +348,4 @@ For day-to-day development guidance and examples, consult:
 - Feature specifications in `/specs/[###-feature]/spec.md`
 - Task breakdowns in `/specs/[###-feature]/tasks.md`
 
-**Version**: 1.2.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25
+**Version**: 1.3.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25

@@ -51,9 +51,19 @@ export function initializeHand(
   const positions = determinePositions(players, previousDealerPosition);
   const { dealerPosition, smallBlindPosition, bigBlindPosition, firstToActPosition } = positions;
 
-  // Deal in players who are sitting at the big blind position
-  // This follows Vegas rules: new players must wait for big blind to be dealt in
-  const playersWithDealIn = dealInPlayersAtBigBlind(players, bigBlindPosition);
+  // Deal in players:
+  // - First hand (handNumber === 1): Deal in ALL sitting players immediately
+  // - Subsequent hands: Wait for big blind position (Vegas rules)
+  let playersWithDealIn: PlayerState[];
+  if (handNumber === 1) {
+    // First hand: deal in everyone who is sitting
+    playersWithDealIn = players.map(player =>
+      player.status === 'sitting' ? { ...player, status: 'playing' as const } : player
+    );
+  } else {
+    // Subsequent hands: only deal in players at big blind position
+    playersWithDealIn = dealInPlayersAtBigBlind(players, bigBlindPosition);
+  }
 
   // Filter active players (those who will be dealt cards this hand)
   const activePlayers = playersWithDealIn.filter(p => p.status !== 'sitting');

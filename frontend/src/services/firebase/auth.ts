@@ -1,8 +1,5 @@
-import { getAuth, signInAnonymously, onAuthStateChanged, User, Auth } from 'firebase/auth';
-import { app } from './config';
-
-// Initialize Firebase Auth
-export const auth: Auth = getAuth(app);
+import { signInAnonymously, onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from './config';
 
 /**
  * Sign in anonymously for friend games

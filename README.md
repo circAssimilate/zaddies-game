@@ -21,10 +21,50 @@ A web-based Texas Hold'em Poker game for friend groups with Vegas-style rules, r
 
 ## Prerequisites
 
-- Node.js 20 LTS or higher
+- Node.js 20 LTS or higher (managed via nvm recommended)
 - pnpm 8.x or higher
+- Java 21 or higher (required for Firebase emulators)
 - Firebase CLI: `pnpm install -g firebase-tools`
 - Git
+
+### Installing Node.js via nvm (Recommended)
+
+Using nvm ensures you have the correct Node.js version and avoids compatibility issues:
+
+```bash
+# Install nvm (if not already installed)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Install Node.js 20 LTS
+nvm install 20
+
+# Use Node.js 20
+nvm use 20
+
+# Set as default
+nvm alias default 20
+```
+
+This project includes a `.nvmrc` file, so you can simply run `nvm use` in the project directory.
+
+### Installing Java
+
+Firebase emulators require Java 21 or higher:
+
+```bash
+# macOS (using Homebrew)
+brew install openjdk@21
+
+# Add to your shell configuration (~/.zshrc or ~/.bashrc)
+export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
+
+# Reload your shell
+source ~/.zshrc  # or source ~/.bashrc
+
+# Verify installation
+java -version  # Should show version 21.x.x
+```
 
 ### Installing pnpm
 
@@ -99,6 +139,9 @@ cp backend/.env.template backend/.env
 
 \`\`\`bash
 
+# Ensure you're using the correct Node.js version
+nvm use
+
 # Start Firebase emulators + frontend (parallel)
 
 pnpm run dev
@@ -115,6 +158,8 @@ cd frontend && pnpm run dev
 \`\`\`
 
 Visit http://localhost:5173 for the app and http://localhost:4000 for Firebase Emulator UI.
+
+**Note**: The first time you run `pnpm run dev`, the emulators may take a moment to start. If the frontend starts before the emulators are ready, you may see connection errors in the browser console. Just wait a few seconds and refresh the page.
 
 ## Development
 
@@ -213,6 +258,57 @@ npm ERR! Unsupported engine: wanted: {"npm":"please-use-pnpm"}
 \`\`\`bash
 npm install -g pnpm
 pnpm install
+\`\`\`
+
+### Firebase Emulator Errors
+
+#### "Unable to locate a Java Runtime"
+
+**Solution**: Install Java 21 or higher (see Prerequisites section above).
+
+#### "firebase-tools will drop support for Java version < 21"
+
+**Solution**: You have an older Java version installed. Update to Java 21:
+
+\`\`\`bash
+# macOS
+brew install openjdk@21
+
+# Update your ~/.zshrc or ~/.bashrc to use Java 21
+# Remove or comment out any old Java paths (e.g., openjdk@11)
+export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
+
+# Reload shell and verify
+source ~/.zshrc
+java -version  # Should show 21.x.x
+\`\`\`
+
+#### "Port 5000 is not open" or "Port taken"
+
+**Solution**: The hosting emulator port is already in use. This has been resolved in the firebase.json config by removing the hosting emulator (we use Vite directly).
+
+### ICU4C Library Errors (macOS)
+
+If you see errors like `dyld: Library not loaded: libicui18n.73.dylib`:
+
+**Solution**: Use nvm to install a fresh Node.js version:
+
+\`\`\`bash
+nvm install 20 --latest-npm
+nvm use 20
+nvm alias default 20
+\`\`\`
+
+### Blank Page or Auth Errors
+
+If you see `auth/invalid-api-key` or a blank page:
+
+**Solution**: Make sure you have a `.env.local` file in the `frontend/` directory with your Firebase credentials:
+
+\`\`\`bash
+cp frontend/.env.local.example frontend/.env.local
+# Edit .env.local with your Firebase config values
 \`\`\`
 
 ### Common pnpm Commands

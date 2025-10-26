@@ -1,6 +1,8 @@
 /**
  * Firebase Cloud Functions entry point
  * Contract: specs/001-texas-holdem-poker/contracts/api-functions.md
+ *
+ * Note: Functions are deployed using esbuild which bundles to lib/index.js
  */
 
 import admin from 'firebase-admin';

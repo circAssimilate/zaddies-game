@@ -1,32 +1,32 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version: 1.0.0 → 1.1.0
+Version: 1.1.0 → 1.2.0
 Change Type: MINOR (New principle added)
 Date: 2025-10-25
 
 Modified Principles:
-- NEW: VI. Mobile-First UI Design
+- NEW: VII. Universal Accessibility
 
 Added Sections:
-- Mobile-First UI Design principle with requirements, enforcement, and rationale
+- Universal Accessibility principle with WCAG AA compliance and color-blind requirements
 
 Removed Sections:
 - (None)
 
 Templates Requiring Updates:
-✅ .specify/templates/plan-template.md - Constitution Check section will include mobile-first
+✅ .specify/templates/plan-template.md - Constitution Check section will include accessibility
 ✅ .specify/templates/spec-template.md - Requirements alignment verified
-✅ .specify/templates/tasks-template.md - Task categorization includes mobile testing
+✅ .specify/templates/tasks-template.md - Task categorization includes accessibility testing
 ✅ Command files - No changes needed
 
 Follow-up TODOs:
-- ✅ Updated Quality Gates section to include mobile-first check
-- ✅ Updated Code Review Requirements to reference 6 principles
+- ✅ Updated Quality Gates section to include accessibility check
+- ✅ Updated Code Review Requirements to reference 7 principles
 
 Rationale for MINOR version bump:
-Adding a new principle (VI. Mobile-First UI Design) without removing or redefining
-existing principles. This is a non-breaking change that expands governance guidance.
+Adding a new principle (VII. Universal Accessibility) based on ADR 003 color-blind
+accessibility requirements. This expands governance without removing existing principles.
 -->
 
 # Zaddies Game Constitution
@@ -166,6 +166,46 @@ All frontend user interfaces MUST be designed and implemented with a mobile-firs
 - Accessibility testing MUST include mobile screen readers
 - All user stories MUST define mobile acceptance criteria
 
+### VII. Universal Accessibility
+
+All user interfaces MUST be accessible to users of all abilities, including those with visual, motor, cognitive, and auditory disabilities. Accessibility is a core requirement, not an optional enhancement.
+
+**Accessibility Requirements**:
+
+- **WCAG AA Compliance**: All UI components MUST meet WCAG 2.1 Level AA standards
+- **Color-Blind Safe**: Visual information MUST NOT rely solely on color (use patterns, shapes, labels)
+- **Contrast Ratios**: Text and interactive elements MUST meet 4.5:1 minimum contrast ratio
+- **Keyboard Navigation**: All functionality MUST be fully operable via keyboard
+- **Screen Reader Support**: All interactive elements MUST have proper ARIA labels and semantic HTML
+- **Focus Indicators**: Keyboard focus MUST be clearly visible (distinct outline/highlight)
+
+**Color-Blind Specific Requirements** (per ADR 003):
+
+- **Blue/Orange Palette**: Use blue (#2563EB, #1E40AF) and orange (#F97316, #EA580C) instead of red/green
+- **Pattern Redundancy**: Combine color with patterns/textures for differentiation
+- **Suit Differentiation**: Spades (solid blue), Clubs (blue + dots), Hearts (solid orange), Diamonds (orange + stripes)
+- **Testing Required**: Validate with Chrome DevTools color vision simulations (protanopia, deuteranopia, tritanopia)
+
+**Prohibited**:
+
+- Red/green color combinations without alternative cues
+- Color-only differentiation (must include patterns, shapes, or labels)
+- Interactive elements below 4.5:1 contrast ratio
+- Mouse-only interactions without keyboard alternatives
+- Images or icons without alt text or ARIA labels
+- Automatic carousels or animations without pause controls
+
+**Rationale**: Approximately 8% of males and 0.5% of females have color vision deficiency. WCAG compliance is both a legal requirement in many jurisdictions and an ethical imperative. Universal design principles benefit all users, not just those with disabilities. Games should be enjoyable by everyone regardless of ability.
+
+**Enforcement**:
+
+- Design mockups MUST demonstrate color-blind safe palettes
+- All PRs MUST include accessibility testing (axe DevTools, WAVE, or similar)
+- Color vision simulations MUST pass for all critical UI elements
+- Keyboard navigation MUST be tested for all user flows
+- Screen reader testing required for key interactions
+- Contrast ratios verified with WebAIM or similar tools
+
 ## Development Workflow
 
 ### Code Review Requirements
@@ -173,7 +213,7 @@ All frontend user interfaces MUST be designed and implemented with a mobile-firs
 All code changes MUST be reviewed and approved before merge:
 
 1. **Tests First**: Reviewer verifies tests were written before implementation
-2. **Constitution Compliance**: Verify adherence to all six core principles
+2. **Constitution Compliance**: Verify adherence to all seven core principles
 3. **Performance Validation**: Confirm performance benchmarks pass
 4. **Documentation**: Ensure module interfaces and contracts are documented
 5. **Security**: Check for client-side exploits, data validation issues
@@ -206,6 +246,7 @@ Before implementation begins, features MUST be evaluated against these checks:
 4. **Architecture Alignment**: Does this respect client-server separation?
 5. **Observability**: Are logging, metrics, and debugging hooks planned?
 6. **Mobile-First Design**: Are mobile views designed first with touch optimization?
+7. **Universal Accessibility**: Are WCAG AA and color-blind requirements met?
 
 **Complexity Justification**: Any violation of core principles MUST be documented with:
 
@@ -256,4 +297,4 @@ For day-to-day development guidance and examples, consult:
 - Feature specifications in `/specs/[###-feature]/spec.md`
 - Task breakdowns in `/specs/[###-feature]/tasks.md`
 
-**Version**: 1.1.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25
+**Version**: 1.2.0 | **Ratified**: 2025-10-25 | **Last Amended**: 2025-10-25

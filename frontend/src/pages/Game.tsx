@@ -237,7 +237,8 @@ export default function Game() {
 
         {/* Leave button (top-right corner) */}
         <Button
-          colorScheme="red"
+          backgroundColor="rgba(255, 255, 255, 0.05)"
+          colorScheme="white"
           variant="outline"
           size="sm"
           onClick={handleLeaveTable}

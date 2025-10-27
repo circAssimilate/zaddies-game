@@ -110,18 +110,27 @@ export default function Game() {
         const snapshot = await getDocs(q);
 
         const usernameMap = new Map<string, string>();
+
+        // Add usernames from Firestore documents
         snapshot.docs.forEach(doc => {
           const data = doc.data();
-          usernameMap.set(doc.id, data.username || data.email || 'Unknown');
+          usernameMap.set(doc.id, data.username || data.email || `Player ${doc.id.slice(0, 6)}`);
+        });
+
+        // Add fallback names for players without Firestore documents
+        table.players.forEach(p => {
+          if (!usernameMap.has(p.id)) {
+            usernameMap.set(p.id, `Player ${p.id.slice(0, 6)}`);
+          }
         });
 
         setUsernames(usernameMap);
       } catch (err) {
         console.error('Failed to fetch usernames:', err);
-        // Fallback: use player IDs as usernames
+        // Fallback: use formatted player IDs as display names
         const fallbackMap = new Map<string, string>();
         table.players.forEach(p => {
-          fallbackMap.set(p.id, p.id.slice(0, 8));
+          fallbackMap.set(p.id, `Player ${p.id.slice(0, 6)}`);
         });
         setUsernames(fallbackMap);
       } finally {
@@ -228,7 +237,6 @@ export default function Game() {
 
         {/* Leave button (top-right corner) */}
         <Button
-          backgroundColor="rgba(255, 255, 255, 0.5)"
           colorScheme="red"
           variant="outline"
           size="sm"

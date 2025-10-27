@@ -3,8 +3,6 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
-import Home from '../../src/pages/Home';
-import TableLobby from '../../src/pages/TableLobby';
 
 /**
  * Integration tests for Create/Join Table Flow (User Story 1)
@@ -21,7 +19,15 @@ import TableLobby from '../../src/pages/TableLobby';
  * Backend integration tests are in backend/tests/integration/tableManagement.test.ts
  */
 
-// Setup is now handled in tests/setup.ts
+// Mock Firebase config BEFORE importing any components
+vi.mock('../../src/services/firebase/config', () => ({
+  app: {},
+  db: {},
+  auth: {
+    currentUser: null,
+    onAuthStateChanged: vi.fn(),
+  },
+}));
 
 // Mock Firebase services
 const mockCreateTable = vi.fn();
@@ -104,6 +110,10 @@ vi.mock('../../src/hooks/useTable', () => ({
     };
   },
 }));
+
+// Import components AFTER all mocks are set up
+import Home from '../../src/pages/Home';
+import TableLobby from '../../src/pages/TableLobby';
 
 // Test wrapper with providers
 function TestWrapper({

@@ -41,7 +41,9 @@ export default function TableLobby() {
 
   // Redirect to game when status changes to 'playing'
   useEffect(() => {
+    console.log('[TableLobby] Redirect check:', { status: table?.status, tableId });
     if (table && table.status === 'playing') {
+      console.log('[TableLobby] Game started, redirecting to game page');
       navigate(`/game/${tableId}`);
     }
   }, [table, tableId, navigate]);

@@ -38,7 +38,6 @@ export function TableView({ table, userId, usernames }: TableViewProps) {
   const {
     hand,
     currentPlayerPosition,
-    phase,
     pot,
     communityCards,
     loading,
@@ -91,53 +90,42 @@ export function TableView({ table, userId, usernames }: TableViewProps) {
   return (
     <Box
       width="100%"
-      height="100vh"
+      minHeight="100vh"
       bg="green.900"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
       position="relative"
-      overflow="hidden"
+      overflowY="auto"
+      overflowX="hidden"
     >
       {/* Poker table surface */}
       <Box
-        width="90%"
+        width="100%"
         maxWidth="1200px"
-        height="80%"
-        maxHeight="800px"
+        minHeight="100vh"
         bg="green.800"
-        borderRadius="50%"
-        borderWidth="8px"
-        borderColor="brown.700"
         position="relative"
-        boxShadow="inset 0 0 50px rgba(0,0,0,0.5)"
+        pb={{ base: '220px', md: '120px' }}
+        pt={{ base: 4, md: 8 }}
+        mx="auto"
       >
         {/* Center area - Community cards and pot */}
         <VStack
-          position="absolute"
-          top="50%"
-          left="50%"
-          transform="translate(-50%, -50%)"
+          position="relative"
           spacing={4}
           zIndex={2}
+          pt={{ base: '90px', sm: '40px', md: '40px' }}
+          pb={4}
         >
           <CommunityCards cards={communityCards} size="lg" />
           <PotDisplay mainPot={pot} sidePots={hand?.sidePots ?? []} size="lg" />
-          {phase && (
-            <Text fontSize="lg" fontWeight="bold" color="yellow.300">
-              {phase.toUpperCase()}
-            </Text>
-          )}
         </VStack>
 
         {/* Player seats - arranged around the table */}
         <Grid
-          templateColumns="repeat(4, 1fr)"
+          templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
           gap={4}
-          position="absolute"
+          position="relative"
           width="100%"
-          height="100%"
-          padding={8}
+          padding={4}
         >
           {renderPlayerSeats()}
         </Grid>
@@ -145,7 +133,7 @@ export function TableView({ table, userId, usernames }: TableViewProps) {
 
       {/* Bottom panel - Player's cards and actions */}
       <Box
-        position="absolute"
+        position="fixed"
         bottom={0}
         left={0}
         right={0}

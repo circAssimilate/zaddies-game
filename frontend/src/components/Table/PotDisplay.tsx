@@ -32,19 +32,21 @@ export function PotDisplay({ mainPot, sidePots = [], size = 'md' }: PotDisplayPr
   const totalPot = mainPot + sidePots.reduce((sum, pot) => sum + pot.amount, 0);
 
   return (
-    <VStack spacing={2} alignItems="center">
-      {/* Chip visual - use highest denomination chip for display */}
-      <Chip value={totalPot >= 1000 ? 1000 : totalPot >= 100 ? 100 : 25} size={size} count={3} />
+    <VStack spacing={2} alignItems="justify">
+      <HStack spacing={2}>
+        {/* Chip visual - use highest denomination chip for display */}
+        <Chip value={totalPot >= 1000 ? 1000 : totalPot >= 100 ? 100 : 25} size={size} count={3} />
 
-      {/* Main pot amount */}
-      <VStack spacing={0}>
-        <Text fontSize={fontSize} fontWeight="bold" color="yellow.500">
-          ${totalPot}
-        </Text>
-        <Text fontSize="xs" color="gray.500">
-          Pot
-        </Text>
-      </VStack>
+        {/* Main pot amount */}
+        <HStack spacing={2} alignItems="center">
+          <Text fontSize={fontSize} fontWeight="bold" color="yellow.500" whiteSpace="nowrap">
+            ${totalPot}
+          </Text>
+          <Text fontSize="xs" color="gray.500">
+            Pot
+          </Text>
+        </HStack>
+      </HStack>
 
       {/* Side pots (if any) */}
       {sidePots.length > 0 && (

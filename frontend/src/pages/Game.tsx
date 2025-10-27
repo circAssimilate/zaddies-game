@@ -10,7 +10,17 @@
  * - Action buttons
  */
 
-import { Box, Button, useToast, Spinner, VStack, Text, HStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  useToast,
+  Spinner,
+  VStack,
+  Text,
+  HStack,
+  Stack,
+  Flex,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -23,17 +33,18 @@ export default function Game() {
   const { tableId } = useParams<{ tableId: string }>();
   const navigate = useNavigate();
   const toast = useToast();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { table, loading, error, leaveTable } = useTable(tableId, user?.uid);
   const [usernames, setUsernames] = useState<Map<string, string>>(new Map());
   const [loadingUsernames, setLoadingUsernames] = useState(false);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated (wait for auth to load first)
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
+      console.log('[Game] Not authenticated, redirecting to home');
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [authLoading, user, navigate]);
 
   // Redirect if no tableId
   useEffect(() => {
@@ -43,11 +54,28 @@ export default function Game() {
   }, [tableId, navigate]);
 
   // Redirect to lobby if game hasn't started yet
+  // Only redirect if we've successfully loaded the table and it's actually in waiting status
   useEffect(() => {
-    if (table && table.status === 'waiting') {
-      navigate(`/table/${tableId}`);
+    console.log('[Game] Redirect check:', {
+      loading,
+      status: table?.status,
+      tableId,
+      hasUser: !!user,
+    });
+
+    // Don't redirect while still loading or if user isn't authenticated yet
+    if (loading || !user) {
+      console.log('[Game] Still loading or no user, skipping redirect check');
+      return;
     }
-  }, [table, tableId, navigate]);
+
+    if (table && table.status === 'waiting') {
+      console.log('[Game] Game not started, redirecting to lobby');
+      navigate(`/table/${tableId}`);
+    } else if (table && table.status === 'playing') {
+      console.log('[Game] Game is playing, staying on game page');
+    }
+  }, [loading, table, tableId, navigate, user]);
 
   // Handle errors
   useEffect(() => {
@@ -172,43 +200,45 @@ export default function Game() {
   }
 
   return (
-    <Box position="relative" width="100%" height="100vh" overflow="hidden">
-      {/* Leave button (top-right corner) */}
-      <Button
-        position="absolute"
-        top={4}
-        right={4}
-        colorScheme="red"
-        variant="outline"
-        size="sm"
-        onClick={handleLeaveTable}
-        zIndex={20}
+    <Box position="relative" width="100%" height="100vh" overflow="scroll">
+      <Stack
+        direction={{ base: 'column', sm: 'row' }}
+        position="fixed"
+        top={0}
+        left={0}
+        right={0}
+        zIndex={10}
+        spacing={1}
+        p={2}
       >
-        Leave Table
-      </Button>
+        {/* Table info (top-left corner) */}
+        <HStack spacing={2} zIndex={20} bg="blackAlpha.700" px={4} py={2} borderRadius="md">
+          <Text color="white" fontWeight="bold">
+            Table {table.id}
+          </Text>
+          <Text color="gray.400" fontSize="sm">
+            |
+          </Text>
+          <Text color="gray.400" fontSize="sm">
+            {table.players.length}/{table.settings.maxPlayers} players
+          </Text>
+        </HStack>
 
-      {/* Table info (top-left corner) */}
-      <HStack
-        position="absolute"
-        top={4}
-        left={4}
-        spacing={2}
-        zIndex={20}
-        bg="blackAlpha.700"
-        px={4}
-        py={2}
-        borderRadius="md"
-      >
-        <Text color="white" fontWeight="bold">
-          Table {table.id}
-        </Text>
-        <Text color="gray.400" fontSize="sm">
-          |
-        </Text>
-        <Text color="gray.400" fontSize="sm">
-          {table.players.length}/{table.settings.maxPlayers} players
-        </Text>
-      </HStack>
+        <Flex flex={1} />
+
+        {/* Leave button (top-right corner) */}
+        <Button
+          backgroundColor="rgba(255, 255, 255, 0.5)"
+          colorScheme="red"
+          variant="outline"
+          size="sm"
+          onClick={handleLeaveTable}
+          zIndex={20}
+          height="40px"
+        >
+          Leave Table
+        </Button>
+      </Stack>
 
       {/* Main table view */}
       <TableView table={table} userId={user.uid} usernames={usernames} />

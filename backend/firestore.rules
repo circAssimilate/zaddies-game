@@ -43,6 +43,15 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Users collection (for usernames)
+    match /users/{userId} {
+      // Anyone authenticated can read usernames
+      allow read: if isAuthenticated();
+      // Users can create/update their own profile
+      allow create, update: if isOwner(userId);
+      allow delete: if false; // Never delete users
+    }
+
     // Tables
     match /tables/{tableId} {
       // Anyone authenticated can read any table (join by table ID)
@@ -58,6 +67,14 @@ service cloud.firestore {
 
       // Host can delete their table
       allow delete: if isTableHost(tableId);
+
+      // Player hole cards subcollection
+      match /hands/{handNumber}/playerHands/{playerId} {
+        // Players can only read their own hole cards
+        allow read: if isAuthenticated() && request.auth.uid == playerId;
+        // Only backend can write (via Cloud Functions)
+        allow write: if false;
+      }
     }
 
     // Game state is managed entirely by Cloud Functions

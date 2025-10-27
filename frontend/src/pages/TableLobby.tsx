@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTable } from '../hooks/useTable';
+import { useGameState } from '../hooks/useGameState';
 import PlayerList from '../components/Table/PlayerList';
 import StartGameButton from '../components/Table/StartGameButton';
 
@@ -28,6 +29,7 @@ export default function TableLobby() {
   const toast = useToast();
   const { user } = useAuth();
   const { table, loading, error, leaveTable } = useTable(tableId, user?.uid);
+  const { startGame, loading: gameLoading } = useGameState(table, user?.uid ?? null);
   const [isLeaving, setIsLeaving] = useState(false);
 
   // Redirect if no tableId
@@ -36,6 +38,15 @@ export default function TableLobby() {
       navigate('/');
     }
   }, [tableId, navigate]);
+
+  // Redirect to game when status changes to 'playing'
+  useEffect(() => {
+    console.log('[TableLobby] Redirect check:', { status: table?.status, tableId });
+    if (table && table.status === 'playing') {
+      console.log('[TableLobby] Game started, redirecting to game page');
+      navigate(`/game/${tableId}`);
+    }
+  }, [table, tableId, navigate]);
 
   // Handle errors
   useEffect(() => {
@@ -95,13 +106,31 @@ export default function TableLobby() {
   };
 
   const handleStartGame = async () => {
-    // TODO: Implement start game logic
-    toast({
-      title: 'Coming soon',
-      description: 'Start game functionality will be implemented in User Story 2',
-      status: 'info',
-      duration: 3000,
-    });
+    if (!tableId || !table) return;
+
+    try {
+      toast({
+        title: 'Starting game',
+        description: 'Dealing cards and posting blinds...',
+        status: 'info',
+        duration: 2000,
+      });
+
+      // Call startGame Cloud Function
+      await startGame();
+
+      // The table status will update to 'playing' via Firestore subscription
+      // and the useEffect above will redirect to the game page
+    } catch (err) {
+      console.error('Failed to start game:', err);
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to start game',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   if (loading) {
@@ -207,6 +236,7 @@ export default function TableLobby() {
             <StartGameButton
               onClick={handleStartGame}
               isDisabled={!canStartGame}
+              isLoading={gameLoading}
               tooltip={playerCount < 2 ? 'Need at least 2 players to start' : undefined}
             />
           ) : (

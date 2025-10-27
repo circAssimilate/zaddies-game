@@ -46,7 +46,7 @@ export function Chip({ value, size = 'md', count = 1 }: ChipProps) {
     const chips = Array.from({ length: stackCount }, (_, i) => i);
 
     return (
-      <Box position="relative" height={config.diameter}>
+      <Box position="relative" height={config.diameter} width={config.diameter}>
         {chips.map((_, index) => (
           <Circle
             key={index}

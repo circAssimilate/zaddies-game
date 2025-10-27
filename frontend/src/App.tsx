@@ -8,6 +8,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { theme } from './theme';
 import Home from './pages/Home';
 import TableLobby from './pages/TableLobby';
+import Game from './pages/Game';
 import { Demo } from './pages/Demo';
 
 function App() {
@@ -20,6 +21,9 @@ function App() {
 
           {/* Table Lobby - Pre-game waiting room */}
           <Route path="/table/:tableId" element={<TableLobby />} />
+
+          {/* Game Page - Active poker game */}
+          <Route path="/game/:tableId" element={<Game />} />
 
           {/* Demo Page - Component showcase (development only) */}
           <Route path="/demo" element={<Demo />} />

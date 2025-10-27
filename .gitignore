@@ -11,7 +11,14 @@ coverage/
 # Production builds
 dist/
 build/
+lib/
 *.tsbuildinfo
+
+# TypeScript compiled output (JS from TS files)
+**/*.js
+!*.config.js
+!**/vite.config.js
+!**/vitest.config.js
 
 # Environment variables
 .env
@@ -56,6 +63,9 @@ backend/_isolated_/
 *.sw?
 *.swp
 *.tmp
+
+# Claude Code local settings
+.claude/settings.local.json
 
 # OS
 Thumbs.db

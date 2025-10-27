@@ -181,7 +181,7 @@ export function processPlayerAction(
       updatedHand.pot += betAmount;
       break;
 
-    case 'raise':
+    case 'raise': {
       if (!amount) {
         throw new Error('Raise amount must be specified');
       }
@@ -204,6 +204,7 @@ export function processPlayerAction(
       updatedHand.bettingRound.currentBet = amount;
       updatedHand.bettingRound.minRaise = raiseAmount;
       break;
+    }
 
     case 'allin':
       if (!amount) {

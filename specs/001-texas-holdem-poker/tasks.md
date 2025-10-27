@@ -143,26 +143,26 @@
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T076 [P] [US2] Write contract test for playerAction function in backend/tests/integration/playerAction.test.ts
-- [ ] T077 [P] [US2] Write contract test for startGame function in backend/tests/integration/startGame.test.ts
-- [ ] T078 [P] [US2] Write integration test for complete hand flow in backend/tests/integration/handFlow.test.ts
+- [x] T076 [P] [US2] Write contract test for playerAction function in backend/tests/integration/playerAction.test.ts
+- [x] T077 [P] [US2] Write contract test for startGame function in backend/tests/integration/startGame.test.ts
+- [x] T078 [P] [US2] Write integration test for complete hand flow in backend/tests/integration/handFlow.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T079 [P] [US2] Create Hand schema in backend/src/functions/game/schemas.ts
-- [ ] T080 [P] [US2] Create PlayerHand subcollection schema in backend/src/functions/game/schemas.ts
-- [ ] T081 [US2] Implement startGame Cloud Function in backend/src/functions/game/startGame.ts
-- [ ] T082 [US2] Implement playerAction Cloud Function in backend/src/functions/game/playerAction.ts
-- [ ] T083 [US2] Implement hand initialization logic in backend/src/lib/poker/handManager.ts
-- [ ] T084 [US2] Implement betting round logic in backend/src/lib/poker/bettingRound.ts
-- [ ] T085 [US2] Implement showdown logic in backend/src/lib/poker/showdownHandler.ts
-- [ ] T086 [US2] Implement pot distribution logic using potCalculator
-- [ ] T087 [US2] Implement blind posting logic in backend/src/lib/poker/blindManager.ts
-- [ ] T088 [US2] Implement dealer button rotation in backend/src/lib/poker/dealerManager.ts
-- [ ] T089 [US2] Implement player dealing-in rules (wait for big blind)
-- [ ] T090 [US2] Implement all-in and side pot handling
-- [ ] T091 [P] [US2] Create useGameState hook in frontend/src/hooks/useGameState.ts
-- [ ] T092 [P] [US2] Create usePlayerHand hook in frontend/src/hooks/usePlayerHand.ts (private hole cards)
+- [x] T079 [P] [US2] Create Hand schema in backend/src/functions/game/schemas.ts
+- [x] T080 [P] [US2] Create PlayerHand subcollection schema in backend/src/functions/game/schemas.ts
+- [x] T081 [US2] Implement startGame Cloud Function in backend/src/functions/game/startGame.ts
+- [x] T082 [US2] Implement playerAction Cloud Function in backend/src/functions/game/playerAction.ts
+- [x] T083 [US2] Implement hand initialization logic in backend/src/poker/handInitializer.ts
+- [x] T084 [US2] Implement phase transition logic in backend/src/poker/phaseManager.ts
+- [x] T085 [US2] Implement showdown logic in backend/src/poker/showdownHandler.ts
+- [x] T086 [US2] Implement pot distribution logic in backend/src/poker/potCalculator.ts
+- [x] T087 [US2] Implement blind posting logic in backend/src/poker/handInitializer.ts (postBlinds)
+- [x] T088 [US2] Implement dealer button rotation in backend/src/poker/handInitializer.ts (determinePositions)
+- [x] T089 [US2] Implement player dealing-in rules in backend/src/poker/handInitializer.ts (dealInPlayersAtBigBlind, resetPlayerStatesForNextHand)
+- [x] T090 [US2] Implement all-in and side pot handling in backend/src/poker/potCalculator.ts
+- [x] T091 [P] [US2] Create useGameState hook in frontend/src/hooks/useGameState.ts
+- [x] T092 [P] [US2] Create usePlayerHand hook in frontend/src/hooks/usePlayerHand.ts (private hole cards)
 - [ ] T093 [P] [US2] Create Game page component in frontend/src/pages/Game.tsx
 - [ ] T094 [P] [US2] Create TableView component in frontend/src/components/Table/TableView.tsx
 - [ ] T095 [US2] Create CommunityCards component in frontend/src/components/Table/CommunityCards.tsx
@@ -177,7 +177,24 @@
 - [ ] T104 [US2] Add sound effects for actions (optional, accessibility)
 - [ ] T105 [US2] Add animations for card dealing and pot distribution
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
+### Refactor: Move Game Logic to Backend
+
+- [ ] T106 [P] [REFACTOR] Refactor Demo.tsx to use real Cloud Functions instead of client-side shuffling
+  - Replace `@shared/lib/poker/shuffler` usage with backend `startGameFunction` calls
+  - Connect Demo to Firebase emulator or create demo table in Firestore
+  - Remove client-side deck shuffling (security issue - clients should never shuffle)
+  - Update demo to showcase actual game flow (create table, join, start, play actions)
+- [ ] T107 [P] [REFACTOR] Move hand evaluator from `@shared/lib/poker/handEvaluator` to backend
+  - Hand evaluation affects pot distribution and must be server-authoritative
+  - Create `backend/src/poker/handEvaluator.ts` (move from shared)
+  - Remove or deprecate `@shared/lib/poker/handEvaluator`
+  - Update any tests that depend on client-side hand evaluation
+- [ ] T108 [REFACTOR] Remove duplicate shuffler from shared (`@shared/lib/poker/shuffler`)
+  - Deck shuffling is now exclusively in `backend/src/poker/deck.ts`
+  - Remove shared shuffler to maintain single source of truth
+  - Update any remaining references to use backend implementation
+
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently, and Demo.tsx demonstrates real backend functionality
 
 ---
 

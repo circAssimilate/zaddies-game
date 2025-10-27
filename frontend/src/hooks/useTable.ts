@@ -36,7 +36,10 @@ export function useTable(tableId?: string, userId?: string | null): TableState &
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    console.log('[useTable] Effect running:', { tableId, userId });
+
     if (!tableId) {
+      console.log('[useTable] No tableId, returning');
       setTable(null);
       setLoading(false);
       return;
@@ -45,17 +48,20 @@ export function useTable(tableId?: string, userId?: string | null): TableState &
     // Wait for authentication before subscribing
     if (userId === undefined) {
       // Auth state not yet determined, keep loading
+      console.log('[useTable] userId undefined, waiting for auth');
       setLoading(true);
       return;
     }
 
     if (userId === null) {
       // User not authenticated
+      console.log('[useTable] userId null, user not authenticated');
       setError(new Error('You must be signed in to view this table'));
       setLoading(false);
       return;
     }
 
+    console.log('[useTable] Setting up subscription for table:', tableId);
     setLoading(true);
     setError(null);
 
@@ -63,6 +69,11 @@ export function useTable(tableId?: string, userId?: string | null): TableState &
     const unsubscribe = subscribeToTable(
       tableId,
       updatedTable => {
+        console.log('[useTable] Table update:', {
+          tableId,
+          status: updatedTable?.status,
+          hasHand: !!updatedTable?.hand,
+        });
         setTable(updatedTable);
         setLoading(false);
       },
